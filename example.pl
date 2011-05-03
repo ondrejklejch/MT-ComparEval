@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-
+use autodie;
 use NGram;
 
 $ngram = new NGram();
