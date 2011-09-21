@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>MT-ComparEval</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <fieldset>
+            <legend>MT-ComparEval - Compute statistics for machine translations</legend>
+            <form action="/cgi-bin/upload.cgi" method="post" enctype="multipart/form-data">
+                <table>
+                    <tr>
+                        <th><label for="src">Source text:</label></th>
+                        <td><input type="file" name="src" id="src" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="ref">Reference translation</label></th>
+                        <td><input type="file" name="ref" id="ref" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="tst1">Machine translation 1:</label></th>
+                        <td><input type="file" name="tst1" id="tst1" /></td>
+                    </tr>
+                    <tr>
+                        <th><label for="tst2">Machine translation 2:</label></th>
+                        <td><input type="file" name="tst2" id="tst2" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <input type="submit" value="Compute statistics" />
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </fieldset>
+    </body>
+</html>
