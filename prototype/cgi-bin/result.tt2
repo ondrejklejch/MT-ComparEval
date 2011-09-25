@@ -1,0 +1,75 @@
+<html>
+<head>
+	<title>MT-ComparEval</title>
+	<script type="text/javascript" src="../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../js/jquery.sort.js"></script>
+	<script type="text/javascript" src="../js/control.js"></script>
+	<style>
+		.append {
+			background-color: red;
+		}
+		
+		.remove {
+			background-color: blue;
+		}
+	</style>
+</head>
+<body>
+	
+    <table id="stats">
+        <tr>
+            <th>Machine translation 1</th>
+            <th>Machine translation 2</th>
+        </tr>
+        <tr>
+            <td>[% GET tst1_bleu %]</td>
+            <td>[% GET tst2_bleu %]</td>
+        </tr>
+    </table>
+
+	<ul id="sentences">
+		[% FOREACH sentence IN sentences %]
+			<li>
+		        <table>
+		            <tr class="src">
+		                <th>Source text</th>
+		                <td colspan="3">[% GET sentence.src %]</td>
+		                <td rowspan="4" class="diff-bleu">
+		                	[% GET sentence.tst1_bleu - sentence.tst2_bleu %]
+		                </td>
+		            </tr>
+		            <tr class="ref">
+		                <th>Reference translation</th>
+		                <td colspan="3">[% GET sentence.ref %]</td>
+		            </tr>
+		            <tr class="tst1">
+		                <th>Machine translation 1</th>
+		                <td>[% GET sentence.tst1_diff %]</td>
+		                <td>
+		                	<a href="#" class="display_diff">display diff</a>
+		                </td>
+		                <td class="bleu">[% GET sentence.tst1_bleu %]</td>
+		            </tr>
+		            <tr class="tst2">
+		                <th>Machine translation 2</th>
+		                <td>[% GET sentence.tst2_diff %]</td>
+		                <td><a href="#" class="display_diff">display diff</a></td>
+		                <td class="bleu">[% GET sentence.tst2_bleu %]</td>
+		            </tr>
+		        </table>
+		    </li>
+        [% END %]
+	</ul>
+	
+    <ul id="toolbar">
+        <li><a href="../index.html">Compute new statistics</a></li>
+        <li><a href="#">Display diff for machine translation 1</a></li>
+        <li><a href="#">Display diff for machine translation 2</a></li>
+        <li>
+        	<a href="#" id="sort-control">
+        		Sort by DIFF-BLEU <span>DESC</span>
+        	</a>
+        </li>
+    </ul>
+</body>
+</html>
