@@ -57,7 +57,11 @@
 	
     <ul id="toolbar">
         <li><a href="../index.html">Compute new statistics</a></li>
-        <li><a href="#">Display diff for machine translation 1</a></li>
+        <li>
+        	<a href="#" id="diff1-control">
+        		Display diff for machine translation 1
+        	</a>
+        </li>
         <li><a href="#">Display diff for machine translation 2</a></li>
         <li>
         	<a href="#" id="sort-control">
