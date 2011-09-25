@@ -5,12 +5,13 @@
 	<script type="text/javascript" src="../js/jquery.sort.js"></script>
 	<script type="text/javascript" src="../js/control.js"></script>
 	<style>
-		.append {
-			background-color: red;
+		ins {
+			text-decoration: none;
+			display: none;
 		}
 		
-		.remove {
-			background-color: blue;
+		del {
+			text-decoration: none;
 		}
 	</style>
 </head>

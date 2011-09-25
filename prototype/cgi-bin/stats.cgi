@@ -8,7 +8,7 @@ use CGI;
 use CGI::Carp qw ( fatalsToBrowser );
 use Digest::MD5 qw( md5 );
 use NGram;
-use String::Diff qw ( diff_merge );
+use Text::WordDiff;
 use Template;
 use Text::Iconv;
 
@@ -116,16 +116,18 @@ sub get_bleu_for_sentence {
 sub get_diff {
 	my ( $ref, $tst ) = @_;
 	
-	my $iconvUtfToIso = Text::Iconv->new("utf8", "iso-8859-2");
-	my $iconvIsoToUtf =	Text::Iconv->new("iso-8859-2", "utf8");
+	my $iconvUtfToIso = Text::Iconv->new( "utf8", "iso-8859-2" );
+	my $iconvIsoToUtf =	Text::Iconv->new( "iso-8859-2", "utf8" );
 		
-	return $iconvIsoToUtf->convert( String::Diff::diff_merge( 
-		$iconvUtfToIso->convert( $tst ), $iconvUtfToIso->convert( $ref ), 
-		remove_open => '<span class="remove">',
-		remove_close => '</span>',
-		append_open => '<span class="append">',
-		append_close => '</span>',
+	my $ref_iso = $iconvUtfToIso->convert( $ref );	
+	my $tst_iso = $iconvUtfToIso->convert( $tst );
+		
+	my $diff = $iconvIsoToUtf->convert( word_diff( 
+		\$tst_iso, \$ref_iso, 
+		{ STYLE => 'HTML' } 
 	) );
+
+	return $diff;
 }
 
 
