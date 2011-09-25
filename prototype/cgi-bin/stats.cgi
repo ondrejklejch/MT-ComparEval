@@ -109,7 +109,7 @@ sub get_bleu_for_sentence {
 	my $ngram = new NGram;
 	$ngram->add_sentence( $ref, $tst );
 
-	return $ngram->get_bleu();
+	return sprintf("%.4f", $ngram->get_bleu() );
 }
 
 
