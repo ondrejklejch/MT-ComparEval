@@ -28,30 +28,30 @@ $(document).ready(function() {
 	});
 
 	$("#diff1-control").click(function() {
-		toggleDiff($(this), ".tst1 ins, .tst1 del");
+		toggleDiff($(this), ".tst1");
 		
 		return false;
 	});
 
 	$("#diff2-control").click(function() {
-		toggleDiff($(this), ".tst2 ins, .tst2 del");
+		toggleDiff($(this), ".tst2");
 		
 		return false;	
 	});
 	
 	function toggleDiff($control, selector) {
-		if( $control.children("span").text() == "Display" ) {
+		if( ! $control.hasClass("active") ) {
 			$(selector).addClass("active");
-			$control.children("span").text("Hide");
 		} else {
 			$(selector).removeClass("active");
-			$control.children("span").text("Display");
 		}
+		
+		$control.toggleClass("active");
 	}
 	
 	
 	$(".display-diff").click(function() {
-		$(this).closest("tr").find("ins, del").toggleClass("active");
+		$(this).closest("tr").toggleClass("active");
 	
 		return false;
 	});

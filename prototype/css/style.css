@@ -56,7 +56,7 @@ ins {
 	display: none;
 }
 
-ins.active {
+.active ins {
 	display: inline;
 	background-color: red;	
 }
@@ -65,9 +65,25 @@ del {
 	text-decoration: none;
 }
 
-del.active {
+.active del {
 	display: inline;
 	background-color: blue;	
+}
+
+span.display {
+	display: inline;
+}
+
+span.hide {
+	display: none;
+}
+
+.active span.display {
+	display: none;	
+}
+
+.active span.hide {
+	display: inline;
 }
 
 ul#toolbar {
