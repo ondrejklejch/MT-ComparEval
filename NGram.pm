@@ -64,7 +64,16 @@ sub add_sentence {
 sub get_bleu {
 	my $self = shift;
 	my $brevity_penalty = $self->_count_brevity_penalty(); 
-	my $geometric_average = $self->_count_geometric_average();
+	my $geometric_average = $self->_count_geometric_average( "-inf" );
+
+	return sprintf( "%.4f", $brevity_penalty * exp( $geometric_average ) ); 
+}
+
+
+sub get_sentence_bleu {
+	my $self = shift;
+	my $brevity_penalty = $self->_count_brevity_penalty();
+	my $geometric_average = $self->_count_geometric_average( 0 );
 
 	return sprintf( "%.4f", $brevity_penalty * exp( $geometric_average ) ); 
 }
@@ -82,7 +91,7 @@ sub _count_brevity_penalty {
 
 
 sub _count_geometric_average {
-	my ( $self ) = @_;
+	my ( $self, $ngram_not_found_income ) = @_;
 	my @reference_ngrams = @{ $self->reference_ngrams() };
 	my @common_ngrams = @{ $self->common_ngrams() }; 
 
@@ -90,18 +99,18 @@ sub _count_geometric_average {
 	my $geometric_average = 0;
 	for	my $length ( 1..4 ) {
 		if ( ! exists $common_ngrams[ $length ]) {
-			return "-inf";
-		}
-		
-		my $common_ngrams_count = $self->_array_sum(
-			values %{ $common_ngrams[ $length ] }
-		);
-		my $reference_ngrams_count = $self->_array_sum( 
-			values %{ $reference_ngrams[ $length ] } 
-		);
+			$geometric_average += $ngram_not_found_income;
+		} else {
+			my $common_ngrams_count = $self->_array_sum(
+				values %{ $common_ngrams[ $length ] }
+			);
+			my $reference_ngrams_count = $self->_array_sum( 
+				values %{ $reference_ngrams[ $length ] } 
+			);
 	
-		my $ngram_precision = $common_ngrams_count / $reference_ngrams_count;
-		$geometric_average += 1/4 * log( $ngram_precision ); 
+			my $ngram_precision = $common_ngrams_count / $reference_ngrams_count;
+			$geometric_average += 1/4 * log( $ngram_precision ); 
+		}
 	}
 
 	return $geometric_average;

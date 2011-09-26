@@ -87,7 +87,10 @@ sub compute_statistics {
 			'tst1_diff' => get_diff( $ref_sentence, $tst1_sentence ),
 			'tst1_bleu' => get_bleu_for_sentence( $ref_sentence, $tst1_sentence ),
 			'tst2_diff' => get_diff( $ref_sentence, $tst2_sentence ),
-			'tst2_bleu' => get_bleu_for_sentence( $ref_sentence, $tst1_sentence ),
+			'tst2_bleu' => get_bleu_for_sentence( $ref_sentence, $tst2_sentence ),
+		);
+		$sentence{ 'diff_bleu' } = sprintf( 
+			'%.4f', $sentence{ 'tst1_bleu'} - $sentence{ 'tst2_bleu'}
 		);
 
 		push @sentences_stats, \%sentence;
@@ -109,7 +112,7 @@ sub get_bleu_for_sentence {
 	my $ngram = new NGram;
 	$ngram->add_sentence( $ref, $tst );
 
-	return sprintf("%.4f", $ngram->get_bleu() );
+	return sprintf("%.4f", $ngram->get_sentence_bleu() );
 }
 
 

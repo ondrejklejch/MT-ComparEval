@@ -27,7 +27,7 @@
 		                <th>Source text</th>
 		                <td colspan="3">[% GET sentence.src %]</td>
 		                <td rowspan="4" class="diff-bleu">
-		                	[% GET sentence.tst1_bleu - sentence.tst2_bleu %]
+		                	[% GET sentence.diff_bleu %]
 		                </td>
 		            </tr>
 		            <tr class="ref">
