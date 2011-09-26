@@ -3,6 +3,7 @@
 	<title>MT-ComparEval</title>
 	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery.sort.js"></script>
+	<script type="text/javascript" src="../js/jsdiff.js"></script>
 	<script type="text/javascript" src="../js/control.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/style.css" />
 </head>
@@ -32,11 +33,11 @@
 		            </tr>
 		            <tr class="ref">
 		                <th>Reference translation</th>
-		                <td colspan="3">[% GET sentence.ref %]</td>
+		                <td colspan="3" class="text">[% GET sentence.ref %]</td>
 		            </tr>
 		            <tr class="tst1">
 		                <th>Machine translation 1</th>
-		                <td>[% GET sentence.tst1_diff %]</td>
+		                <td class="text">[% GET sentence.tst1 %]</td>
 		                <td class="diff">
 		                	<a href="#" class="display-diff">
 		                		<span class="display">Display</span>
@@ -48,7 +49,7 @@
 		            </tr>
 		            <tr class="tst2">
 		                <th>Machine translation 2</th>
-		                <td>[% GET sentence.tst2_diff %]</td>
+		                <td class="text">[% GET sentence.tst2 %]</td>
 		                <td class="diff">
 		                	<a href="#" class="display-diff">
 		                		<span class="display">Display</span>

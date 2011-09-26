@@ -53,7 +53,7 @@ ul#sentences table td.bleu {
 
 ins {
 	text-decoration: none;
-	display: none;
+	display: inline;
 }
 
 .active ins {
@@ -63,6 +63,7 @@ ins {
 
 del {
 	text-decoration: none;
+	display: none;
 }
 
 .active del {

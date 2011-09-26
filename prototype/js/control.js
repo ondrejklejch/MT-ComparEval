@@ -28,16 +28,30 @@ $(document).ready(function() {
 	});
 
 	$("#diff1-control").click(function() {
+		generateDiff( $(this), ".tst1" );
 		toggleDiff($(this), ".tst1");
 		
 		return false;
 	});
 
 	$("#diff2-control").click(function() {
+		generateDiff( $(this), ".tst2" );
 		toggleDiff($(this), ".tst2");
 		
 		return false;	
 	});
+	
+	
+	function generateDiff( $controler, selector ) {
+		if( ! $controler.hasClass( "cached" ) ) { 
+			$(selector).find("td.text").each( function( index, element ) {
+				computeDiff( element );		
+			});
+
+			$controler.addClass( "cached" );
+		}
+	}
+	
 	
 	function toggleDiff($control, selector) {
 		if( ! $control.hasClass("active") ) {
@@ -51,8 +65,23 @@ $(document).ready(function() {
 	
 	
 	$(".display-diff").click(function() {
-		$(this).closest("tr").toggleClass("active");
+		computeDiff( this );			
+		$(this).closest("tr").toggleClass( "active" );
 	
 		return false;
 	});
+	
+	
+	function computeDiff( element ) {
+		var $tr = $(element).closest("tr");
+		
+		if( !$tr.hasClass( "cached" ) ) {
+			var $td = $tr.find("td.text");
+			var ref = $(element).closest("table").find("tr.ref td.text").text();
+			var tst = $td.text();
+		
+			$tr.addClass("cached");
+			$td.html( diffString(ref, tst) );
+		}
+	}
 });

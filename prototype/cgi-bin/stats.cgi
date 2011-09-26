@@ -84,9 +84,9 @@ sub compute_statistics {
 		my %sentence = (
 			'src' => $src_sentence,
 			'ref' => $ref_sentence,
-			'tst1_diff' => get_diff( $ref_sentence, $tst1_sentence ),
+			'tst1' => $tst1_sentence,
 			'tst1_bleu' => get_bleu_for_sentence( $ref_sentence, $tst1_sentence ),
-			'tst2_diff' => get_diff( $ref_sentence, $tst2_sentence ),
+			'tst2' => $tst2_sentence,
 			'tst2_bleu' => get_bleu_for_sentence( $ref_sentence, $tst2_sentence ),
 		);
 		$sentence{ 'diff_bleu' } = sprintf( 
@@ -113,24 +113,6 @@ sub get_bleu_for_sentence {
 	$ngram->add_sentence( $ref, $tst );
 
 	return sprintf("%.4f", $ngram->get_sentence_bleu() );
-}
-
-
-sub get_diff {
-	my ( $ref, $tst ) = @_;
-	
-	my $iconvUtfToIso = Text::Iconv->new( "utf8", "iso-8859-2" );
-	my $iconvIsoToUtf =	Text::Iconv->new( "iso-8859-2", "utf8" );
-		
-	my $ref_iso = $iconvUtfToIso->convert( $ref );	
-	my $tst_iso = $iconvUtfToIso->convert( $tst );
-		
-	my $diff = $iconvIsoToUtf->convert( word_diff( 
-		\$tst_iso, \$ref_iso, 
-		{ STYLE => 'HTML' } 
-	) );
-
-	return $diff;
 }
 
 
