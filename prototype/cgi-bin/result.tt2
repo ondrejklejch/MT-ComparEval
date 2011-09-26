@@ -71,6 +71,7 @@
         		<span class="display">Display</span>
         		<span class="hide">Hide</span>
         		diff for machine translation 1
+        		<img src="../img/spinner.gif" class="spinner" alt="" />
         	</a>
         </li>
         <li>
@@ -78,11 +79,14 @@
         		<span class="display">Display</span>
         		<span class="hide">Hide</span>
         		diff for machine translation 2
+        		<img src="../img/spinner.gif" class="spinner" alt="" />
         	</a>
         </li>
         <li>
         	<a href="#" id="sort-control">
-        		Sort by DIFF-BLEU <span>DESC</span>
+        		Sort by DIFF-BLEU
+        		<span>DESC</span>
+        		<img src="../img/spinner.gif" class="spinner" alt="" />
         	</a>
         </li>
     </ul>

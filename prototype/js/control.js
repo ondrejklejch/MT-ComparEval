@@ -1,5 +1,7 @@
 $(document).ready(function() {
 	$("#sort-control").click(function() {
+		$(this).addClass( "processing" );
+		
 		var callback;
 		var newOrder;
 		
@@ -23,20 +25,25 @@ $(document).ready(function() {
 		
 		$("ul#sentences li").sort(callback);
 		$(this).children("span").text(newOrder);
+		$(this).removeClass( "processing" );
 
 		return false;
 	});
 
 	$("#diff1-control").click(function() {
+		$(this).addClass( "processing" );
 		generateDiff( $(this), ".tst1" );
 		toggleDiff($(this), ".tst1");
+		$(this).removeClass( "processing" );
 		
 		return false;
 	});
 
 	$("#diff2-control").click(function() {
+		$(this).addClass( "processing" );
 		generateDiff( $(this), ".tst2" );
 		toggleDiff($(this), ".tst2");
+		$(this).removeClass( "processing" );
 		
 		return false;	
 	});
