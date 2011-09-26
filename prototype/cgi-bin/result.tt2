@@ -38,7 +38,7 @@
 		                <th>Machine translation 1</th>
 		                <td>[% GET sentence.tst1_diff %]</td>
 		                <td class="diff">
-		                	<a href="#" class="display_diff">display diff</a>
+		                	<a href="#" class="display-diff">display diff</a>
 		                </td>
 		                <td class="bleu">[% GET sentence.tst1_bleu %]</td>
 		            </tr>
@@ -46,7 +46,7 @@
 		                <th>Machine translation 2</th>
 		                <td>[% GET sentence.tst2_diff %]</td>
 		                <td class="diff">
-		                	<a href="#" class="display_diff">display diff</a>
+		                	<a href="#" class="display-diff">display diff</a>
 		                </td>
 		                <td class="bleu">[% GET sentence.tst2_bleu %]</td>
 		            </tr>
@@ -59,10 +59,14 @@
         <li><a href="../index.html">Compute new statistics</a></li>
         <li>
         	<a href="#" id="diff1-control">
-        		Display diff for machine translation 1
+        		<span>Display</span> diff for machine translation 1
         	</a>
         </li>
-        <li><a href="#">Display diff for machine translation 2</a></li>
+        <li>
+        	<a href="#" id="diff2-control">
+        		<span>Display</span> diff for machine translation 2
+        	</a>
+        </li>
         <li>
         	<a href="#" id="sort-control">
         		Sort by DIFF-BLEU <span>DESC</span>

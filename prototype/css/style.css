@@ -56,10 +56,19 @@ ins {
 	display: none;
 }
 
+ins.active {
+	display: inline;
+	background-color: red;	
+}
+
 del {
 	text-decoration: none;
 }
 
+del.active {
+	display: inline;
+	background-color: blue;	
+}
 
 ul#toolbar {
 	position: fixed;
