@@ -1,7 +1,7 @@
 <html>
 <head>
 	<title>MT-ComparEval</title>
-	<script type="text/javascript" src="../js/jquery.min.js"></script>
+	<script type="text/javascript" src="../js/jquery.js"></script>
 	<script type="text/javascript" src="../js/jquery.sort.js"></script>
 	<script type="text/javascript" src="../js/control.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/style.css" />

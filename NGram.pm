@@ -66,7 +66,7 @@ sub get_bleu {
 	my $brevity_penalty = $self->_count_brevity_penalty(); 
 	my $geometric_average = $self->_count_geometric_average();
 
-	return $brevity_penalty * exp( $geometric_average ); 
+	return sprintf( "%.4f", $brevity_penalty * exp( $geometric_average ) ); 
 }
 
 
