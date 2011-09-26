@@ -73,7 +73,7 @@ sub get_bleu {
 sub get_sentence_bleu {
 	my $self = shift;
 	my $brevity_penalty = $self->_count_brevity_penalty();
-	my $geometric_average = $self->_count_geometric_average( 0 );
+	my $geometric_average = $self->_count_geometric_average( -10 );
 
 	return sprintf( "%.4f", $brevity_penalty * exp( $geometric_average ) ); 
 }
