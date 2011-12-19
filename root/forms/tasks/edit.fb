@@ -1,4 +1,5 @@
 name: experiment_edit
+enctype: multipart/form-data
 method: post
 fields:
 	name:
@@ -9,3 +10,6 @@ fields:
 	comment:
 		label: Comment
 		type: textarea 
+	translation:
+		label: Translation
+		type: file

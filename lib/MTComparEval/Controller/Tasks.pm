@@ -1,6 +1,7 @@
 package MTComparEval::Controller::Tasks;
 use Moose;
 use namespace::autoclean;
+use File::Remove 'remove';
 
 BEGIN {extends 'Catalyst::Controller'; }
 extends 'Catalyst::Controller::FormBuilder';
@@ -47,11 +48,20 @@ sub edit :Local Form( '/tasks/edit' ) {
     my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $experimentId } );
     my $task = $c->model( 'TestDatabase::tasks' )->find_or_new( { id => $id } );
 
+    if( !$id ) {
+        $form->field( name => 'translation', required => 1 );
+    }
+
     if( $form->submitted && $form->validate ) {
         $task->name( $form->field( 'name' ) );
         $task->comment( $form->field( 'comment' ) );
         $task->experiment_id( $experimentId );
         $task->update_or_insert;
+
+        if( $form->field( 'translation' ) ) {
+             my $file = $c->req->upload( 'translation' );
+             $file->copy_to( $c->path_to( 'data', 'translation' . $task->id ) );
+        }
 
         if( !$id ) {
             $c->flash->{ message } = 'Task "' . $form->field( 'name' ) . '" was created';
@@ -82,6 +92,7 @@ sub delete :Local {
 
     if( $task ) {
         $c->flash->{ message } = "Task " . $task->name . " deleted.";
+        remove( $c->path_to( 'data', 'translation' . $id ) );
         $task->delete;
     } else {
         $c->response->status( 404 );
