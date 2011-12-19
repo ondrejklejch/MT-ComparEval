@@ -13,10 +13,10 @@
 		<table>
 			[% WHILE ( task = tasks.next ) %]
 			<tr>
-				<td>[% task.name | html %]</td>
+				<td><a href="[% c.uri_for( "../task/detail/$task.id" ) %]">[% task.name | html %]</a></td>
 				<td>[% task.date | html %]</td>
 				<td>[% task.comment | html %]</td>
-				<td><a href="[% c.uri_for( "delete/$task.experiment_id/$task.id" ) | html %]">delete</a></td>
+				<td><a href="[% c.uri_for( "delete/$task.experiment_id/$task.id" ) %]">delete</a></td>
 			</tr>
 			[% END %]
 		</table>

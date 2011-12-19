@@ -1,4 +1,4 @@
-package MTComparEval::NGram;
+package NGram;
 use Moose;
 use List::Util qw[min max];
 
