@@ -72,6 +72,26 @@ sub edit :Local Form( '/tasks/edit' ) {
 }
 
 
+=head2 delete 
+
+=cut
+
+sub delete :Local {
+    my ( $self, $c, $experimentId, $id ) = @_;
+    my $task = $c->model( 'TestDatabase::tasks' )->find( { id => $id } );
+
+    if( $task ) {
+        $c->flash->{ message } = "Task " . $task->name . " deleted.";
+        $task->delete;
+    } else {
+        $c->response->status( 404 );
+        $c->flash->{ error } = "Task $id not found.";
+    } 
+ 
+    $c->response->redirect( $c->uri_for_action( 'tasks/index', ( $experimentId ) ) );
+    $c->detach(); 
+}
+
 
 =head1 AUTHOR
 

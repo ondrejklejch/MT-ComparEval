@@ -8,13 +8,15 @@
 		<h1>MT-ComparEval experiments</h1>
 		<h2>Tasks for experiment: [% experiment.name %]</h2>
 
+		<div id="message">[% message | html %]</div>
+		<div id="error">[% error | html %]</div>
 		<table>
 			[% WHILE ( task = tasks.next ) %]
 			<tr>
 				<td>[% task.name | html %]</td>
 				<td>[% task.date | html %]</td>
 				<td>[% task.comment | html %]</td>
-				<td><a href="[% c.uri_for( "delete/$task.id" ) | html %]">delete</a></td>
+				<td><a href="[% c.uri_for( "delete/$task.experiment_id/$task.id" ) | html %]">delete</a></td>
 			</tr>
 			[% END %]
 		</table>
