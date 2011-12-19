@@ -11,7 +11,7 @@
 		<table>
 			[% WHILE ( experiment = experiments.next ) %]
 			<tr>
-				<td>[% experiment.name | html %]</td>
+				<td><a href="[% c.uri_for( "../tasks/$experiment.id" ) %]">[% experiment.name | html %]</a></td>
 				<td>[% experiment.date | html %]</td>
 				<td>[% experiment.comment | html %]</td>
 				<td><a href="[% c.uri_for( "edit/$experiment.id" ) %]">edit</a></td>
