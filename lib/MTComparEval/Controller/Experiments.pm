@@ -3,6 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller'; }
+extends 'Catalyst::Controller::FormBuilder';
 
 =head1 NAME
 
@@ -28,7 +29,31 @@ sub index :Path :Args(0) {
 }
 
 
-=head2 new
+=head2 edit
+
+=cut
+
+sub edit :Local Form {
+    my ( $self, $c, $id ) = @_;
+    my $form = $self->formbuilder;
+    my $experiment = $c->model( 'TestDatabase::experiments' )->find_or_new( { id => $id } );
+
+    if( $form->submitted && $form->validate ) {
+        $experiment->name( $form->field( 'name' ) );
+	$experiment->comment( $form->field( 'comment' ) );
+	$experiment->update_or_insert;
+
+	$c->flash->{message} = 'Thanks';
+	$c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
+    } else {
+        $form->field( name => 'name', value => $experiment->name );
+        $form->field( name => 'comment', value => $experiment->comment );
+    }
+}
+
+
+
+=head2 delete 
 
 =cut
 
@@ -59,6 +84,6 @@ it under the same terms as Perl itself.
 
 =cut
 
-__PACKAGE__->meta->make_immutable;
+# __PACKAGE__->meta->make_immutable;
 
 1;
