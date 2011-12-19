@@ -3,6 +3,7 @@ use Moose;
 use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller'; }
+extends 'Catalyst::Controller::FormBuilder';
 
 =head1 NAME
 
@@ -34,6 +35,42 @@ sub index :Path :Args(1) {
         $c->stash->{ experiment } = $experiment;
     }
 }
+
+
+=head2 edit
+
+=cut
+
+sub edit :Local Form( '/tasks/edit' ) {
+    my ( $self, $c, $experimentId, $id ) = @_;
+    my $form = $self->formbuilder;
+    my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $experimentId } );
+    my $task = $c->model( 'TestDatabase::tasks' )->find_or_new( { id => $id } );
+
+    if( $form->submitted && $form->validate ) {
+        $task->name( $form->field( 'name' ) );
+        $task->comment( $form->field( 'comment' ) );
+        $task->experiment_id( $experimentId );
+        $task->update_or_insert;
+
+        if( !$id ) {
+            $c->flash->{ message } = 'Task "' . $form->field( 'name' ) . '" was created';
+        } else {
+            $c->flash->{ message } = 'Task "' . $form->field( 'name' ) . '" was updated';
+        }
+       $c->response->redirect( $c->uri_for_action( '/tasks/index', ( $experimentId ) ) );
+    } else {
+        if( !$id ) {
+            $c->stash->{ action } = 'Adding new task';
+        } else {
+            $c->stash->{ action } = 'Edit task ' . $task->name;
+        }
+
+        $form->field( name => 'name', value => $task->name );
+        $form->field( name => 'comment', value => $task->comment );
+    }
+}
+
 
 
 =head1 AUTHOR
