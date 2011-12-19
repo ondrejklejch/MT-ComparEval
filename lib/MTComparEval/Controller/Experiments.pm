@@ -1,6 +1,7 @@
 package MTComparEval::Controller::Experiments;
 use Moose;
 use namespace::autoclean;
+use File::Copy;
 
 BEGIN {extends 'Catalyst::Controller'; }
 extends 'Catalyst::Controller::FormBuilder';
@@ -47,6 +48,13 @@ sub edit :Local Form {
         $experiment->name( $form->field( 'name' ) );
         $experiment->comment( $form->field( 'comment' ) );
         $experiment->update_or_insert;
+
+        for my $type ( 'source', 'reference' ) {
+            if( $form->field( $type ) ) {
+                my $file = $c->req->upload( $type );
+                $file->copy_to( $c->path_to( 'data', $type . $experiment->id ) );
+            }
+        }
 
         if( !$id ) {
             $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was created';

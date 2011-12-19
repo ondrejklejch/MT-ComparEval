@@ -1,5 +1,6 @@
 name: experiment_edit
 method: post
+enctype: multipart/form-data
 fields:
 	name:
 		label: Name
