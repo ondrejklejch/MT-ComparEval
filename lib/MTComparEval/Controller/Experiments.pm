@@ -1,7 +1,7 @@
 package MTComparEval::Controller::Experiments;
 use Moose;
 use namespace::autoclean;
-use File::Copy;
+use File::Remove 'remove';
 
 BEGIN {extends 'Catalyst::Controller'; }
 extends 'Catalyst::Controller::FormBuilder';
@@ -88,6 +88,8 @@ sub delete :Local {
 
     if( $experiment ) {
         $c->flash->{ message } = "Experiment " . $experiment->name . " deleted.";
+        remove( $c->path_to( 'data', 'source' . $id ) );
+        remove( $c->path_to( 'data', 'reference' . $id ) );
         $experiment->delete;
     } else {
         $c->response->status( 404 );
