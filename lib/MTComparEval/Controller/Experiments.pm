@@ -40,19 +40,19 @@ sub edit :Local Form {
 
     if( $form->submitted && $form->validate ) {
         $experiment->name( $form->field( 'name' ) );
-	$experiment->comment( $form->field( 'comment' ) );
-	$experiment->update_or_insert;
+        $experiment->comment( $form->field( 'comment' ) );
+        $experiment->update_or_insert;
 
-	if( !$id ) {
-	    $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was created';
+        if( !$id ) {
+            $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was created';
         } else {
             $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was updated';
         }
-	$c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
+       $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
     } else {
         if( !$id ) {
             $c->stash->{ action } = 'Adding new experiment';
-	} else {
+        } else {
             $c->stash->{ action } = 'Edit experiment ' . $experiment->name;
         }
 
@@ -72,11 +72,11 @@ sub delete :Local {
     my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $id } );
 
     if( $experiment ) {
-	$c->flash->{ message } = "Experiment " . $experiment->name . " deleted.";
+        $c->flash->{ message } = "Experiment " . $experiment->name . " deleted.";
         $experiment->delete;
     } else {
         $c->response->status( 404 );
-	$c->flash->{ error } = "Experiment $id not found.";
+        $c->flash->{ error } = "Experiment $id not found.";
     } 
  
     $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
