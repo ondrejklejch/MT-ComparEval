@@ -29,8 +29,7 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    # Hello World
-    $c->response->body( $c->welcome_message );
+    $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
 }
 
 =head2 default
