@@ -8,4 +8,10 @@ fields:
 		required: 1
 	comment:
 		label: Comment
-		type: textarea 
+		type: textarea
+	source:
+		label: Source text
+		type: file
+	reference:
+		label: Reference translation
+		type: file

@@ -38,6 +38,11 @@ sub edit :Local Form {
     my $form = $self->formbuilder;
     my $experiment = $c->model( 'TestDatabase::experiments' )->find_or_new( { id => $id } );
 
+    if( !$id ) {
+        $form->field( name => 'source', required => 1 );
+        $form->field( name => 'reference', required => 1 );
+    }
+
     if( $form->submitted && $form->validate ) {
         $experiment->name( $form->field( 'name' ) );
         $experiment->comment( $form->field( 'comment' ) );
@@ -48,14 +53,16 @@ sub edit :Local Form {
         } else {
             $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was updated';
         }
-       $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
+
+        $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
+        $c->detach();
     } else {
         if( !$id ) {
             $c->stash->{ action } = 'Adding new experiment';
         } else {
             $c->stash->{ action } = 'Edit experiment ' . $experiment->name;
         }
-
+    
         $form->field( name => 'name', value => $experiment->name );
         $form->field( name => 'comment', value => $experiment->comment );
     }
