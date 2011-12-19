@@ -14,11 +14,11 @@
 				<td>[% experiment.name | html %]</td>
 				<td>[% experiment.date | html %]</td>
 				<td>[% experiment.comment | html %]</td>
-				<td><a href="experiments/edit/[% experiment.id %]">edit</a></td>
+				<td><a href="[% c.uri_for( "edit/$experiment.id" ) %]">edit</a></td>
 				<td><a href="[% c.uri_for( "delete/$experiment.id" ) | html %]">delete</a></td>
 			</tr>
 			[% END %]
 		</table>
-		<a href="/experiments/new">Add new experiment</a>
+		<a href="[% c.uri_for( "edit" ) %]">Add new experiment</a>
 	</body>
 </html>

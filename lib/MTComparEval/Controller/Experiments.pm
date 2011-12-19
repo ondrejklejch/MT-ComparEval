@@ -43,9 +43,19 @@ sub edit :Local Form {
 	$experiment->comment( $form->field( 'comment' ) );
 	$experiment->update_or_insert;
 
-	$c->flash->{message} = 'Thanks';
+	if( !$id ) {
+	    $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was created';
+        } else {
+            $c->flash->{ message } = 'Experiment "' . $form->field( 'name' ) . '" was updated';
+        }
 	$c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
     } else {
+        if( !$id ) {
+            $c->stash->{ action } = 'Adding new experiment';
+	} else {
+            $c->stash->{ action } = 'Edit experiment ' . $experiment->name;
+        }
+
         $form->field( name => 'name', value => $experiment->name );
         $form->field( name => 'comment', value => $experiment->comment );
     }
