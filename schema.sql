@@ -35,6 +35,30 @@ CREATE TABLE sentences (
 );
 
 
+CREATE TABLE source_sentences (
+	id INTEGER NOT NULL,
+	experiment_id INTEGER NOT NULL,
+	position INTEGER NOT NULL,
+	text TEXT NOT NULL,
+	PRIMARY KEY ( id ),
+	UNIQUE ( experiment_id, position ),
+	FOREIGN KEY ( experiment_id ) REFERENCES experiments( id ) ON DELETE CASCADE
+);
+
+
+CREATE TABLE reference_sentences (
+	id INTEGER NOT NULL,
+	experiment_id INTEGER NOT NULL,
+	position INTEGER NOT NULL,
+	text TEXT NOT NULL,
+	length INTEGER NOT NULL,
+	diff_blue REAL NOT NULL,
+        PRIMARY KEY ( id ),
+	UNIQUE ( experiment_id, position ),
+	FOREIGN KEY ( experiment_id ) REFERENCES experiments( id ) ON DELETE CASCADE
+);
+
+
 CREATE TABLE ngrams (
 	id INTEGER NOT NULL,
 	sentence_id INTEGER NOT NULL,

@@ -1,5 +1,6 @@
 package MTComparEval::Controller::Experiments;
 use Moose;
+use Proc::Simple;
 use namespace::autoclean;
 use File::Remove 'remove';
 
@@ -52,7 +53,13 @@ sub edit :Local Form {
         for my $type ( 'source', 'reference' ) {
             if( $form->field( $type ) ) {
                 my $file = $c->req->upload( $type );
-                $file->copy_to( $c->path_to( 'data', $type . $experiment->id ) );
+                my $path = $c->path_to( 'data', $type . $experiment->id );
+                $file->copy_to( $path );
+
+                my $command = $c->config->{ 'process_' . $type } . ' ' . $path . ' ' . $experiment->id;
+                $c->log->info( $command );
+                my $process = Proc::Simple->new();
+                $process->start( $command );
             }
         }
 
