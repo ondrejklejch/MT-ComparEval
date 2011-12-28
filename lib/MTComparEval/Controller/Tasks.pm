@@ -59,8 +59,14 @@ sub edit :Local Form( '/tasks/edit' ) {
         $task->update_or_insert;
 
         if( $form->field( 'translation' ) ) {
-             my $file = $c->req->upload( 'translation' );
-             $file->copy_to( $c->path_to( 'data', 'translation' . $task->id ) );
+            my $file = $c->req->upload( 'translation' );
+            my $path = $c->path_to( 'data', 'translation' . $task->id );
+            $file->copy_to( $path );
+
+            my $command = $c->config->{ 'process_translation' } . ' ' . $path . ' ' . $experiment->id . ' ' . $task->id;
+            $c->log->info( $command );
+            my $process = Proc::Simple->new();
+            $process->start( $command );
         }
 
         if( !$id ) {
