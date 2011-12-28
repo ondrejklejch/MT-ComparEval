@@ -73,10 +73,15 @@ __PACKAGE__->belongs_to(
   "MTComparEval::Schema::Result::Tasks",
   { id => "task_id" },
 );
+__PACKAGE__->has_many(
+  "translation_ngrams",
+  "MTComparEval::Schema::Result::TranslationNgrams",
+  { "foreign.sentence_id" => "self.id" },
+);
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-28 10:50:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:BEhacpkqzaUcjzWv9tFn+g
+# Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-28 12:27:21
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ApKhiqDt27wxnqOZ8RHD7A
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

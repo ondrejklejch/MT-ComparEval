@@ -66,7 +66,7 @@ CREATE TABLE translation_ngrams (
 	text TEXT NOT NULL,
 	PRIMARY KEY ( id ),
 	UNIQUE ( sentence_id, position, length ),
-	FOREIGN KEY ( sentence_id ) REFERENCES sentences( id ) ON DELETE CASCADE
+	FOREIGN KEY ( sentence_id ) REFERENCES translation_sentences( id ) ON DELETE CASCADE
 );
 
 
