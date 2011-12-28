@@ -44,8 +44,8 @@ __PACKAGE__->has_many(
   { "foreign.experiment_id" => "self.id" },
 );
 __PACKAGE__->has_many(
-  "sentences",
-  "MTComparEval::Schema::Result::Sentences",
+  "translation_sentences",
+  "MTComparEval::Schema::Result::TranslationSentences",
   { "foreign.experiment_id" => "self.id" },
 );
 __PACKAGE__->has_many(
@@ -60,8 +60,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-27 16:19:06
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ug6OjHZBnGngsogubxaeIw
+# Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-28 10:50:16
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iHya2+UnDCic15i2pWNK7Q
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

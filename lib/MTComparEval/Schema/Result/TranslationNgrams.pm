@@ -1,4 +1,4 @@
-package MTComparEval::Schema::Result::SourceSentences;
+package MTComparEval::Schema::Result::TranslationNgrams;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use warnings;
 use base 'DBIx::Class';
 
 __PACKAGE__->load_components("InflateColumn::DateTime", "Core");
-__PACKAGE__->table("source_sentences");
+__PACKAGE__->table("translation_ngrams");
 __PACKAGE__->add_columns(
   "id",
   {
@@ -15,7 +15,7 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     size => undef,
   },
-  "experiment_id",
+  "sentence_id",
   {
     data_type => "INTEGER",
     default_value => undef,
@@ -23,6 +23,13 @@ __PACKAGE__->add_columns(
     size => undef,
   },
   "position",
+  {
+    data_type => "INTEGER",
+    default_value => undef,
+    is_nullable => 0,
+    size => undef,
+  },
+  "length",
   {
     data_type => "INTEGER",
     default_value => undef,
@@ -39,18 +46,13 @@ __PACKAGE__->add_columns(
 );
 __PACKAGE__->set_primary_key("id");
 __PACKAGE__->add_unique_constraint(
-  "experiment_id_position_unique",
-  ["experiment_id", "position"],
-);
-__PACKAGE__->belongs_to(
-  "experiment_id",
-  "MTComparEval::Schema::Result::Experiments",
-  { id => "experiment_id" },
+  "sentence_id_position_length_unique",
+  ["sentence_id", "position", "length"],
 );
 
 
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-28 10:50:16
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:X08OEzv5a5iaOqfgq+cYMg
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:HuyoieznZEW0hbn9iloYWw
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

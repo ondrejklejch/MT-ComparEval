@@ -14,7 +14,7 @@ my $sourcePath = $ARGV[ 0 ];
 my $experimentId = $ARGV[ 1 ];
 
 my $sentencesModel = model( 'ReferenceSentences' );
-my $ngramsModel = model( 'Ngrams' );
+my $ngramsModel = model( 'ReferenceNgrams' );
 my $position = 0;
 open my $file, '<:utf8', $ARGV[ 0 ] or die $!;
 while( <$file> ) {
