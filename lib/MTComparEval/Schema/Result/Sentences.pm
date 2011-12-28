@@ -54,7 +54,7 @@ __PACKAGE__->add_columns(
   {
     data_type => "REAL",
     default_value => undef,
-    is_nullable => 0,
+    is_nullable => 1,
     size => undef,
   },
 );
