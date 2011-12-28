@@ -22,7 +22,7 @@ while( <$file> ) {
     my $sentence = $model->create( { 
         experiment_id => $experimentId,
         text => $_,
-        position => ++$position,
+        position => $position++,
     } );
 
     print "Sentence " . $sentence->id . " added to experiment " . $experimentId . "\n";
