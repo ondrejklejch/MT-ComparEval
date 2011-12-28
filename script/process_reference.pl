@@ -15,37 +15,19 @@ my $experimentId = $ARGV[ 1 ];
 
 my $sentencesModel = model( 'ReferenceSentences' );
 my $ngramsModel = model( 'ReferenceNgrams' );
-my $position = 0;
-open my $file, '<:utf8', $ARGV[ 0 ] or die $!;
-while( <$file> ) {
-	chomp $_;
-	my @tokens = split ' ', $_;
 
-	my $sentence = $sentencesModel->create( {
-		experiment_id => $experimentId,
-		position => $position++,
-		text => $_,
-		length => $#tokens
-	} );	
+my $sentencesSaver = sub {
+    my $data = shift;
+    $data->{ experiment_id } = $experimentId;
 
-	for my $length ( 1..4 ) {
-		my @stack = @tokens[ 0..( $length-2 ) ];
-		
-		my $ngramPosition = 0;
-		for my $token ( @tokens[ ( $length-1 )..$#tokens ] ) {
-			push( @stack, $token );
-			my $ngram = $ngramsModel->create( {
-				'sentence_id' => $sentence->id,
-				'position' => $ngramPosition++,
-				'length' => $length,
-				'text' => join ' ', @stack,
-			} );
+    return $sentencesModel->create( $data );	
+};
 
-			shift( @stack );
-		} 
-	}
+my $ngramsSaver = sub {
+    my $data = shift;
+    
+    return $ngramsModel->create( $data );
+};
 
-	print "Reference translation " . $sentence->id . " added to experiment " . $experimentId . "\n";
-}
-
+save( $sourcePath, $sentencesSaver, $ngramsSaver );
 print "Import done\n";

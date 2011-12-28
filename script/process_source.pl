@@ -13,19 +13,14 @@ use Process;
 my $sourcePath = $ARGV[ 0 ];
 my $experimentId = $ARGV[ 1 ];
 
-my $model = model( 'SourceSentences' );
-my $position = 0;
-open my $file, '<:utf8', $ARGV[ 0 ] or die $!;
-while( <$file> ) {
-    chomp;
+my $sentencesModel = model( 'SourceSentences' );
+my $sentencesSaver = sub {
+    my $data = shift;
+    $data->{ experiment_id } = $experimentId;
+    delete( $data->{ length } );    
 
-    my $sentence = $model->create( { 
-        experiment_id => $experimentId,
-        text => $_,
-        position => $position++,
-    } );
+    return $sentencesModel->create( $data );	
+};
 
-    print "Sentence " . $sentence->id . " added to experiment " . $experimentId . "\n";
-}
-
+save( $sourcePath, $sentencesSaver );
 print "Import done\n";
