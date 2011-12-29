@@ -5,7 +5,7 @@ use warnings;
 use FindBin qw( $Bin );
 use Path::Class;
 use lib dir( $Bin, '..', 'lib' )->stringify;
-use MTComparEval::Schema::TestDatabase;
+use MTComparEval::Model::DBIC;
 use Config::JFDI;
 
 sub model {
@@ -18,7 +18,8 @@ sub model {
         path_to => $home->stringify
     } );
     my $dsn = $config->get->{ 'Model::MTComparEval' }->{ connect_info };
-    my $schema = MTComparEval::Schema::TestDatabase->connect( $dsn ) or die $!;
+    my $model = MTComparEval::Model::DBIC->new();
+    my $schema = $model->connect( $dsn ) or die $!;
 
     return $schema->resultset( $tableName );
 }
