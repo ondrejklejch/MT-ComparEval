@@ -27,7 +27,7 @@ Catalyst Controller.
 sub index :Path :Args(0) {
     my ( $self, $c, @args ) = @_;
 
-    $c->stash->{experiments} = $c->model( 'TestDatabase::experiments' )->search({});
+    $c->stash->{experiments} = $c->model( 'DBIC::experiments' )->search({});
 }
 
 
@@ -38,7 +38,7 @@ sub index :Path :Args(0) {
 sub edit :Local Form {
     my ( $self, $c, $id ) = @_;
     my $form = $self->formbuilder;
-    my $experiment = $c->model( 'TestDatabase::experiments' )->find_or_new( { id => $id } );
+    my $experiment = $c->model( 'DBIC::experiments' )->find_or_new( { id => $id } );
 
     if( !$id ) {
         $form->field( name => 'source', required => 1 );
@@ -91,7 +91,7 @@ sub edit :Local Form {
 
 sub delete :Local {
     my ( $self, $c, $id ) = @_;
-    my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $id } );
+    my $experiment = $c->model( 'DBIC::experiments' )->find( { id => $id } );
 
     if( $experiment ) {
         $c->flash->{ message } = "Experiment " . $experiment->name . " deleted.";

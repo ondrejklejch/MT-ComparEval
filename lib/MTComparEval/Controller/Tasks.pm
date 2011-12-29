@@ -26,13 +26,13 @@ Catalyst Controller.
 sub index :Path :Args(1) {
     my ( $self, $c, $experimentId ) = @_;
 
-    my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $experimentId } );
+    my $experiment = $c->model( 'DBIC::experiments' )->find( { id => $experimentId } );
     if( !$experiment ) {
         $c->flash->{ error } = 'Experiment ' . $experimentId . ' not found.';
         $c->response->redirect( $c->uri_for_action( 'experiments/index' ) );
         $c->detach();
     } else {
-        $c->stash->{ tasks } = $c->model( 'TestDatabase::tasks' )->search( { experiment_id => $experimentId } );
+        $c->stash->{ tasks } = $c->model( 'DBIC::tasks' )->search( { experiment_id => $experimentId } );
         $c->stash->{ experiment } = $experiment;
     }
 }
@@ -45,8 +45,8 @@ sub index :Path :Args(1) {
 sub edit :Local Form( '/tasks/edit' ) {
     my ( $self, $c, $experimentId, $id ) = @_;
     my $form = $self->formbuilder;
-    my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $experimentId } );
-    my $task = $c->model( 'TestDatabase::tasks' )->find_or_new( { id => $id } );
+    my $experiment = $c->model( 'DBIC::experiments' )->find( { id => $experimentId } );
+    my $task = $c->model( 'DBIC::tasks' )->find_or_new( { id => $id } );
 
     if( !$id ) {
         $form->field( name => 'translation', required => 1 );
@@ -94,7 +94,7 @@ sub edit :Local Form( '/tasks/edit' ) {
 
 sub delete :Local {
     my ( $self, $c, $experimentId, $id ) = @_;
-    my $task = $c->model( 'TestDatabase::tasks' )->find( { id => $id } );
+    my $task = $c->model( 'DBIC::tasks' )->find( { id => $id } );
 
     if( $task ) {
         $c->flash->{ message } = "Task " . $task->name . " deleted.";

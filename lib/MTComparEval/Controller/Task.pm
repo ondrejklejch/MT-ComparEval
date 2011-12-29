@@ -60,8 +60,8 @@ sub get_bleu_for_sentence {
 sub detail :Local :Args(1) {
     my( $self, $c, $id ) = @_;
 
-    my $task = $c->model( 'TestDatabase::tasks' )->find( { id => $id } );
-    my $experiment = $c->model( 'TestDatabase::experiments' )->find( { id => $task->experiment_id } );
+    my $task = $c->model( 'DBIC::tasks' )->find( { id => $id } );
+    my $experiment = $c->model( 'DBIC::experiments' )->find( { id => $task->experiment_id } );
     my @sourceSentences = loadSentences( $c->path_to( 'data', 'source' . $experiment->id ) );
     my @referenceSentences = loadSentences( $c->path_to( 'data', 'reference' . $experiment->id ) );
     my @translationSentences = loadSentences( $c->path_to( 'data', 'translation' . $task->id ) );
