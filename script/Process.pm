@@ -39,7 +39,7 @@ sub save {
         my $sentence = $sentencesSaver->( {
             position => $position++,
             text => $_,
-            length => $#tokens
+            length => $#tokens + 1
         } );    
 
         
