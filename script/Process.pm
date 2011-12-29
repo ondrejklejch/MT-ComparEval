@@ -17,7 +17,7 @@ sub model {
         path => $filename->stringify,
         path_to => $home->stringify
     } );
-    my $dsn = $config->get->{ 'Model::MTComparEval' }->{ connect_info };
+    my $dsn = $config->get->{ 'Model::DBIC' }->{ connect_info };
     my $model = MTComparEval::Model::DBIC->new();
     my $schema = $model->connect( $dsn ) or die $!;
 
