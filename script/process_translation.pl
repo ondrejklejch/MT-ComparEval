@@ -10,26 +10,33 @@ BEGIN {
 
 use Process;
 
-my $sourcePath = $ARGV[ 0 ];
-my $experimentId = $ARGV[ 1 ];
-my $taskId = $ARGV[ 2 ];
+my $source_path = $ARGV[ 0 ];
+my $experiment_id = $ARGV[ 1 ];
+my $task_id = $ARGV[ 2 ];
 
-my $sentencesModel = model( 'TranslationSentences' );
-my $ngramsModel = model( 'TranslationNgrams' );
-
-my $sentencesSaver = sub {
+my $sentences_model = model( 'TranslationSentences' );
+my $sentences_saver = sub {
     my $data = shift;
-    $data->{ experiment_id } = $experimentId;
-    $data->{ task_id } = $taskId;
+    $data->{ experiment_id } = $experiment_id;
+    $data->{ task_id } = $task_id;
 
-    return $sentencesModel->create( $data );	
+    return $sentences_model->create( $data );	
 };
 
-my $ngramsSaver = sub {
+
+my $ngrams_model = model( 'TranslationNgrams' );
+my $ngrams_saver = sub {
     my $data = shift;
     
-    return $ngramsModel->create( $data );
+    return $ngrams_model->create( $data );
 };
 
-save( $sourcePath, $sentencesSaver, $ngramsSaver );
+save( $source_path, $sentences_saver, $ngrams_saver );
+
+my $bleu = get_bleu_for_task( $task_id );
+my $task = model( 'Tasks' )->find( { id => $task_id } );
+$task->set_column( 'bleu', $bleu );
+$task->set_column( 'state', 1 );
+$task->update();
+
 print "Import done\n";

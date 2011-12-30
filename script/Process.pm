@@ -7,6 +7,8 @@ use Path::Class;
 use lib dir( $Bin, '..', 'lib' )->stringify;
 use MTComparEval::Model::DBIC;
 use Config::JFDI;
+use Bleu;
+
 
 sub model {
     my $tableName = shift;
@@ -76,4 +78,25 @@ sub saveNGrams {
     }
 }
 
+
+sub get_bleu_for_task {
+    my $task_id = shift;
+
+    my $tasks_model = model( 'Tasks' );
+    my $task = $tasks_model->find( { id => $task_id } );
+    my $experiment_id = $task->get_column( 'experiment_id' );
+    
+    my $translation_length = $tasks_model->getTranslationLength( $task_id );
+    
+    my $common_ngrams_model = model( 'CommonNGrams' );
+    my $common_ngrams = $common_ngrams_model->getCommonNGramsCountByLength( $experiment_id, $task_id );
+    
+    my $experiments_model = model( 'Experiments' );
+    my $reference_ngrams = $experiments_model->getReferenceNGramsCountByLength( $experiment_id );
+    my $reference_length = $experiments_model->getReferenceTranslationLength( $experiment_id );
+    
+    my $bleu = Bleu::compute_bleu( $reference_ngrams, $common_ngrams, $reference_length, $translation_length );
+
+    return sprintf( "%.4f", $bleu );
+}
 1;

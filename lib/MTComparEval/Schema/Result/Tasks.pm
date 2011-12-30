@@ -64,7 +64,11 @@ __PACKAGE__->has_many(
   "MTComparEval::Schema::Result::TranslationSentences",
   { "foreign.task_id" => "self.id" },
 );
-
+__PACKAGE__->has_many(
+  "common_ngrams",
+  "MTComparEval::Schema::Result::CommonNGrams",
+  { }
+);
 
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2011-12-28 12:27:21
 # DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RQH8uWp35CJDC7pxXfD5BQ
