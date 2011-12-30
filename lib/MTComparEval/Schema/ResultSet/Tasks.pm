@@ -19,4 +19,18 @@ sub getTranslationLength {
     } )->first->get_column( 'length' ) || 0;
 }
 
+
+sub getTranslationsLengthByPosition {
+    my $self = shift;
+    my $taskId = shift;
+
+    my $task = $self->find( { id => $taskId } );
+    my $sentences = $task->search_related( 'translation_sentences' );
+
+    return $sentences->search( undef, {
+        select => [ 'position', 'length' ],
+        as => [ 'position', 'length' ]
+    } )
+}
+
 1;

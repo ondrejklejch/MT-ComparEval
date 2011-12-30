@@ -27,6 +27,22 @@ sub getReferenceNGramsCountByLength {
 }
 
 
+sub getReferenceNGramsCountByLengthAndPosition {
+    my $self = shift;
+    my $experimentId = shift;
+
+    my $experiment = $self->find( { id => $experimentId } );
+    my $referenceSentences = $experiment->search_related( 'reference_sentences' );
+    my $referenceNGrams = $referenceSentences->search_related( 'reference_ngrams' );
+
+    return $referenceNGrams->search( undef, {
+        select => [ 'me.position', 'reference_ngrams.length', { count => '1', -as => 'count' } ],
+        as => [ 'position', 'length', 'count' ],
+        group_by => [ 'me.position', 'reference_ngrams.length' ],
+    } ); 
+}
+
+
 sub getReferenceTranslationLength {
     my $self = shift;
     my $experimentId = shift;

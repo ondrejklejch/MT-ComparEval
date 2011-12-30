@@ -39,4 +39,15 @@ $task->set_column( 'bleu', $bleu );
 $task->set_column( 'state', 1 );
 $task->update();
 
+my $sentence_blue_saver = sub {
+    my $position = shift;
+    my $bleu = shift;
+
+    my $sentence = $sentences_model->find( { task_id => $task_id, position => $position } );
+    $sentence->set_column( 'diff_bleu', $bleu );
+    $sentence->update();
+};
+
+compute_and_set_bleu_for_sentences_of_task( $task_id, $sentence_blue_saver ); 
+
 print "Import done\n";

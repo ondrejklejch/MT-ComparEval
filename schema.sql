@@ -27,7 +27,7 @@ CREATE TABLE translation_sentences (
 	position INTEGER NOT NULL,
 	text TEXT NOT NULL,
 	length INTEGER NOT NULL,
-	diff_bleu REAL NULL,
+	diff_bleu REAL DEFAULT 0,
 	PRIMARY KEY ( id ),
 	UNIQUE ( experiment_id, task_id, position ),
 	FOREIGN KEY ( experiment_id ) REFERENCES experiments( id ) ON DELETE CASCADE,
