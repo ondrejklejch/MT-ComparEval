@@ -35,13 +35,6 @@
 				<tr class="tst">
 					<th>Machine translation 1</th>
 					<td class="text">[% sentence.tst %]</td>
-					<td class="diff">
-						<a href="#" class="display-diff">
-							<span class="display">Display</span>
-							<span class="hide">Hide</span>
-							diff
-						</a>
-					</td>
 					<td class="bleu">[% sentence.bleu %]</td>
 				</tr>
 			</table>
@@ -52,7 +45,7 @@
 	<ul id="toolbar">
 		<li><a href="../index.html">Compute new statistics</a></li>
 		<li>
-			<a href="#" id="diff1-control">
+			<a href="#" id="diff-control">
 				<span class="display">Display</span>
 				<span class="hide">Hide</span>
 				diff
@@ -60,7 +53,7 @@
 			</a>
 		</li>
 		<li>
-			<a href="#" id="sort-control">
+			<a href="#" id="sort-control" class="bleu">
 				Sort by BLEU
 				<span>DESC</span>
 				<img src="/static/images/spinner.gif" class="spinner" alt="" />
