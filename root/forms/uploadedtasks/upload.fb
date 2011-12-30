@@ -1,0 +1,16 @@
+name: experiment_edit
+enctype: multipart/form-data
+method: post
+fields:
+	name:
+		label: Name
+		type: text
+		size: 50
+		required: 1
+	comment:
+		label: Comment
+		type: textarea 
+	experiment_id:
+		label: Experiment
+		type: select
+		required: 1

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>MT-ComparEval experiments</title>
+	</head>
+	<body>
+		<h1>MT-ComparEval experiments</h1>
+		<h2>Uploaded files</h2>
+		<div id="message">[% message | html %]</div>
+		<div id="error">[% error | html %]</div>
+		<table>
+			[% FOREACH task IN tasks %]
+			<tr>
+				<td>[% task.name %]</td>
+				<td><a href="[% c.uri_for( "upload/$task.name" ) %]">upload task</a></td>
+			</tr>
+			[% END %]
+		</table>
+		<a href="[% c.uri_for( "edit" ) %]">Add new experiment</a>
+	</body>
+</html>

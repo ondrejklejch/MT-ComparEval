@@ -27,5 +27,6 @@
 			[% END %]
 		</table>
 		<a href="[% c.uri_for( "edit" ) %]">Add new experiment</a>
+		<a href="[% c.uri_for( "/uploadedtasks" ) %]">Create task from uploaded file</a>
 	</body>
 </html>
