@@ -61,7 +61,7 @@
 		</li>
 		<li>
 			<a href="#" id="sort-control">
-				Sort by DIFF-BLEU
+				Sort by BLEU
 				<span>DESC</span>
 				<img src="/static/images/spinner.gif" class="spinner" alt="" />
 			</a>
