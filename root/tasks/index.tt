@@ -26,7 +26,7 @@
 					<td>[% task.name | html %]</td>
 					<td>[% task.date | html %]</td>
 					<td>[% task.comment | html %]</td>
-					<td rowspan="2"><em>being processed</em></td>
+					<td colspan="2"><em>being processed</em></td>
 					[% END %]
 				</tr>
 				[% END %]

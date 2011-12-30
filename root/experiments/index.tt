@@ -21,7 +21,7 @@
 				<td>[% experiment.name | html %]</td>
 				<td>[% experiment.date | html %]</td>
 				<td>[% experiment.comment | html %]</td>
-				<td rowspan="2"><em>being processed</em></td>
+				<td colspan="2"><em>being processed</em></td>
 				[% END %]
 			</tr>
 			[% END %]
