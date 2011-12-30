@@ -36,6 +36,13 @@ __PACKAGE__->add_columns(
     is_nullable => 1,
     size => undef,
   },
+  "state",
+  {
+    data_type => "INTEGER",
+    default_value => 0,
+    is_nullable => 0,
+    size => undef,
+  },
 );
 __PACKAGE__->set_primary_key("id");
 __PACKAGE__->has_many(

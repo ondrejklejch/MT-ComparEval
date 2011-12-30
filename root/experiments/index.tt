@@ -11,11 +11,18 @@
 		<table>
 			[% WHILE ( experiment = experiments.next ) %]
 			<tr>
+				[% IF ( experiment.state == 1 ) %]
 				<td><a href="[% c.uri_for( "../tasks/$experiment.id" ) %]">[% experiment.name | html %]</a></td>
 				<td>[% experiment.date | html %]</td>
 				<td>[% experiment.comment | html %]</td>
 				<td><a href="[% c.uri_for( "edit/$experiment.id" ) %]">edit</a></td>
 				<td><a href="[% c.uri_for( "delete/$experiment.id" ) | html %]">delete</a></td>
+                        	[% ELSE %]
+				<td>[% experiment.name | html %]</td>
+				<td>[% experiment.date | html %]</td>
+				<td>[% experiment.comment | html %]</td>
+				<td rowspan="2"><em>being processed</em></td>
+				[% END %]
 			</tr>
 			[% END %]
 		</table>

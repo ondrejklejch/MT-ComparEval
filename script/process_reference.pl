@@ -30,4 +30,9 @@ my $ngramsSaver = sub {
 };
 
 save( $sourcePath, $sentencesSaver, $ngramsSaver );
+
+my $experiment = model( 'Experiments' )->find( { id => $experimentId } );
+$experiment->set_column( 'state', 1 );
+$experiment->update();
+
 print "Import done\n";

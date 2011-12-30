@@ -3,6 +3,7 @@ CREATE TABLE experiments (
 	name TEXT NOT NULL,
 	comment TEXT NULL,
 	date DATETIME DEFAULT ( DATETIME( 'now', 'localtime' ) ),
+	state INTEGER DEFAULT 0,
 	PRIMARY KEY ( id )
 );
 
