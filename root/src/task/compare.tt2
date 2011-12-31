@@ -31,12 +31,12 @@
 					<td colspan="3" class="text">[% sentence.ref %]</td>
 				</tr>
 				<tr class="tst1">
-					<th>Machine translation 1</th>
+					<th>[% task1.get_column( 'name' ) %]</th>
 					<td class="text">[% sentence.tst1 %]</td>
 					<td class="bleu">[% sentence.bleu1 %]</td>
 				</tr>
 				<tr class="tst2">
-					<th>Machine translation 2</th>
+					<th>[% task2.get_column( 'name' ) %]</th>
 					<td class="text">[% sentence.tst2 %]</td>
 					<td class="bleu">[% sentence.bleu2 %]</td>
 				</tr>
