@@ -1,0 +1,28 @@
+<h2>Tasks for experiment: [% experiment.name %]</h2>
+
+<div id="message">[% message | html %]</div>
+<div id="error">[% error | html %]</div>
+<form action="[% c.uri_for( "../task/compare" ) %]">
+	<table>
+		[% WHILE ( task = tasks.next ) %]
+		<tr>
+			[% IF ( task.state == 1 ) %]
+			<td><input type="checkbox" name="task" value="[% task.id %]" /></td>
+			<td><a href="[% c.uri_for( "../task/detail/$task.id" ) %]">[% task.name | html %]</a></td>
+			<td>[% task.date | html %]</td>
+			<td>[% task.comment | html %]</td>
+			<td>[% task.bleu | html %]</td>
+			<td><a href="[% c.uri_for( "delete/$task.experiment_id/$task.id" ) %]">delete</a></td>
+			[% ELSE %]
+			<td></td>
+			<td>[% task.name | html %]</td>
+			<td>[% task.date | html %]</td>
+			<td>[% task.comment | html %]</td>
+			<td colspan="2"><em>being processed</em></td>
+			[% END %]
+		</tr>
+		[% END %]
+	</table>
+	<input type="submit" value="compare" />
+	<a href="[% c.uri_for( "edit/$experiment.id" ) %]">Add new task</a>
+</form>

@@ -1,0 +1,3 @@
+<h2>Upload task</h2>
+
+[% FormBuilder.render %]

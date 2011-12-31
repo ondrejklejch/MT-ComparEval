@@ -1,0 +1,73 @@
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/jquery.sort.js"></script>
+<script type="text/javascript" src="../js/jsdiff.js"></script>
+<script type="text/javascript" src="../js/control.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+
+<table id="stats" border="1">
+	<tr>
+		<th>[% task1.get_column( 'name' ) %]</th>
+		<th>[% task2.get_column( 'name' ) %]</th>
+	</tr>
+	<tr>
+		<td>[% task1.get_column( 'bleu' ) %]</td>
+		<td>[% task2.get_column( 'bleu' ) %]</td>
+	</tr>
+</table>
+
+<ul id="sentences">
+	[% FOREACH sentence IN sentences %]
+		<li>
+			<table border="1">
+				<tr class="src">
+					<th>Source text</th>
+					<td colspan="3">[% sentence.src %]</td>
+					<td rowspan="4" class="diff-bleu">
+						[% sentence.bleu1 - sentence.bleu2 %]
+					</td>
+				</tr>
+				<tr class="ref">
+					<th>Reference translation</th>
+					<td colspan="3" class="text">[% sentence.ref %]</td>
+				</tr>
+				<tr class="tst1">
+					<th>Machine translation 1</th>
+					<td class="text">[% sentence.tst1 %]</td>
+					<td class="bleu">[% sentence.bleu1 %]</td>
+				</tr>
+				<tr class="tst2">
+					<th>Machine translation 2</th>
+					<td class="text">[% sentence.tst2 %]</td>
+					<td class="bleu">[% sentence.bleu2 %]</td>
+				</tr>
+			</table>
+		</li>
+	[% END %]
+</ul>
+
+<ul id="toolbar">
+	<li><a href="../index.html">Compute new statistics</a></li>
+	<li>
+		<a href="#" id="diff1-control">
+			<span class="display">Display</span>
+			<span class="hide">Hide</span>
+			diff for machine translation 1
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+	<li>
+		<a href="#" id="diff2-control">
+			<span class="display">Display</span>
+			<span class="hide">Hide</span>
+			diff for machine translation 2
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+	<li>
+		<a href="#" id="sort-control" class="diff-bleu">
+			Sort by DIFF-BLEU
+			<span>DESC</span>
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+</ul>
