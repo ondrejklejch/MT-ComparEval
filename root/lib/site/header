@@ -1,3 +1,7 @@
-<!-- BEGIN site/header -->
-<h1 class="title">[% template.title or site.title %]</h1>
-<!-- END site/header -->
+<div class="topbar">
+	<div class="fill">
+		<div class="container">
+			<a class="brand" href="/">MT-ComparEval</a>
+		</div>
+	</div>
+</div>

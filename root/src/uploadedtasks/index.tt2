@@ -1,9 +1,16 @@
 <h2>Uploaded files</h2>
-<table>
-	[% FOREACH task IN tasks %]
-	<tr>
-		<td>[% task.name %]</td>
-		<td><a href="[% c.uri_for( "upload/$task.name" ) %]">upload task</a></td>
-	</tr>
-	[% END %]
+<table class="bordered-table zebra-striped">
+	<thead>
+		<tr>
+			<th>File name</th>
+			<th class="span3"></th>
+	<thead>
+	<tbody>
+		[% FOREACH task IN tasks %]
+		<tr>
+			<td>[% task.name %]</td>
+			<td><a href="[% c.uri_for( "upload/$task.name" ) %]">upload task</a></td>
+		</tr>
+		[% END %]
+	</tbody>
 </table>

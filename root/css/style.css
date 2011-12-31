@@ -89,9 +89,12 @@ span.hide {
 
 ul#toolbar {
 	position: fixed;
-	top: 10px;
+	bottom: 10px;
 	right: 10px;
-	width: 260px;
+	width: 240px;
+	padding: 10px;
+	background-color: #fff;
+	border: 1px solid #eee;
 }
 
 ul#toolbar li {

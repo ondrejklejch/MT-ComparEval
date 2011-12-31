@@ -1,12 +1,24 @@
-<table>
+<h2>Experiments</h2>
+<table class="bordered-table zebra-striped">
+	<thead>
+		<tr>
+			<th class="span4">Experiment</th>
+			<th class="span3">Creation date</th>
+			<th class="span6">Comment</th>
+			<th class="span2"></th>
+		<tr>
+	</thead>
+	<tbody>
 	[% WHILE ( experiment = experiments.next ) %]
 	<tr>
 		[% IF ( experiment.state == 1 ) %]
 		<td><a href="[% c.uri_for( "../tasks/$experiment.id" ) %]">[% experiment.name | html %]</a></td>
 		<td>[% experiment.date | html %]</td>
-		<td>[% experiment.comment | html %]</td>
-		<td><a href="[% c.uri_for( "edit/$experiment.id" ) %]">edit</a></td>
-		<td><a href="[% c.uri_for( "delete/$experiment.id" ) | html %]">delete</a></td>
+		<td>[% experiment.comment | html | html_line_break %]</td>
+		<td>
+			<a href="[% c.uri_for( "edit/$experiment.id" ) %]">edit</a>
+			<a href="[% c.uri_for( "delete/$experiment.id" ) | html %]">delete</a>
+		</td>
 		[% ELSE %]
 		<td>[% experiment.name | html %]</td>
 		<td>[% experiment.date | html %]</td>
@@ -15,6 +27,8 @@
 		[% END %]
 	</tr>
 	[% END %]
+	</tbody>
 </table>
-<a href="[% c.uri_for( "edit" ) %]">Add new experiment</a>
-<a href="[% c.uri_for( "/uploadedtasks" ) %]">Create task from uploaded file</a>
+
+<a href="[% c.uri_for( "edit" ) %]" class="btn">Add new experiment</a>
+<a href="[% c.uri_for( "/uploadedtasks" ) %]" class="btn">Create task from uploaded file</a>

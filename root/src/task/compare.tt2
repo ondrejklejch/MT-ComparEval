@@ -4,7 +4,7 @@
 <script type="text/javascript" src="../js/control.js"></script>
 <link rel="stylesheet" type="text/css" href="../css/style.css" />
 
-<table id="stats" border="1">
+<table id="stats" class="bordered-table">
 	<tr>
 		<th>[% task1.get_column( 'name' ) %]</th>
 		<th>[% task2.get_column( 'name' ) %]</th>
@@ -18,11 +18,11 @@
 <ul id="sentences">
 	[% FOREACH sentence IN sentences %]
 		<li>
-			<table border="1">
+			<table class="bordered-table zebra-striped">
 				<tr class="src">
 					<th>Source text</th>
 					<td colspan="3">[% sentence.src %]</td>
-					<td rowspan="4" class="diff-bleu">
+					<td rowspan="4" class="diff-bleu span1">
 						[% sentence.bleu1 - sentence.bleu2 %]
 					</td>
 				</tr>
@@ -46,7 +46,6 @@
 </ul>
 
 <ul id="toolbar">
-	<li><a href="../index.html">Compute new statistics</a></li>
 	<li>
 		<a href="#" id="diff1-control">
 			<span class="display">Display</span>

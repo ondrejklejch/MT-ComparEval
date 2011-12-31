@@ -1,10 +1,19 @@
 <h2>Tasks for experiment: [% experiment.name %]</h2>
 
-<div id="message">[% message | html %]</div>
-<div id="error">[% error | html %]</div>
 <form action="[% c.uri_for( "../task/compare" ) %]">
-	<table>
-		[% WHILE ( task = tasks.next ) %]
+	<table class="bordered-table zebra-striped">
+		<thead>
+			<tr>
+				<th class="span1"></th>
+				<th class="span3">Task</th>
+				<th class="span3">Creation date</th>
+				<th class="span5">Comment</th>
+				<th class="span1">BLEU</th>
+				<th class="span1"></th>
+			<tr>
+		</thead>
+		<tbody>
+[% WHILE ( task = tasks.next ) %]
 		<tr>
 			[% IF ( task.state == 1 ) %]
 			<td><input type="checkbox" name="task" value="[% task.id %]" /></td>
@@ -23,6 +32,6 @@
 		</tr>
 		[% END %]
 	</table>
-	<input type="submit" value="compare" />
-	<a href="[% c.uri_for( "edit/$experiment.id" ) %]">Add new task</a>
+	<input type="submit" value="compare" class="btn" />
+	<a href="[% c.uri_for( "edit/$experiment.id" ) %]" class="btn">Add new task</a>
 </form>
