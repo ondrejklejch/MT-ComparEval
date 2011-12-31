@@ -57,8 +57,10 @@ ins {
 }
 
 .active ins {
+	padding: 2px;
 	display: inline;
-	background-color: red;	
+	color:#fff;
+	background-color:#57a957;
 }
 
 del {
@@ -67,8 +69,10 @@ del {
 }
 
 .active del {
+	padding: 2px;
 	display: inline;
-	background-color: blue;	
+	color: #fff;
+	background-color: #c43c35;	
 }
 
 span.display {
