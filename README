@@ -1,1 +1,8 @@
+Installation
+Ensure that you have installed these cpan modules:
+Module::Install
+Module::Install::Catalyst
+run perl Makefile.PL && make
+
+Usage
 Run script/mtcompareval_server.pl to test the application.

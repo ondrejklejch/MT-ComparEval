@@ -12,9 +12,16 @@ all_from 'lib/MTComparEval.pm';
 requires 'Catalyst::Runtime' => '5.90007';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
+requires 'Catalyst::Plugin::Session::Store::FastMmap';
+requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Action::RenderView';
+requires 'Catalyst::Model::DBIC::Schema';
+requires 'Catalyst::Controller::FormBuilder';
 requires 'Catalyst::View::TT' => 0;
 requires 'Moose';
+requires 'Proc::Simple';
+requires 'File::Util';
+requires 'DBIx::Class::Helper::ResultSet::SetOperations';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
                  # See Catalyst::Plugin::ConfigLoader for supported formats
