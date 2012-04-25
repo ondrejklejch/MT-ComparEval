@@ -1,0 +1,238 @@
+<html>
+	<head>
+		<title>Aligment display example</title>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.js"></script>
+		<script type="text/javascript">
+			( function( $ ) {
+				$(document).ready( function() {
+					var isReference = function( $node ) {
+						return $node.parent( "#ref" ).size() == 1;
+					}
+
+
+					var getMatchedClass = function( node ) {
+						var $node = $( node );
+						if( isReference( $node ) ) {
+							return getNodeClasses( $node );
+						} else {
+							var $reference = getReferenceNode( $node );
+							return getNodeClasses( $reference );
+						}
+					}
+
+
+					var getNodeClasses = function( $node ) {
+						//return $.map( $node, function( item ) {
+						//	return $( item ).attr( "class" )
+						//} ).join( " " ).split( " " );
+						return $node.attr( "class" ).split( " " );
+					}
+
+
+					var getReferenceNode = function( $node ) {
+						var nodeClasses = getNodeClasses( $node )
+						var selector = getSelectorForMatcherClasses( nodeClasses );
+				
+						var $reference = $node.parent().siblings( "#ref" ).children( selector );
+						if( $reference.size() > 0 ) {
+							return $reference;
+						} else {
+							return $node;
+						}
+					}
+			
+
+					var getSelectorForMatcherClasses = function( classes ) {
+						return classes
+							.filter( function( item ) {
+								return item.indexOf( "ALIGNMENT" ) == 0;
+							} )
+							.map( function( item ) {
+								return "." + item;	
+							} )
+							.join( "," );
+					}	
+
+
+					$( "div.sentence span" ).live( 'click', function() {
+						$( ".active" ).removeClass( "active" );
+
+						var matchedClasses = getMatchedClass( this );
+						var matchedWords = getSelectorForMatcherClasses( matchedClasses );
+						
+						$( matchedWords ).addClass( "active" );
+					} );
+				} );
+			} )( jQuery );
+		</script>
+		<script type="text/javascript">
+			var tokenizer = function( text ) {
+				var tokens = text.split( /\s+/ );
+
+				return tokens.map( function( token ) {
+					return {
+						'text': token,
+						'classes': []
+					};
+				} );
+			}			
+
+			var comparator = function( a, b ) {
+				return a == b;
+			}
+
+			var hash = function( state ) {
+				return state[ 0 ] + "-" + state[ 1 ];
+			}	
+
+			var graphGenerator = function( comparator, referenceTokens, translationTokens ) {
+				var states = new Array();
+				var visited = new Array();
+				states.push( [ 0, 0, "start" ] );
+
+				while( states.length > 0 ) {
+					var state = states.shift();
+					var stateHash = hash( state );
+
+					if( typeof( visited[ stateHash ] ) != "undefined" ) {
+						continue;
+					}
+
+					visited[ stateHash ] = state[ 2 ];	
+					if( state[ 0 ] == referenceTokens.length && state[ 1 ] == translationTokens.length ) {
+						break;
+					}
+
+					if( state[ 0 ] < referenceTokens.length && state[ 1 ] < translationTokens.length ) {
+						if( comparator( referenceTokens[ state[ 0 ] ].text, translationTokens[ state[ 1 ] ].text ) ) {
+							states.push( [ state[ 0 ] + 1, state[ 1 ] + 1, stateHash ] );
+						}
+					}
+
+					if( state[ 0 ] < referenceTokens.length ) {
+						states.push( [ state[ 0 ] + 1, state[ 1 ], stateHash ] );
+					}
+
+					if( state[ 1 ] < translationTokens.length ) {
+						states.push( [ state[ 0 ], state[ 1 ] + 1, stateHash ] );
+					}
+				}
+
+				return visited;
+			}
+
+			
+			var pathGenerator = function( graph, endPoint ) {
+				var state = hash( endPoint );
+				var path = new Array();
+				while( state != "start" ) {
+					path.push( state );
+					state = graph[ state ];
+				}
+
+				return path.reverse();
+			}
+
+
+			var addAlignmentClasses = function( translationId, referenceTokens, translationTokens, path ) {
+				state = path.shift().split( "-" );
+				var matchCount = 0;				
+				var insCount = 0;
+				while( path.length > 0 ) {
+					var currentState = path.shift().split( "-" );
+
+					if( currentState[0] - state[0] == 1 && currentState[1] - state[ 1 ] == 1 ) {
+						referenceTokens[ state[ 0 ] ].classes.push( "ALIGNMENT-" + translationId + "-M-" + matchCount );
+						translationTokens[ state[ 1 ] ].classes.push( "ALIGNMENT-" + translationId + "-M-" + matchCount );
+						matchCount++;	
+						insCount++;
+					} else if( currentState[ 0 ] - state[ 0 ] == 1 ) {
+						referenceTokens[ state[ 0 ] ].classes.push( "ALIGNMENT-" + translationId + "-I-" + insCount );
+					} else if( currentState[ 1 ] - state[ 1 ] == 1 ) {
+						translationTokens[ state[ 1 ] ].classes.push( "ALIGNMENT-" + translationId + "-I-" + insCount );
+					}
+
+					state = currentState;
+				}
+			}
+
+
+			var detokenize = function( tokens ) {
+				return tokens.map( function( token ) {
+					return "<span class='" + token.classes.join( " " ) + "'>" + token.text + "</span>";
+				} ).join( " " )
+			}
+
+
+			var alignmentGenerator = function( reference, translations, tokenizer, comparator ) {
+				var referenceTokens = tokenizer( reference );
+				var alignedTranslations = new Array();
+
+				for( var translationId in translations ) {
+					var translationTokens = tokenizer( translations[ translationId ] );
+		
+					var graph = graphGenerator( comparator, referenceTokens, translationTokens );
+					var path = pathGenerator( graph, [ referenceTokens.length, translationTokens.length ] ); 
+					addAlignmentClasses( translationId, referenceTokens, translationTokens, path );	
+
+					alignedTranslations.push( detokenize( translationTokens ) );
+					console.log( translationId + " proccessed" );
+				}
+
+				return {
+					'reference': detokenize( referenceTokens ),
+					'translations': alignedTranslations,
+				};
+			}
+		</script>
+		<script type="text/javascript">
+			( function( $ ) {
+				$( document ).ready( function() {
+					$( "#form" ).submit( function() {
+						var sentences = alignmentGenerator( this.ref.value, [ this.tst1.value, this.tst2.value ], tokenizer, comparator );
+
+						$( "#result" )
+							.empty()
+							.append( "<div id='ref' class='sentence'>" + sentences.reference + "</div>" )
+							.append( "<div class='sentence'>" + sentences.translations[0] + "</div>" )
+							.append( "<div class='sentence'>" + sentences.translations[1] + "</div>" );
+
+						return false;
+					} );
+				} );
+			} )( jQuery );
+		</script>
+		<style type="text/css">
+			span.active {
+				font-weight: bold;
+				color red;
+			}
+		</style>
+	</head>
+	<body>
+		<form id="form">
+			<table>
+				<tr>
+					<th>Reference translation</th>
+					<td><textarea name="ref"></textarea></td>
+				</tr>
+				<tr>
+					<th>Translation 1</th>
+					<td><textarea name="tst1"></textarea></td>
+				</tr>
+				<tr>
+					<th>Translation 2</th>
+					<td><textarea name="tst2"></textarea></td>
+				</tr>
+				<tr>
+					<th><input type="submit" value="display alignment" /></th>	
+				</tr>
+			</table>	
+		</form>
+
+		<div id="result">
+
+		</div>
+		<p>Click on word to display its alignment.</p>
+	</body>
+</html>
