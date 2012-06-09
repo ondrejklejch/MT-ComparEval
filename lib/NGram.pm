@@ -259,14 +259,13 @@ sub _count_ngrams {
 	my @tokens = split( ' ', $sentence );
 	
 	my @ngrams;
-	for my $length ( 1..4 ) {
-		my @stack = @tokens[ 0..( $length-2 ) ];
 
-		for my $token ( @tokens[ ( $length-1 )..$#tokens ] ) {
-			push( @stack, $token );
-			$ngrams[ $length ]{ join( ' ', @stack) }++;	
-			shift( @stack );
-		} 
+	for (; @tokens; shift @tokens) {
+		my ($j, $ngram, $word);
+		for ($j=0; $j<4 and defined($word=$tokens[$j]); $j++) {
+			$ngram .= defined $ngram ? " $word" : $word;
+			$ngrams[ $j + 1 ]{$ngram}++;
+		}
 	}
 	
 	return @ngrams;
