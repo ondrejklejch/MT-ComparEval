@@ -54,8 +54,8 @@ sub add_sentence {
 	
 	$self->_add_reference_ngrams( \@reference_ngrams );
 	$self->_add_common_ngrams( \@reference_ngrams, \@machine_ngrams );
-	$self->_add_missing_ngrams( \@reference_ngrams, \@machine_ngrams );
-	$self->_add_redundant_ngrams( \@reference_ngrams, \@machine_ngrams );
+	#$self->_add_missing_ngrams( \@reference_ngrams, \@machine_ngrams );
+	#$self->_add_redundant_ngrams( \@reference_ngrams, \@machine_ngrams );
 }
 
 
@@ -288,22 +288,14 @@ sub _merge {
 		
 	my @merged;
 	for my $length ( 1..4 ) {
-		while ( 
-			my ( $ngram, $count ) = each( %{ $a[ $length ] } ) 
-		) {	
-			if( exists $b[ $length ]{ $ngram } ) {
-				$count += $b[ $length ]{ $ngram };
-			}
-			
-			$merged[ $length ]{ $ngram } = $count;		
+		$merged[ $length ] = {};
+
+		foreach my $ngram ( keys %{ $a[ $length ] } ) {
+			$merged[ $length ]{ $ngram } += $a[ $length ]{ $ngram }; 
 		}
-	
-		while ( 
-			my ( $ngram, $count ) = each( %{ $b[ $length ] } ) 
-		) {	
-			if( ! exists $a[ $length ]{ $ngram } ) {
-				$merged[ $length ]{ $ngram } = $count;
-			}
+		
+		foreach my $ngram ( keys %{ $b[ $length ] } ) {
+			$merged[ $length ]{ $ngram } += $b[ $length ]{ $ngram }; 
 		}
 	}	
 	
