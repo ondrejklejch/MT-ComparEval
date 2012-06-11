@@ -46,11 +46,13 @@ sub add_sentence {
 	my $reference = shift;
 	my $machine = shift;
 	
-	my @reference_ngrams = $self->_count_ngrams( $reference );
-	my @machine_ngrams = $self->_count_ngrams( $machine );
+	my @reference_tokens = split( ' ', $reference );
+	my @reference_ngrams = $self->_count_ngrams( \@reference_tokens );
+	my @machine_tokens = split( ' ', $machine );
+	my @machine_ngrams = $self->_count_ngrams( \@machine_tokens );
 
-	$self->_add_reference_length( $reference );
-	$self->_add_machine_length( $machine );
+	$self->_add_reference_length( $#reference_tokens );
+	$self->_add_machine_length( $#machine_tokens );
 	
 	$self->_add_reference_ngrams( \@reference_ngrams );
 	$self->_add_common_ngrams( \@reference_ngrams, \@machine_ngrams );
@@ -128,19 +130,19 @@ sub _array_sum {
 
 
 sub _add_reference_length {
-	my ( $self, $reference ) = @_;
+	my ( $self, $length ) = @_;
 	
 	$self->_reference_length(
-		length( $reference ) + $self->reference_length()
+		$length + $self->reference_length()
 	);
 }
 
 
 sub _add_machine_length {
-	my( $self, $machine ) = @_;
+	my( $self, $length ) = @_;
 	
 	$self->_machine_length(
-		length( $machine ) + $self->machine_length()
+		$length + $self->machine_length()
 	);
 }
 
@@ -255,8 +257,8 @@ sub _find_missing_ngrams {
 
 sub _count_ngrams {
 	my $self = shift;
-	my $sentence = shift;
-	my @tokens = split( ' ', $sentence );
+	my $tokens_ref = shift;
+	my @tokens = @{ $tokens_ref };
 	
 	my @ngrams;
 
