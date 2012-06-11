@@ -46,9 +46,9 @@ sub add_sentence {
 	my $reference = shift;
 	my $machine = shift;
 	
-	my @reference_tokens = split( ' ', $reference );
+	my @reference_tokens = $self->tokenize( $reference );
 	my @reference_ngrams = $self->_count_ngrams( \@reference_tokens );
-	my @machine_tokens = split( ' ', $machine );
+	my @machine_tokens = $self->tokenize( $machine );
 	my @machine_ngrams = $self->_count_ngrams( \@machine_tokens );
 
 	$self->_add_reference_length( $#reference_tokens );
@@ -58,6 +58,23 @@ sub add_sentence {
 	$self->_add_common_ngrams( \@reference_ngrams, \@machine_ngrams );
 	#$self->_add_missing_ngrams( \@reference_ngrams, \@machine_ngrams );
 	#$self->_add_redundant_ngrams( \@reference_ngrams, \@machine_ngrams );
+}
+
+
+sub tokenize {
+	my( $self, $norm_text ) = @_;
+
+	# language-dependent part (assuming Western languages):
+	$norm_text = " $norm_text ";
+	$norm_text =~ s/([\{-\~\[-\` -\&\(-\+\:-\@\/])/ $1 /g;	# tokenize punctuation
+	$norm_text =~ s/([^0-9])([\.,])/$1 $2 /g; # tokenize period and comma unless preceded by a digit
+	$norm_text =~ s/([\.,])([^0-9])/ $1 $2/g; # tokenize period and comma unless followed by a digit
+	$norm_text =~ s/([0-9])(-)/$1 $2 /g; # tokenize dash when preceded by a digit
+	$norm_text =~ s/\s+/ /g; # one space only between words
+	$norm_text =~ s/^\s+//;  # no leading space
+	$norm_text =~ s/\s+$//;  # no trailing space
+
+	return split( /\s+/, $norm_text );
 }
 
 
