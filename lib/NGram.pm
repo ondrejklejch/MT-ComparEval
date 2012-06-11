@@ -54,7 +54,7 @@ sub add_sentence {
 	$self->_add_reference_length( $#reference_tokens );
 	$self->_add_machine_length( $#machine_tokens );
 	
-	$self->_add_reference_ngrams( \@reference_ngrams );
+	$self->_add_reference_ngrams( \@machine_ngrams );
 	$self->_add_common_ngrams( \@reference_ngrams, \@machine_ngrams );
 	#$self->_add_missing_ngrams( \@reference_ngrams, \@machine_ngrams );
 	#$self->_add_redundant_ngrams( \@reference_ngrams, \@machine_ngrams );
@@ -124,7 +124,7 @@ sub _count_geometric_average {
 			my $reference_ngrams_count = $self->_array_sum( 
 				values %{ $reference_ngrams[ $length ] } 
 			);
-	
+
 			my $ngram_precision = $common_ngrams_count / $reference_ngrams_count;
 			$geometric_average += 1/4 * log( $ngram_precision ); 
 		}
