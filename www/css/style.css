@@ -1,0 +1,115 @@
+table#stats {
+	width: 950px;
+	font-size: 200%;
+	border-size: 2px;
+	border-collapse: collapse;
+	margin-bottom: 20px;
+}
+
+table#stats th, table#stats td {
+	width: 50%;
+	border-size: 1px;
+	text-align: center;		
+}
+
+ul#sentences {
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#sentences li {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#sentences table {
+	width: 950px;
+	border-width: 1px;
+	border-collapse: collapse;
+	margin-bottom: 5px;
+}
+
+ul#sentences table th {
+	width: 200px;
+}
+
+ul#sentences table td.diff-bleu {
+	width: 80px;
+	font-size: 150%;
+	text-align: center;
+}
+
+ul#sentences table td.diff {
+	width: 80px;
+	text-align:center;
+}
+
+ul#sentences table td.bleu {
+	width: 100px;
+	text-align:center;
+}
+
+
+ins {
+	text-decoration: none;
+	display: inline;
+}
+
+.active ins {
+	padding: 2px;
+	display: inline;
+	color:#fff;
+	background-color:#57a957;
+}
+
+del {
+	text-decoration: none;
+	display: none;
+}
+
+.active del {
+	padding: 2px;
+	display: inline;
+	color: #fff;
+	background-color: #c43c35;	
+}
+
+span.display {
+	display: inline;
+}
+
+span.hide {
+	display: none;
+}
+
+.active span.display {
+	display: none;	
+}
+
+.active span.hide {
+	display: inline;
+}
+
+ul#toolbar {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	width: 240px;
+	padding: 10px;
+	background-color: #fff;
+	border: 1px solid #eee;
+}
+
+ul#toolbar li {
+	list-style: none;
+	margin: 2px 0px;		
+}
+
+ul#toolbar img.spinner {
+	display: none;
+}
+
+ul#toolbar .processing img.spinner {
+	display: inline;
+}
