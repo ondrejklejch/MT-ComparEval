@@ -1,0 +1,39 @@
+{block #content}
+<h2>Tasks for experiment: {$experiment->name}</h2>
+
+<form action="[% c.uri_for( "../task/compare" ) %]">
+	<table class="bordered-table zebra-striped">
+		<thead>
+			<tr>
+				<th class="span1"></th>
+				<th class="span3">Task</th>
+				<th class="span3">Creation date</th>
+				<th class="span5">Comment</th>
+				<th class="span1">BLEU</th>
+				<th class="span1"></th>
+			<tr>
+		</thead>
+		<tbody>
+			{foreach $tasks as $task}
+				<tr>
+					{if $task->state == 1}
+						<td><input type="checkbox" name="task" value="{$task->id}" /></td>
+						<td><a href="{plink Task:detail $task->id}">{$task->name}</a></td>
+						<td>{$task->date}</td>
+						<td>{$task->comment}</td>
+						<td>{$task->bleu}</td>
+						<td><a href="{plink Tasks:delete $task->id}">delete</a></td>
+					{else}
+					<td></td>
+						<td>{$task->name}</td>
+						<td>{$task->date}</td>
+						<td>{$task->comment}</td>
+						<td colspan="2"><em>being processed</em></td>
+					{/if}
+				</tr>
+			{/foreach}
+		</tbody>
+	</table>
+	<input type="submit" value="compare" class="btn" />
+	<a href="{plink Tasks:new}" class="btn">Add new task</a>
+</form>

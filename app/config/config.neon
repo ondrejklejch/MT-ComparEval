@@ -6,13 +6,6 @@
 #
 common:
 	parameters:
-		database:
-			driver: mysql
-			host: localhost
-			dbname: test
-			user:
-			password:
-
 
 	php:
 		date.timezone: Europe/Prague
@@ -26,15 +19,15 @@ common:
 
 		database:
 			default:
-				dsn: '%database.driver%:host=%database.host%;dbname=%database.dbname%'
-				user: %database.user%
-				password: %database.password%
+				dsn: 'sqlite:%appDir%/database'
 
 
 	services:
 		database: @Nette\Database\Connection
 
-		authenticator: Authenticator( @database::table(users) )
+		experimentsModel: Experiments( @database::table(experiments) )
+
+		tasksModel: Tasks( @database::table(tasks) )
 
 
 	factories:

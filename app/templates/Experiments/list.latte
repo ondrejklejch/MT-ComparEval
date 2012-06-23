@@ -1,0 +1,34 @@
+{block #content}
+<h2>Experiments</h2>
+<table class="bordered-table zebra-striped">
+	<thead>
+		<tr>
+			<th class="span4">Experiment</th>
+			<th class="span3">Creation date</th>
+			<th class="span6">Comment</th>
+			<th class="span2"></th>
+		<tr>
+	</thead>
+	<tbody>
+		{foreach $experiments as $experiment}
+			<tr>
+				{if $experiment->state == 1}
+					<td><a href="{plink Experiments:detail $experiment->id}">{$experiment->name}</a></td>
+					<td>{$experiment->date}</td>
+					<td>{$experiment->comment}</td>
+					<td>
+						<a href="{plink Experiments:edit $experiment->id}">edit</a>
+						<a href="{plink Experiments:delete $experiment->id}">delete</a>
+					</td>
+				{else}
+					<td>{$experiment->name}</td>
+					<td>{$experiment->date}</td>
+					<td>{$experiment->comment}</td>
+					<td colspan="2"><em>being processed</em></td>
+				{/if}
+			</tr>
+		{/foreach}
+	</tbody>
+</table>
+
+<a href="{plink Experiments:new}" class="btn">Add new experiment</a>
