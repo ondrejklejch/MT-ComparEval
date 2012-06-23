@@ -1,3 +1,4 @@
 # TMP files
 *~
 *.swp
+/temp/cache/*
