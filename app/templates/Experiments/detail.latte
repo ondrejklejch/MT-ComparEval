@@ -18,7 +18,7 @@
 				<tr>
 					{if $task->state == 1}
 						<td><input type="checkbox" name="task" value="{$task->id}" /></td>
-						<td><a href="{plink Task:detail $task->id}">{$task->name}</a></td>
+						<td><a href="{plink Tasks:detail $task->id}">{$task->name}</a></td>
 						<td>{$task->date}</td>
 						<td>{$task->comment}</td>
 						<td>{$task->bleu}</td>

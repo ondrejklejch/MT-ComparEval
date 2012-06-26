@@ -1,0 +1,74 @@
+{block #content}
+
+<script type="text/javascript" src="../js/jquery.js"></script>
+<script type="text/javascript" src="../js/jquery.sort.js"></script>
+<script type="text/javascript" src="../js/jsdiff.js"></script>
+<script type="text/javascript" src="../js/control.js"></script>
+<link rel="stylesheet" type="text/css" href="../css/style.css" />
+{dump $task2}
+<table id="stats" class="bordered-table">
+	<tr>
+		<th>{$task1->name}</th>
+		<th>{$task2->name}</th>
+	</tr>
+	<tr>
+		<td>{$task1->bleu}</td>
+		<td>{$task2->bleu}</td>
+	</tr>
+</table>
+
+<ul id="sentences">
+	{foreach $sentences as $sentence}
+		<li>
+			<table class="bordered-table zebra-striped">
+				<tr class="src">
+					<th>Source text</th>
+					<td colspan="3">{$sentence->src}</td>
+					<td rowspan="4" class="diff-bleu span1">
+						{= $sentence->bleu1 - $sentence->bleu2}
+					</td>
+				</tr>
+				<tr class="ref">
+					<th>Reference translation</th>
+					<td colspan="3" class="text">{$sentence->ref}</td>
+				</tr>
+				<tr class="tst1">
+					<th>{$task1->name}</th>
+					<td class="text">{$sentence->tst1}</td>
+					<td class="bleu">{$sentence->bleu1}</td>
+				</tr>
+				<tr class="tst2">
+					<th>{$task2->name}</th>
+					<td class="text">{$sentence->tst2}</td>
+					<td class="bleu">{$sentence->bleu2}</td>
+				</tr>
+			</table>
+		</li>
+	{/foreach}
+</ul>
+
+<ul id="toolbar">
+	<li>
+		<a href="#" id="diff1-control">
+			<span class="display">Display</span>
+			<span class="hide">Hide</span>
+			diff for machine translation 1
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+	<li>
+		<a href="#" id="diff2-control">
+			<span class="display">Display</span>
+			<span class="hide">Hide</span>
+			diff for machine translation 2
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+	<li>
+		<a href="#" id="sort-control" class="diff-bleu">
+			Sort by DIFF-BLEU
+			<span>DESC</span>
+			<img src="../img/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+</ul>

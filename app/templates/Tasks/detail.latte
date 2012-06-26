@@ -1,0 +1,54 @@
+{block #content}
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script type="text/javascript" src="/js/jquery.sort.js"></script>
+<script type="text/javascript" src="/js/jsdiff.js"></script>
+<script type="text/javascript" src="/js/control.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/style.css" />
+<table id="stats" class="bordered-table">
+	<tr>
+		<th>Bleu:</th>
+	</tr>
+	<tr>
+		<td>{$task->bleu}</td>
+	</tr>
+</table>
+
+<ul id="sentences">
+	{foreach $sentences as $sentence}
+	<li>
+		<table class="bordered-table zebra-striped">
+			<tr class="src">
+				<th>Source text</th>
+				<td colspan="2">{$sentence->src}</td>
+			</tr>
+			<tr class="ref">
+				<th>Reference translation</th>
+				<td colspan="2" class="text">{$sentence->ref}</td>
+			</tr>
+			<tr class="tst">
+				<th>Machine translation 1</th>
+				<td class="text">{$sentence->tst}</td>
+				<td class="bleu" class="span1">{$sentence->bleu}</td>
+			</tr>
+		</table>
+	</li>
+	{/foreach}
+</ul>
+
+<ul id="toolbar">
+	<li>
+		<a href="#" id="diff-control">
+			<span class="display">Display</span>
+			<span class="hide">Hide</span>
+			diff
+			<img src="/static/images/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+	<li>
+		<a href="#" id="sort-control" class="bleu">
+			Sort by BLEU
+			<span>DESC</span>
+			<img src="/static/images/spinner.gif" class="spinner" alt="" />
+		</a>
+	</li>
+</ul>

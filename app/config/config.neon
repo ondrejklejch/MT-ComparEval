@@ -27,7 +27,9 @@ common:
 
 		experimentsModel: Experiments( @database::table(experiments) )
 
-		tasksModel: Tasks( @database::table(tasks) )
+		tasksModel: Tasks( @database, tasks )
+
+		sentencesModel: Sentences( @database )
 
 
 	factories:

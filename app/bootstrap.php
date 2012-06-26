@@ -30,7 +30,8 @@ $container = $configurator->createContainer();
 
 // Setup router
 $container->router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
-$container->router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+$container->router[] = new Route('api/<presenter>/<action>', array( 'module' => 'Api' ) );
+$container->router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
 
 
 // Configure and run the application!
