@@ -32,4 +32,21 @@ class Sentences {
 		return $this->connection->query( $sql, $id1, $id2 );
 	}
 
+
+	public function getTranslationLength( $taskId ) {
+		$sql = 'SELECT SUM( length ) AS length FROM translation_sentences '
+			. ' WHERE task_id = ?';
+
+		return $this->connection->query( $sql, $taskId )->fetch()->length;
+	}
+
+
+
+	public function getReferenceLength( $experimentId ) {
+		$sql = 'SELECT SUM( length ) AS length FROM reference_sentences '
+			. ' WHERE experiment_id = ?';
+
+		return $this->connection->query( $sql, $experimentId )->fetch()->length;
+	}
+
 }

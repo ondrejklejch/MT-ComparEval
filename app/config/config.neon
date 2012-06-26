@@ -31,6 +31,8 @@ common:
 
 		sentencesModel: Sentences( @database )
 
+		ngramsModel: NGrams( @database, @tasksModel )
+
 
 	factories:
 
