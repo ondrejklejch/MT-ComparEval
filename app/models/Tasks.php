@@ -28,6 +28,17 @@ class Tasks {
 	}
 
 
+	public function setBleu( $task, $bleu ) {
+		$data = array( 
+			'bleu' => $bleu,
+			'state' => 1,
+		);
+
+		return $this->getTable()->where( 'id', $task )->update( $data );
+
+	}
+
+
 	private function getTable() {
 		return $this->connection->table( $this->tableName );
 	}
