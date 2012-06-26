@@ -58,8 +58,6 @@ class BleuPresenter extends \BasePresenter {
 		}
 
 
-		dump( $matching );
-		dump( $translation );
 		for( $length = 1; $length <= 4; $length++ ) {
 			if( !isset( $matching[ $length ] ) ) {
 				continue;
@@ -74,9 +72,6 @@ class BleuPresenter extends \BasePresenter {
 
 
 	private function computeBrevityPenalty( $translationLength, $referenceLength ) {
-		dump( $translationLength );
-		dump( $referenceLength );
-
 		if( $translationLength <= $referenceLength ) {
 			return exp( 1 - $referenceLength / $translationLength );
 		} else {
