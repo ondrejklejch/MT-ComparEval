@@ -13,7 +13,7 @@ split --lines 500 /tmp/$$/sentences /tmp/$$/sentences-chunks
 for file in /tmp/$$/sentences-chunks*
 do
 	values=`sed "s/SELECT /SELECT $experimentId AS \"experiment_id\",/g;2,$ s/^/UNION ALL /;" $file`
- 	echo "INSERT INTO \"source_sentences\" ( \"experiment_id\", \"position\", \"text\", \"length\") ${values};" > /tmp/$$/sql
+ 	echo "INSERT INTO \"source_sentences\" ( \"experiment_id\", \"position\", \"length\", \"text\") ${values};" > /tmp/$$/sql
 
 	sqlite3 $database < /tmp/$$/sql
 done
