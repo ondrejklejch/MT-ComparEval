@@ -29,10 +29,20 @@ class Experiments {
 
 	
 	private function processSource( $id, $sourceFile ) {
+		$script = 'scripts/source/process_source.sh';
+		$database = 'app/database';		
+		$file = $sourceFile->getPathname();
+
+		`sh $script $file $id $database`;
 	}
 
 
 	private function processReference( $id, $referenceFile ) {
+		$script = 'scripts/reference/process_reference.sh';
+		$database = 'app/database';		
+		$file = $referenceFile->getPathname();
+
+		`sh $script $file $id $database`;
 	}
 
 
