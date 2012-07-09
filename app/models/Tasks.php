@@ -28,6 +28,22 @@ class Tasks {
 	}
 
 
+	public function createTask( $values ) {
+		$task = $this->getTable()->insert( $this->prepareTask( $values ) );
+
+		$this->processTranslation( $task->getPrimary(), $values[ 'translation' ] );
+	}
+
+
+	private function processTranslation( $id, $translationFile ) {
+		$script = 'scripts/translation/process_translation.sh';
+		$database = 'app/database';		
+		$file = $translationFile->getPathname();
+
+		`sh $script $file $id $database`;
+	}
+
+
 	public function setBleu( $task, $bleu ) {
 		$data = array( 
 			'bleu' => $bleu,
@@ -38,6 +54,14 @@ class Tasks {
 
 	}
 
+
+	private function prepareTask( $values ) {
+		return array(
+			'name' => $values[ 'name' ],
+			'comment' => $values[ 'comment' ],
+			'experiment_id' => $values[ 'experiment_id' ],
+		);
+	}
 
 	private function getTable() {
 		return $this->connection->table( $this->tableName );

@@ -7,11 +7,15 @@ class DiscoveryPresenter extends \BasePresenter {
 	/** @var Experiments */
 	private $experimentsModel;
 
+	/** @var Tasks */
+	private $tasksModel;
+
 
 	public function startup() {
 		parent::startup();
 
 		$this->experimentsModel = $this->getService( 'experimentsModel' );
+		$this->tasksModel = $this->getService( 'tasksModel' );
 	}
 
 
@@ -52,6 +56,40 @@ class DiscoveryPresenter extends \BasePresenter {
 		$response .= "Experiments imported\n";
 		$this->sendResponse( new \Nette\Application\Responses\TextResponse( $response ) );
 		
+	}
+
+
+	public function renderFindNewTasks( $dir ) {
+		$checkFile = "$dir/tasks-check";
+
+		// @TODO add check that experiment has been processed
+		$newTasks = \Nette\Utils\Finder::findFiles( "*/*/task.neon" )
+			->from( $dir )
+			->limitDepth( 2 )
+			->filter( function( $file ) use ( $checkFile ) {
+				return $file->getMTime() > filemtime( $checkFile );
+			} );
+
+		$response = "";
+		foreach( $newTasks as $task ) {
+			$config = \Nette\Utils\Neon::decode( file_get_contents( $task->getPathname() ) );
+			$config[ 'path' ] = $task->getPathname();
+
+			if( !isset( $config[ 'name' ] ) || isset( $config[ 'id' ] ) ) {
+				continue;
+			}
+
+			if( !isset( $config[ 'translation' ] ) ) {
+				$config[ 'translation' ] = new \SplFileInfo( $task->getPath() . "/translation" );
+			}
+
+			$this->tasksModel->createTask( $config );
+			$response .= sprintf( "Task '%s' successfully imported.\n", $config[ 'name' ] );
+		}	
+
+		touch( $checkFile );
+		$response .= "Tasks imported\n";
+		$this->sendResponse( new \Nette\Application\Responses\TextResponse( $response ) );
 	}
 
 }
