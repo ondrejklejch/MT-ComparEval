@@ -17,8 +17,8 @@ class DetailPageContext extends BasePageContext {
 	 * @When /^I open page with result$/
 	 */
 	public function iOpenPageWithResult() {
-		$this->getSession()->visit( $this->getUrl( 'tasks/1/detail.html' ) );
-		$this->getSession()->wait(200);
+		$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
+		$this->getSession()->wait(100);
 
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
 	}

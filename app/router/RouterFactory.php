@@ -19,7 +19,9 @@ class RouterFactory
 		$router = new RouteList();
 		$router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
 		$router[] = new Route('api/sentences', 'Api:Sentences:default');
+		$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
 		$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+		
 		return $router;
 	}
 
