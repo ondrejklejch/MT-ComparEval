@@ -13,14 +13,34 @@
 			"homepage": "http://nette.org/contributors"
 		}
 	],
+	"repositories": {
+		"PHPTestCase": { 
+			"type": "package", 
+			"package": {
+				"name": "PHPTestCase",
+				"version": "1.0",
+				"source": {
+					"url": "http://github.com/DeveloperHub/PHPTestCase.git", 
+					"type": "git", 
+					"reference": "1.0.0"
+				}
+			}
+		}
+	},
 	"config": {
-		"vendor-dir": "libs"
+		"vendor-dir": "libs",
+		"bin-dir": "bin"
 	},
 	"require": {
 		"php": ">= 5.3.0",
-		"nette/nette": ">= 2.0.7"
+		"nette/nette": ">= 2.0.7",
+		"behat/behat": "2.4.*@stable",
+		"behat/mink": "1.4@stable",
+		"behat/mink-extension": "*",
+		"behat/mink-selenium2-driver": "*",
+		"PHPTestCase": "1.0" 
 	},
-    "require-dev": {
-        "nette/tester": "@dev"
+	"require-dev": {
+		"nette/tester": "@dev"
 	}
 }
