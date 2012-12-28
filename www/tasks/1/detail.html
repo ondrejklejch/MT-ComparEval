@@ -1,0 +1,62 @@
+<html ng-app>
+	<head>
+		<script type="text/javascript" src="./angular.min.js"></script>
+		<script type="text/javascript">
+			function Sentences( $scope, $http ) {
+				$scope.currentMetric = 'bleu';
+				$scope.order = null;
+				$scope.asc = false;
+
+				$http.get( 'http://sentences.apiary.io/sentences' ).success( function( data ) {
+					$scope.sentences = data.sentences;
+				} );
+
+				$scope.sortSentencesAscending = function() {
+					$scope.order = 'metric';
+					$scope.asc = false;
+				}	
+
+				$scope.sortSentencesDescending = function() {
+					$scope.order = 'metric';
+					$scope.asc = true;
+				}	
+
+				$scope.cancelSort = function() {
+					$scope.order = null;
+					$scope.asc = false;
+				}
+
+				$scope.predicate = function( sentence ) {
+					if( $scope.order == null ) {
+						return sentence.sentence_id;
+					} else {
+						return sentence.translations[0].metrics[$scope.currentMetric];
+					}
+				}
+			}
+		</script>
+	</head>
+	<body ng-controller="Sentences">
+		<a ng-click="sortSentencesAscending()" id="sort-asc">sort ascending</a>
+		<a ng-click="sortSentencesDescending()" id="sort-desc">sort descending</a>
+		<a ng-click="cancelSort()" id="sort-cancel">cancel sort</a>
+
+		<select ng-model="currentMetric" id="metrics">
+			<option value="bleu">bleu</option>
+			<option value="rand">rand</option>
+		</select>
+
+		<ul>
+			<li ng-repeat="sentence in sentences | orderBy:predicate:asc" class="sentence" data-id="{{sentence.sentence_id}}">
+				<span class="source">{{sentence.source}}</span>
+				<span class="reference">{{sentence.reference}}</span>
+
+				<div ng-repeat="translation in sentence.translations" class="translation">
+					<span class="text">{{translation.translation}}</span>
+					<span class="metric">{{translation.metrics[currentMetric]}}</span>
+				</div>
+			</li>
+		</ul>
+		<div id="load-next"></div>
+	</body>
+</html>
