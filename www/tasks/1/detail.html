@@ -7,7 +7,7 @@
 				$scope.order = null;
 				$scope.asc = false;
 
-				$http.get( 'http://sentences.apiary.io/sentences' ).success( function( data ) {
+				$http.get( 'http://localhost:8000/api/sentences' ).success( function( data ) {
 					$scope.sentences = data.sentences;
 				} );
 
