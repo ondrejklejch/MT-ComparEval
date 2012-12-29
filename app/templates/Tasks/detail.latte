@@ -1,43 +1,70 @@
 {block scripts}
 {include #parent}
 <script type="text/javascript">
-	function Sentences( $scope, $http ) {
-		$scope.currentMetric = 'bleu';
+
+angular.module('scroll', []).directive('whenScrolled', function() {
+	return function(scope, elm, attr) {
+		var raw = elm[0];
+
+		$(window).bind('scroll', function() {
+			var elementBottom = $(raw).offset().top + $(raw).height();
+			var windowBottom = $(window).scrollTop() + $(window).height();	
+
+			if( elementBottom <= windowBottom ) {
+				scope.$apply( attr.whenScrolled );
+			}
+		});
+	};
+});
+
+function Sentences( $scope, $http ) {
+	$scope.sentences = [];
+	$scope.offset = 0;
+	$scope.currentMetric = 'bleu';
+	$scope.order = null;
+	$scope.asc = false;
+
+	$http.get( 'http://localhost:8000/api/sentences' ).success( addSentences );
+
+	$scope.sortSentencesAscending = function() {
+		$scope.order = 'metric';
+		$scope.asc = false;
+	}	
+
+	$scope.sortSentencesDescending = function() {
+		$scope.order = 'metric';
+		$scope.asc = true;
+	}	
+
+	$scope.cancelSort = function() {
 		$scope.order = null;
 		$scope.asc = false;
+	}
 
-		$http.get( 'http://localhost:8000/api/sentences' ).success( function( data ) {
-			$scope.sentences = data.sentences;
-		} );
+	$scope.loadMore = function() {
+		$http.get( 'http://localhost:8000/api/sentences', { params: { offset: $scope.offset } } ).success( addSentences );
+	}
 
-		$scope.sortSentencesAscending = function() {
-			$scope.order = 'metric';
-			$scope.asc = false;
-		}	
-
-		$scope.sortSentencesDescending = function() {
-			$scope.order = 'metric';
-			$scope.asc = true;
-		}	
-
-		$scope.cancelSort = function() {
-			$scope.order = null;
-			$scope.asc = false;
-		}
-
-		$scope.predicate = function( sentence ) {
-			if( $scope.order == null ) {
-				return sentence.sentence_id;
-			} else {
-				return sentence.translations[0].metrics[$scope.currentMetric];
-			}
+	function addSentences( data ) {
+		for( var i in data.sentences ) {
+			$scope.sentences.push( data.sentences[i] );
+			$scope.offset++;
 		}
 	}
+
+	$scope.predicate = function( sentence ) {
+		if( $scope.order == null ) {
+			return sentence.sentence_id;
+		} else {
+			return sentence.translations[0].metrics[$scope.currentMetric];
+		}
+	}
+};
 </script>
 {/block}
 
 {block #content}
-<div ng-controller="Sentences">
+<div ng-app="scroll" ng-controller="Sentences" when-scrolled="loadMore()">
 	<a ng-click="sortSentencesAscending()" id="sort-asc">sort ascending</a>
 	<a ng-click="sortSentencesDescending()" id="sort-desc">sort descending</a>
 	<a ng-click="cancelSort()" id="sort-cancel">cancel sort</a>
@@ -47,17 +74,22 @@
 		<option value="rand">rand</option>
 	</select>
 
-	<ul>
-		<li ng-repeat="sentence in sentences | orderBy:predicate:asc" class="sentence" data-id="{{ sentence.sentence_id }}">
-			<span class="source">{{ sentence.source }}</span>
-			<span class="reference">{{ sentence.reference }}</span>
+	<ul >
+		<li
+			ng-repeat="sentence in sentences | orderBy:predicate:asc"
+			class="sentence"
+			data-id="{{ sentence.sentence_id }}">
+
+			<div class="source">{{ sentence.source }}</div>
+			<div class="reference">{{ sentence.reference }}</div>
 
 			<div ng-repeat="translation in sentence.translations" class="translation">
-				<span class="text">{{ translation.translation }}</span>
-				<span class="metric">{{ translation.metrics[currentMetric] }}</span>
+				<div class="text">{{ translation.translation }}</div>
+				<div class="metric">{{ translation.metrics[currentMetric] }}</div>
 			</div>
+			<hr><br><br>
 		</li>
 	</ul>
-	<div id="load-next"></div>
+	<div id="load-next">load next</div>
 </div>
 {/block}

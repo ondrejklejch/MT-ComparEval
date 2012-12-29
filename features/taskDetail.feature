@@ -39,10 +39,10 @@ Feature: Task detail
 		And every translation should have text and metric
 		And sentences should be sorted in ascending order
 
-	@skipped
 	Scenario: Sentences are loaded dynamically
 		Given there is a result for machine translation
 		When I open page with result
 		And part of the result is already shown
 		And I scroll down
 		Then more sentences should load
+	 	And sentences should be unique

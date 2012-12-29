@@ -22,7 +22,7 @@ class TaskDetailPage {
 	}
 
 	public function scrollDown() {
-		$this->page->find( 'css', '#load-next' )->focus();
+		$this->page->getSession()->executeScript( 'window.scrollBy( 0, document.height );' );
 	}
 
 	public function getSentences() {

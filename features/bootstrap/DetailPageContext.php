@@ -63,6 +63,7 @@ class DetailPageContext extends BasePageContext {
 	 */
 	public function iScrollDown() {
 		$this->page->scrollDown();
+		$this->getSession()->wait(100);
 	}
 
 	/**
@@ -197,4 +198,15 @@ class DetailPageContext extends BasePageContext {
 		$this->assert( $currentSentencesCount > $this->sentencesCountBeforeLoad, 'No sentence loaded' );
 	}
 
+	/**
+	 * @Then /^sentences should be unique$/
+	 */
+	public function sentencesShouldBeUnique() {
+		$sentences = $this->page->getSentences();
+		$uniqueSentencesIds = array_unique( array_map( function( $sentence ) {
+			return $sentence->getId();
+		}, $sentences ) );
+
+		$this->assert( count( $sentences ) == count( $uniqueSentencesIds ), 'Sentences are not unique' );
+	}
 }
