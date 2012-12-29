@@ -4,7 +4,7 @@ class DetailPageContext extends BasePageContext {
 
 
 	private $page;
-	private $sentencesCountBeforeLoad = 0;
+	private $sentencesBeforeLoad = array();
 
 	/**
 	 * @Given /^there is a result for machine translation$/
@@ -31,9 +31,9 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @When /^I sort senteces by metric in ascending order$/
+	 * @When /^I sort sentences by metric in ascending order$/
 	 */
-	public function iSortSentecesByMetricInAscendingOrder()	{
+	public function iSortSentencesByMetricInAscendingOrder() {
 		$this->page->sortSentencesByMetric( 'asc' );
 	}
 
@@ -55,15 +55,17 @@ class DetailPageContext extends BasePageContext {
 	 * @When /^part of the result is already shown$/
 	 */
 	public function partOfTheResultIsAlreadyShown()	{
-		$this->sentencesCountBeforeLoad = count( $this->page->getSentences() );
+		$this->sentencesBeforeLoad = $this->page->getSentences();
+		$this->getSession()->wait(100);
 	}
 
 	/**
 	 * @When /^I scroll down$/
 	 */
 	public function iScrollDown() {
+		$this->getSession()->wait(500);
 		$this->page->scrollDown();
-		$this->getSession()->wait(100);
+		$this->getSession()->wait(500);
 	}
 
 	/**
@@ -195,7 +197,7 @@ class DetailPageContext extends BasePageContext {
 	public function moreSentencesShouldLoad() {
 		$currentSentencesCount = count( $this->page->getSentences() );
 
-		$this->assert( $currentSentencesCount > $this->sentencesCountBeforeLoad, 'No sentence loaded' );
+		$this->assert( $currentSentencesCount > count( $this->sentencesBeforeLoad ), 'No sentence loaded' );
 	}
 
 	/**
@@ -209,4 +211,60 @@ class DetailPageContext extends BasePageContext {
 
 		$this->assert( count( $sentences ) == count( $uniqueSentencesIds ), 'Sentences are not unique' );
 	}
+
+	/**
+	 * @Given /^new sentences should have bigger score than old sentences$/
+	 */
+	public function newSentencesShouldHaveBiggerScoreThanOldSentences() {
+		$sentences = $this->page->getSentences();
+		$newSentences = $this->removeOldSentences( $sentences ); 
+
+		foreach( $newSentences as $newSentence ) {
+			foreach( $this->sentencesBeforeLoad as $oldSentence ) {
+				$newTranslations = $newSentence->getTranslations();
+				$oldTranslations = $oldSentence->getTranslations();
+
+
+				$this->assert(
+					$newTranslations[0]->getMetric() >= $oldTranslations[0]->getMetric(),
+					'Loaded sentences do not preserve order'
+				);
+			}
+		}
+	}
+
+	/**
+	 * @Given /^new sentences should have smaller score than old sentences$/
+	 */
+	public function newSentencesShouldHaveSmallerScoreThanOldSentences() {
+		$sentences = $this->page->getSentences();
+		$newSentences = $this->removeOldSentences( $sentences ); 
+
+		foreach( $newSentences as $newSentence ) {
+			foreach( $this->sentencesBeforeLoad as $oldSentence ) {
+				$newTranslations = $newSentence->getTranslations();
+				$oldTranslations = $oldSentence->getTranslations();
+
+
+				$this->assert(
+					$newTranslations[0]->getMetric() <= $oldTranslations[0]->getMetric(),
+					'Loaded sentences do not preserve order'
+				);
+			}
+		}
+	}
+
+
+
+	private function removeOldSentences( $sentences ) {
+		$oldSentencesIds = array_map( function( $sentence ) {
+			return $sentence->getId();
+		}, $this->sentencesBeforeLoad );
+
+		return array_filter( $sentences, function( $sentence ) use ( $oldSentencesIds ) {
+			return !isset( $oldSentencesIds[ $sentence->getId() ] );
+		} );
+	}
+
+
 }

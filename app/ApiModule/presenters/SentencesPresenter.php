@@ -4,19 +4,15 @@ namespace ApiModule;
 
 class SentencesPresenter extends \Nette\Application\UI\Presenter {
 
-	public function renderDefault( $offset = 0, $orderBy, $order ) {
-		if( !file_exists( "sentences.json" ) ) {
-			file_put_contents( "sentences.json", file_get_contents( 'http://sentences.apiary.io/sentences' ) );
-		}
+	public function renderDefault( array $taskIds, $offset = 0, $limit = 20, $orderBy = 'id', $order = 'asc' ) {
+		$sentencesModel = $this->getService( 'sentences' );
 
-		$data = json_decode( file_get_contents( "sentences.json" ) );
-		$data->offset = $offset;
-		$data->sentences = array_map( function( $sentence ) use ( $offset ) {
-			$sentence->sentence_id += $offset;
-			return $sentence;
-		}, $data->sentences );
+		$response = array();
+		$response['offset'] = $offset;
+		$response['has_next'] = $sentencesModel->getSentencesCount( $taskIds ) > $offset+$limit;
+		$response['sentences'] = $sentencesModel->getSentences( $taskIds, $offset, $limit, $orderBy, $order );
 
-		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $data ) );
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
 }

@@ -18,13 +18,27 @@ angular.module('scroll', []).directive('whenScrolled', function() {
 });
 
 function Sentences( $scope, $http ) {
+
 	$scope.sentences = [];
 	$scope.offset = 0;
 	$scope.currentMetric = 'bleu';
-	$scope.order = null;
+	$scope.order = 'id';
 	$scope.asc = false;
 
-	$http.get( 'http://localhost:8000/api/sentences' ).success( addSentences );
+	loadSentences();
+
+	$scope.$watch( 'currentMetric+order+asc', reloadSentences );
+
+	function reloadSentences( oldValue, newValue ) {
+		if( oldValue == newValue ) {
+			return;
+		}
+
+		$scope.sentences = [];
+		$scope.offset = 0;
+
+		loadSentences();
+	}
 
 	$scope.sortSentencesAscending = function() {
 		$scope.order = 'metric';
@@ -37,12 +51,24 @@ function Sentences( $scope, $http ) {
 	}	
 
 	$scope.cancelSort = function() {
-		$scope.order = null;
+		$scope.order = 'id';
 		$scope.asc = false;
 	}
 
 	$scope.loadMore = function() {
-		$http.get( 'http://localhost:8000/api/sentences', { params: { offset: $scope.offset } } ).success( addSentences );
+		loadSentences();
+	}
+
+	function loadSentences() {
+		$http.get( 'http://localhost:8000/api/sentences', {
+			params: {
+				"taskIds[]": 1,
+				"offset": $scope.offset,
+				"limit": 5,
+				"orderBy": ( $scope.order == 'id' ) ? 'id' : $scope.currentMetric,
+				"order": ( $scope.asc ) ? 'asc' : 'desc'
+			}
+		} ).success( addSentences );
 	}
 
 	function addSentences( data ) {
@@ -53,7 +79,7 @@ function Sentences( $scope, $http ) {
 	}
 
 	$scope.predicate = function( sentence ) {
-		if( $scope.order == null ) {
+		if( $scope.order == 'id' ) {
 			return sentence.sentence_id;
 		} else {
 			return sentence.translations[0].metrics[$scope.currentMetric];
@@ -84,7 +110,7 @@ function Sentences( $scope, $http ) {
 			<div class="reference">{{ sentence.reference }}</div>
 
 			<div ng-repeat="translation in sentence.translations" class="translation">
-				<div class="text">{{ translation.translation }}</div>
+				<div class="text">{{ translation.text}}</div>
 				<div class="metric">{{ translation.metrics[currentMetric] }}</div>
 			</div>
 			<hr><br><br>

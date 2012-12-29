@@ -16,15 +16,14 @@ common:
 			errorPresenter: Error
 
 		database:
-			dsn: 'mysql:host=localhost;dbname=test'
-			user:
-			password:
+			dsn: 'sqlite:%appDir%/database'
 
 		session:
 			expiration: 14 days
 
 
 	services:
+		sentences: Sentences
 		authenticator: Authenticator
 		routerFactory: RouterFactory
 		router: @routerFactory::createRouter
