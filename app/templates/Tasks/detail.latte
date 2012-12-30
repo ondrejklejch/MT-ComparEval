@@ -62,7 +62,9 @@ function Sentences( $scope, $http ) {
 	function loadSentences() {
 		$http.get( 'http://localhost:8000/api/sentences', {
 			params: {
-				"taskIds[]": 1,
+				{foreach $taskIds as $i => $id}
+				"taskIds[{$i}]": {$id},
+				{/foreach}
 				"offset": $scope.offset,
 				"limit": 5,
 				"orderBy": ( $scope.order == 'id' ) ? 'id' : $scope.currentMetric,

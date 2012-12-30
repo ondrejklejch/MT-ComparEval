@@ -14,10 +14,27 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
+	 * @Given /^there are two results for machine translations$/
+	 */
+	public function thereAreTwoResultsForMachineTranslations() {
+		return true;
+	}
+
+	/**
 	 * @When /^I open page with result$/
 	 */
 	public function iOpenPageWithResult() {
 		$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
+		$this->getSession()->wait(100);
+
+		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
+	}
+
+	/**
+	 * @When /^I open page with comparison$/
+	 */
+	public function iOpenPageWithComparison() {
+		$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
 		$this->getSession()->wait(100);
 
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
@@ -81,9 +98,9 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @Given /^every sentence should have id, source, reference and translations$/
+	 * @Then /^every sentence should have id, source, reference and (\d+) translations?$/
 	 */
-	public function everySentenceShouldHaveIdSourceReferenceAndTranslations() {
+	public function everySentenceShouldHaveIdSourceReferenceAndTranslations( $translationsCount ) {
 		$sentences = $this->page->getSentences();
 
 		foreach( $sentences as $sentence ) {
@@ -95,7 +112,7 @@ class DetailPageContext extends BasePageContext {
 			$this->assert( !$this->isNull( $id ), 'Not every sentence has id' );
 			$this->assert( !$this->isNull( $source ), 'Not every sentence has source' );
 			$this->assert( !$this->isNull( $reference ), 'Not every sentence has reference' );
-			$this->assert( count( $translations ) > 0, 'Not every sentence has translations' );
+			$this->assert( count( $translations ) == $translationsCount, 'Not every sentence has ' . $translationsCount . ' translations' );
 		}
 	}
 
