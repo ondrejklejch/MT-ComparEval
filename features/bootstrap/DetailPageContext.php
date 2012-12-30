@@ -21,21 +21,16 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @When /^I open page with result$/
+	 * @When /^I open page with (.*)$/
 	 */
-	public function iOpenPageWithResult() {
-		$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
+	public function iOpenPageWithResult( $view ) {
+		if( $view == 'result' ) {
+			$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
+		} else {
+			$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
+		}
+
 		$this->getSession()->wait(200);
-
-		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
-	}
-
-	/**
-	 * @When /^I open page with comparison$/
-	 */
-	public function iOpenPageWithComparison() {
-		$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
-		$this->getSession()->wait(300);
 
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
 	}
@@ -64,10 +59,10 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @When /^I choose another metric$/
+	 * @When /^I choose (.*) metric$/
 	 */
-	public function iChooseAnotherMetric() {
-		$this->page->chooseMetric( 'rand' );
+	public function iChooseAnotherMetric( $metric ) {
+		$this->page->chooseMetric( $metric );
 	}
 
 	/**
@@ -175,30 +170,12 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @Then /^sentences should be sorted by id$/
+	 * @Then /^(.*) metric should be active$/
 	 */
-	public function sentencesShouldBeSortedById() {
-		$sentences = $this->page->getSentences();
-
-		$lastValue = 0;
-		foreach( $sentences as $sentence ) {
-			$currentValue = $sentence->getId();
-			$this->assert( 
-				$currentValue >= $lastValue,
-				'Sentences are not sorted by id'
-			);
-			
-			$lastValue = $currentValue;
-		}
-	}
-
-	/**
-	 * @Then /^another metric should be active$/
-	 */
-	public function anotherMetricShouldBeActive() {
+	public function anotherMetricShouldBeActive( $metric ) {
 		$currentMetric = $this->page->getActiveMetric();
 
-		$this->assert( $currentMetric === 'rand', 'Current metric is not correct' );
+		$this->assert( $currentMetric === $metric, 'Current metric is not correct' );
 	}
 
 	/**
