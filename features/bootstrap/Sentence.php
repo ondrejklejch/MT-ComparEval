@@ -21,6 +21,10 @@ class Sentence {
 		return $this->sentenceNode->find( 'css', '.reference' )->getText();
 	}
 
+	public function getDiffMetric() {
+		return $this->sentenceNode->find( 'css', '.diff-metric' )->getText();
+	}
+
 	public function getTranslations() {
 		$translationNodes = $this->sentenceNode->findAll( 'css', '.translation' );
 

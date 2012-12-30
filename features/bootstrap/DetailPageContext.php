@@ -25,7 +25,7 @@ class DetailPageContext extends BasePageContext {
 	 */
 	public function iOpenPageWithResult() {
 		$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
-		$this->getSession()->wait(100);
+		$this->getSession()->wait(200);
 
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
 	}
@@ -35,23 +35,25 @@ class DetailPageContext extends BasePageContext {
 	 */
 	public function iOpenPageWithComparison() {
 		$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
-		$this->getSession()->wait(100);
+		$this->getSession()->wait(300);
 
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
 	}
 
 	/**
-	 * @When /^I sort sentences by metric in descending order$/
+	 * @When /^I sort sentences by (.*) in (.*) order$/
 	 */
-	public function iSortSentencesByMetricInDescendingOrder() {
-		$this->page->sortSentencesByMetric( 'desc' );
-	}
+	public function iSortSentences( $orderBy, $order ) {
+		switch( $order ) {
+			case 'ascending':
+				$this->page->sortSentencesByMetric( 'asc' );
+				break;
+			case 'descending':
+				$this->page->sortSentencesByMetric( 'desc' );
+				break;
+		}
 
-	/**
-	 * @When /^I sort sentences by metric in ascending order$/
-	 */
-	public function iSortSentencesByMetricInAscendingOrder() {
-		$this->page->sortSentencesByMetric( 'asc' );
+		$this->getSession()->wait(500);
 	}
 
 	/**
@@ -73,16 +75,14 @@ class DetailPageContext extends BasePageContext {
 	 */
 	public function partOfTheResultIsAlreadyShown()	{
 		$this->sentencesBeforeLoad = $this->page->getSentences();
-		$this->getSession()->wait(100);
 	}
 
 	/**
 	 * @When /^I scroll down$/
 	 */
 	public function iScrollDown() {
-		$this->getSession()->wait(500);
 		$this->page->scrollDown();
-		$this->getSession()->wait(500);
+		$this->getSession()->wait(200);
 	}
 
 	/**
@@ -92,7 +92,7 @@ class DetailPageContext extends BasePageContext {
 		$sentences = $this->page->getSentences();
 
 		$this->assert( 
-			count( $sentences ) > 0,
+			count( $sentences ) == 5,
 			"Sentences aren't shown."
 		);
 	}
@@ -113,6 +113,19 @@ class DetailPageContext extends BasePageContext {
 			$this->assert( !$this->isNull( $source ), 'Not every sentence has source' );
 			$this->assert( !$this->isNull( $reference ), 'Not every sentence has reference' );
 			$this->assert( count( $translations ) == $translationsCount, 'Not every sentence has ' . $translationsCount . ' translations' );
+		}
+	}
+
+	/**
+	 * @Given /^every sentence should have diff metric$/
+	 */
+	public function everySentenceShouldHaveDiffMetric() {
+		$sentences = $this->page->getSentences();
+
+		foreach( $sentences as $sentence ) {
+			$metric = $sentence->getDiffMetric();
+
+			$this->assert( !$this->isNull( $metric ), 'Not every sentence has diff metric' );
 		}
 	}
 
@@ -141,42 +154,22 @@ class DetailPageContext extends BasePageContext {
 
 
 	/**
-	 * @Then /^sentences should be sorted in descending order$/
+	 * @Then /^sentences should be sorted by (.*) in (.*) order$/
 	 */
-	public function sentencesShouldBeSortedInDescendingOrder() {
+	public function sentencesShouldBeSorted( $orderBy, $order ) {
 		$sentences = $this->page->getSentences();
+		$getCurrentValue = $this->getValueAccessor( $orderBy );
+		$compare = $this->getComparator( $order );
+		$lastValue = ( $order == 'ascending' ) ? -PHP_INT_SIZE : PHP_INT_SIZE;
 
-		$lastValue = 1;
 		foreach( $sentences as $sentence ) {
-			$translations = $sentence->getTranslations();
-			$currentValue = $translations[0]->getMetric();
+			$currentValue = $getCurrentValue( $sentence );
 
-			$this->assert( 
-				$currentValue <= $lastValue,
-				'Sentences are not sorted by metric in decreasing order'
+			$this->assert(
+				$compare( $lastValue, $currentValue ),
+				'Sentences are not sorted by ' . $orderBy . ' in ' . $order . ' order' 
 			);
-			
-			$lastValue = $currentValue;
-		}
-	}
 
-
-	/**
-	 * @Then /^sentences should be sorted in ascending order$/
-	 */
-	public function sentencesShouldBeSortedInAscendingOrder() {
-		$sentences = $this->page->getSentences();
-
-		$lastValue = 0;
-		foreach( $sentences as $sentence ) {
-			$translations = $sentence->getTranslations();
-			$currentValue = $translations[0]->getMetric();
-
-			$this->assert( 
-				$currentValue >= $lastValue,
-				'Sentences are not sorted by metric in decreasing order'
-			);
-			
 			$lastValue = $currentValue;
 		}
 	}
@@ -230,41 +223,21 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @Given /^new sentences should have bigger score than old sentences$/
+	 * @Given /^new sentences should have (smaller|bigger) (.*) than old sentences$/
 	 */
-	public function newSentencesShouldHaveBiggerScoreThanOldSentences() {
+	public function newSentencesShouldPreserveOrder( $comparsion, $metric ) {
 		$sentences = $this->page->getSentences();
 		$newSentences = $this->removeOldSentences( $sentences ); 
+		$getCurrentValue = $this->getValueAccessor( $metric );
+		$compare = $this->getComparator( $comparsion );
 
 		foreach( $newSentences as $newSentence ) {
 			foreach( $this->sentencesBeforeLoad as $oldSentence ) {
-				$newTranslations = $newSentence->getTranslations();
-				$oldTranslations = $oldSentence->getTranslations();
-
-
-				$this->assert(
-					$newTranslations[0]->getMetric() >= $oldTranslations[0]->getMetric(),
-					'Loaded sentences do not preserve order'
-				);
-			}
-		}
-	}
-
-	/**
-	 * @Given /^new sentences should have smaller score than old sentences$/
-	 */
-	public function newSentencesShouldHaveSmallerScoreThanOldSentences() {
-		$sentences = $this->page->getSentences();
-		$newSentences = $this->removeOldSentences( $sentences ); 
-
-		foreach( $newSentences as $newSentence ) {
-			foreach( $this->sentencesBeforeLoad as $oldSentence ) {
-				$newTranslations = $newSentence->getTranslations();
-				$oldTranslations = $oldSentence->getTranslations();
-
+				$newValue = $getCurrentValue( $newSentence );
+				$oldValue = $getCurrentValue( $oldSentence );
 
 				$this->assert(
-					$newTranslations[0]->getMetric() <= $oldTranslations[0]->getMetric(),
+					$compare( $oldValue, $newValue ),
 					'Loaded sentences do not preserve order'
 				);
 			}
@@ -272,11 +245,48 @@ class DetailPageContext extends BasePageContext {
 	}
 
 
+	private function getValueAccessor( $metric ) {
+		switch( $metric ) {
+			case 'id':
+				return function( $sentence ) {
+					return $sentence->getId();
+				};
+			case 'metric':
+				return function( $sentence ) {
+					$translations = $sentence->getTranslations();
+					
+					return $translations[0]->getMetric();
+				};
+			case 'diff metric':
+				return function( $sentence ) {
+					$translations = $sentence->getTranslations();
+					
+					return $translations[0]->getMetric() - $translations[1]->getMetric();
+				};
+		}
+	}
+
+
+	private function getComparator( $comparsion ) {
+		$lte = function( $a, $b ) { return $a <= $b; };
+		$gte = function( $a, $b ) { return $a >= $b; };
+
+		switch( $comparsion ) {
+			case 'bigger':
+				return $lte;
+			case 'smaller':
+				return $gte;
+			case 'ascending':
+				return $lte;
+			case 'descending':
+				return $gte;
+		}
+	}
 
 	private function removeOldSentences( $sentences ) {
-		$oldSentencesIds = array_map( function( $sentence ) {
+		$oldSentencesIds = array_flip( array_map( function( $sentence ) {
 			return $sentence->getId();
-		}, $this->sentencesBeforeLoad );
+		}, $this->sentencesBeforeLoad ) );
 
 		return array_filter( $sentences, function( $sentence ) use ( $oldSentencesIds ) {
 			return !isset( $oldSentencesIds[ $sentence->getId() ] );

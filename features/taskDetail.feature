@@ -15,13 +15,13 @@ Feature: Task detail
 		Given there is a result for machine translation
 		When I open page with result
 		And I sort sentences by metric in descending order
-		Then sentences should be sorted in descending order
+		Then sentences should be sorted by metric in descending order
 
 	Scenario: Sentences can be ordered by metric in ascending order
 		Given there is a result for machine translation
 		When I open page with result
 		And I sort sentences by metric in ascending order
-		Then sentences should be sorted in ascending order
+		Then sentences should be sorted by metric in ascending order
 
 	Scenario: Sentences sort can be can canceled
 		Given there is a result for machine translation
@@ -37,7 +37,7 @@ Feature: Task detail
 		And I sort sentences by metric in ascending order
 		Then another metric should be active
 		And every translation should have text and metric
-		And sentences should be sorted in ascending order
+		And sentences should be sorted by metric in ascending order
 
 	Scenario: Sentences are loaded dynamically
 		Given there is a result for machine translation
@@ -55,7 +55,7 @@ Feature: Task detail
 		And I scroll down
 		Then more sentences should load
 	 	And sentences should be unique
-		And new sentences should have bigger score than old sentences
+		And new sentences should have bigger metric than old sentences
 
 	Scenario: Dynamic loading preserves descending order
 		Given there is a result for machine translation
@@ -65,4 +65,4 @@ Feature: Task detail
 		And I scroll down
 		Then more sentences should load
 	 	And sentences should be unique
-		And new sentences should have smaller score than old sentences
+		And new sentences should have smaller metric than old sentences

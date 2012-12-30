@@ -18,12 +18,11 @@ angular.module('scroll', []).directive('whenScrolled', function() {
 });
 
 function Sentences( $scope, $http ) {
-
 	$scope.sentences = [];
 	$scope.offset = 0;
-	$scope.currentMetric = 'bleu';
+	$scope.currentMetric = 'rand';
 	$scope.order = 'id';
-	$scope.asc = false;
+	$scope.asc = true;
 
 	loadSentences();
 
@@ -42,17 +41,17 @@ function Sentences( $scope, $http ) {
 
 	$scope.sortSentencesAscending = function() {
 		$scope.order = 'metric';
-		$scope.asc = false;
+		$scope.asc = true;
 	}	
 
 	$scope.sortSentencesDescending = function() {
 		$scope.order = 'metric';
-		$scope.asc = true;
+		$scope.asc = false;
 	}	
 
 	$scope.cancelSort = function() {
 		$scope.order = 'id';
-		$scope.asc = false;
+		$scope.asc = true;
 	}
 
 	$scope.loadMore = function() {
@@ -75,6 +74,13 @@ function Sentences( $scope, $http ) {
 
 	function addSentences( data ) {
 		for( var i in data.sentences ) {
+			if( data.sentences[i].translations.length == 2 ) {
+				metricA = data.sentences[i].translations[0].metrics[$scope.currentMetric];
+				metricB = data.sentences[i].translations[1].metrics[$scope.currentMetric];
+
+				data.sentences[i].diff = metricA - metricB;
+			}
+
 			$scope.sentences.push( data.sentences[i] );
 			$scope.offset++;
 		}
@@ -83,8 +89,13 @@ function Sentences( $scope, $http ) {
 	$scope.predicate = function( sentence ) {
 		if( $scope.order == 'id' ) {
 			return sentence.sentence_id;
+		} else if( sentence.translations.length == 1 ) {
+			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
 		} else {
-			return sentence.translations[0].metrics[$scope.currentMetric];
+			var metricA = parseFloat( sentence.translations[0].metrics[$scope.currentMetric] ); 
+			var metricB = parseFloat( sentence.translations[1].metrics[$scope.currentMetric] ); 
+			console.log( metricA - metricB );
+			return metricA - metricB;
 		}
 	}
 };
@@ -104,7 +115,7 @@ function Sentences( $scope, $http ) {
 
 	<ul >
 		<li
-			ng-repeat="sentence in sentences | orderBy:predicate:asc"
+			ng-repeat="sentence in sentences | orderBy:predicate:!asc"
 			class="sentence"
 			data-id="{{ sentence.sentence_id }}">
 
@@ -112,9 +123,10 @@ function Sentences( $scope, $http ) {
 			<div class="reference">{{ sentence.reference }}</div>
 
 			<div ng-repeat="translation in sentence.translations" class="translation">
-				<div class="text">{{ translation.text}}</div>
+				<div class="text">{{ translation.text }}</div>
 				<div class="metric">{{ translation.metrics[currentMetric] }}</div>
 			</div>
+			<strong class="diff-metric">{{ sentence.diff }}</strong>
 			<hr><br><br>
 		</li>
 	</ul>
