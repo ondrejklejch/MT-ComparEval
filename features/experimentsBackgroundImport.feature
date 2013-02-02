@@ -12,6 +12,12 @@ Feature: Experiments background import
 	Scenario: New experiment detection
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
-		And there is no experiment called "new experiment"
-		When I upload experiment called "new experiment"
+		And there is no experiment called "new-experiment"
+		When I upload experiment called "new-experiment"
 		Then experiments watcher should find it 
+
+	Scenario: Imported experiments are not imported again
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When there is already imported experiment called "old-experiment"
+		Then experiments watcher should not find it

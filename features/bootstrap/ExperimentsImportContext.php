@@ -37,6 +37,27 @@ class ExperimentsImportContext extends BehatContext {
 	}
 
 	/**
+	 * @Given /^experiments watcher is running$/
+	 */
+	public function experimentsWatcherIsRunning() {
+		self::$watcher = new ExperimentsWatcher( $this->dataFolder );
+		self::$watcher->start();
+	}
+
+	/**
+	 * @When /^there is already imported experiment called "([^"]*)"$/
+	 */
+	public function thereIsAlreadyImportedExperimentCalled( $experimentName ) {
+		$experimentFolder = $this->dataFolder . '/' . $experimentName;
+		$importedLock = $experimentFolder . '/.imported';
+
+		if( !file_exists( $experimentFolder ) ) {
+			mkdir( $experimentFolder );
+			touch( $importedLock );	
+		};
+	}
+
+	/**
 	 * @When /^I start experiments watcher$/
 	 */
 	public function iStartExperimentsWatcher() {
@@ -45,60 +66,42 @@ class ExperimentsImportContext extends BehatContext {
 	}
 
 	/**
-	 * @Then /^experiments watcher should watch that folder$/
-	 */
-	public function experimentsWatcherShouldWatchThatFolder() {
-		$logContents = self::$watcher->getOutput();	
-		$expectedMessage = 'Experiments watcher is watching folder: ./data';
-
-		$this->assert( strpos( $logContents, $expectedMessage ) !== FALSE, 'Experiments watcher is not watching given folder' );
-	}
-
-	/**
-	 * @Given /^experiments watcher is running$/
-	 */
-	public function experimentsWatcherIsRunning() {
-		self::$watcher = new ExperimentsWatcher( $this->dataFolder );
-		self::$watcher->start();
-	}
-
-
-	/**
 	 * @When /^I upload experiment called "([^"]*)"$/
 	 */
 	public function iUploadExperimentCalled( $experimentName ) {
+		echo "uploading";
 		$experimentFolder = $this->dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
+	}
+
+	/**
+	 * @Then /^experiments watcher should watch that folder$/
+	 */
+	public function experimentsWatcherShouldWatchThatFolder() {
+		$pattern = 'Experiments watcher is watching folder: ./data';
+		$message =  'Experiments watcher is not watching given folder';
+
+		$this->assertLogContains( $pattern, $message );
 	}
 
 	/**
 	 * @Then /^experiments watcher should find it$/
 	 */
 	public function experimentsWatcherShouldFindIt() {
-		$logContents = self::$watcher->getOutput();	
-		$expectedMessage = 'New experiment called new-experiment was found';
-		
-		$this->assert( strpos( $logContents, $expectedMessage ) !== FALSE, 'New experiment was not found' );
+		$pattern = 'New experiment called new-experiment was found';
+		$message = 'New experiment was not found';
+
+		$this->assertLogContains( $pattern, $message );
 	}
 
-	private function getWatcherOutput( $timeout = 2 ) {
-		$endTime = time() + $timeout;
-		$lastTime = time();
+	/**
+	 * @Then /^experiments watcher should not find it$/
+	 */
+	public function experimentsWatcherShouldNotFindIt() {
+		$pattern = 'New experiment called old-experiment was found';
+		$message = 'Imported experiment was found';
 
-		$output = "";
-		while( !feof( $this->handle ) ) {
-			$stats = fstat( $this->handle );
-			if( $lastTime <= $stats['mtime'] ) {
-				$output .= fgets( $this->handle );
-			}
-
-			$lastTime = time();
-			if( $lastTime >= $endTime ) { 
-				break;
-			}
-		}
-
-		return $output;
+		$this->assertLogDoesNotContain( $pattern, $message );
 	}
 
 	/**
@@ -106,6 +109,21 @@ class ExperimentsImportContext extends BehatContext {
 	 */
 	public static function closeWatcher() {
 		self::$watcher->kill();
+
+		`rm -rf data/*`;
+	}
+
+	
+	private function assertLogContains( $pattern, $message ) {
+		$logContents = self::$watcher->getOutput();
+		
+		$this->assert( strpos( $logContents, $pattern ) !== FALSE, $message );
+	}
+
+	private function assertLogDoesNotContain( $pattern, $message ) {
+		$logContents = self::$watcher->getOutput();
+		
+		$this->assert( strpos( $logContents, $pattern ) === FALSE, $message );
 	}
 
 	private function assert( $condition, $message ) {

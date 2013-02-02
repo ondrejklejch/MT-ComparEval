@@ -16,12 +16,14 @@ class ExperimentsWatcher {
 	}
 	
 	public function kill() {
-		pclose( $this->handle );
+		if( is_resource( $this->handle ) ) {
+			pclose( $this->handle );
+		}
 	}
 
-	public function getOutput( $timeout = 0.5 ) {
+	public function getOutput( $timeout = 1 ) {
 		$microtime = microtime( TRUE ) + $timeout;
-		$lastTime = time();
+		$lastTime = 0;
 
 		$result = "";
 		while( !feof( $this->handle ) ) {
