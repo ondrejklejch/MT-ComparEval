@@ -25,7 +25,7 @@ common:
 	services:
 		sentences: Sentences
 		authenticator: Authenticator
-		routerFactory: RouterFactory
+		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
 
 
