@@ -69,7 +69,6 @@ class ExperimentsImportContext extends BehatContext {
 	 * @When /^I upload experiment called "([^"]*)"$/
 	 */
 	public function iUploadExperimentCalled( $experimentName ) {
-		echo "uploading";
 		$experimentFolder = $this->dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
 	}

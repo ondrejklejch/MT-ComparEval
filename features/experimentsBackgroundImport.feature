@@ -8,7 +8,6 @@ Feature: Experiments background import
 		When I start experiments watcher
 		Then experiments watcher should watch that folder		
 
-
 	Scenario: New experiment detection
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running

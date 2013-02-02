@@ -3,7 +3,9 @@
 
 class ExperimentsWatcher {
 
-	private $handle;
+	private $pid;
+	private $log;
+	private $error;
 	private $folder;
 
 	public function __construct( $folder ) {
@@ -11,34 +13,28 @@ class ExperimentsWatcher {
 	}
 
 	public function start() {
-		$cmd = sprintf( "php -f www/index.php Background:Experiments:watch --folder=%s", $this->folder ); 
-		$this->handle = popen( $cmd, "r" );
+		$hash = md5( microtime() );
+		$this->log = "/tmp/" . $hash . ".log"; 
+		$this->error = "/tmp/" . $hash . ".error.log"; 
+
+		$cmd = sprintf(
+			"nohup php -f www/index.php Background:Experiments:watch --folder=%s > %s 2> %s & echo $!",
+			$this->folder, $this->log, $this->error
+		); 
+
+		$this->pid = exec( $cmd );
+		usleep( 200000 );
 	}
 	
 	public function kill() {
-		if( is_resource( $this->handle ) ) {
-			pclose( $this->handle );
-		}
+		@posix_kill( $this->pid, 9 );
+		@unlink( $this->log );
+		@unlink( $this->error );
 	}
 
 	public function getOutput( $timeout = 1 ) {
-		$microtime = microtime( TRUE ) + $timeout;
-		$lastTime = 0;
-
-		$result = "";
-		while( !feof( $this->handle ) ) {
-			$stats = fstat( $this->handle );
-			if( $lastTime <= $stats['mtime'] ) {
-				$result .= fgets( $this->handle );
-			}
-
-			$lastTime = time();
-			if( microtime( TRUE ) >= $microtime ) { 
-				break;
-			}
-		}
-	
-		return $result;
+		sleep( $timeout );
+		return file_get_contents( $this->log );
 	}
 
 }
