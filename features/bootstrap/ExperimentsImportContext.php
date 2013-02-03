@@ -94,6 +94,16 @@ class ExperimentsImportContext extends BehatContext {
 	}
 
 	/**
+	 * @Then /^experiments watcher should find only once$/
+	 */
+	public function experimentsWatcherShouldFindOnlyOnce() {
+		$pattern = 'New experiment called new-experiment was found';
+		$message = 'New experiment was not found only once';
+
+		$this->assertLogContainsExactlyOccurences( $pattern, $message, 1 );
+	}
+
+	/**
 	 * @Then /^experiments watcher should not find it$/
 	 */
 	public function experimentsWatcherShouldNotFindIt() {
@@ -117,6 +127,12 @@ class ExperimentsImportContext extends BehatContext {
 		$logContents = self::$watcher->getOutput();
 		
 		$this->assert( strpos( $logContents, $pattern ) !== FALSE, $message );
+	}
+
+	private function assertLogContainsExactlyOccurences( $pattern, $message, $occurences ) {
+		$logContents = self::$watcher->getOutput();
+
+		$this->assert( substr_count( $logContents, $pattern ) == $occurences, $message );
 	}
 
 	private function assertLogDoesNotContain( $pattern, $message ) {

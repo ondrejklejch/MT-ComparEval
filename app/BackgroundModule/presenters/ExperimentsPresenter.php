@@ -15,6 +15,7 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				}
 
 				echo "New experiment called ". $experiment->getBaseName() ." was found\n";
+				touch( $experiment->getPathname() . '/.imported' );
 			}
 
 			usleep( 500000 );
