@@ -1,5 +1,5 @@
 {
-    "hash": "c8ced4d40e4bc7b3beaf57b5dbb9b22c",
+    "hash": "0f75044e322638d9624d1dfd6e631596",
     "packages": [
         {
             "name": "PHPTestCase",
@@ -350,16 +350,16 @@
         },
         {
             "name": "nette/nette",
-            "version": "v2.0.8",
+            "version": "dev-v2.0.8-fixed-sqlite",
             "source": {
                 "type": "git",
-                "url": "http://github.com/nette/nette",
-                "reference": "v2.0.8"
+                "url": "https://github.com/choko/nette",
+                "reference": "a434e262b4290d93f153d130d690944bb7164b89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/nette/nette/archive/v2.0.8.zip",
-                "reference": "v2.0.8",
+                "url": "https://github.com/choko/nette/archive/a434e262b4290d93f153d130d690944bb7164b89.zip",
+                "reference": "a434e262b4290d93f153d130d690944bb7164b89",
                 "shasum": ""
             },
             "require": {
@@ -377,20 +377,19 @@
                 "ext-gd": "*",
                 "ext-fileinfo": "*"
             },
-            "time": "2013-01-01 20:42:38",
+            "time": "2013-02-03 19:29:05",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-master": "2.1-dev"
                 }
             },
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "files": [
                     "Nette/loader.php"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause",
                 "GPL-2.0",
@@ -409,19 +408,22 @@
             "description": "Nette Framework - innovative framework for fast and easy development of secured web applications in PHP. Write less, have cleaner code and your work will bring you joy.",
             "homepage": "http://nette.org",
             "keywords": [
-                "templating",
                 "framework",
+                "mvc",
+                "debugging",
+                "templating",
                 "database",
                 "dbal",
-                "debugging",
-                "mvc",
-                "micro",
-                "Forms",
+                "forms",
                 "latte",
                 "neon",
                 "mailing",
-                "images"
-            ]
+                "images",
+                "micro"
+            ],
+            "support": {
+                "source": "https://github.com/choko/nette/tree/v2.0.8-fixed-sqlite"
+            }
         },
         {
             "name": "symfony/config",
@@ -797,6 +799,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "nette/nette": 20,
         "behat/behat": 0,
         "behat/mink": 0,
         "nette/tester": 20
