@@ -11,14 +11,17 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 			$tasks = \Nette\Utils\Finder::findDirectories( '*/*' )->from( $folder );	
 			foreach( $tasks as $task ) {
 				$experimentFolder = new \SplFileInfo( dirname( $task->getPathname() ) );
-				if( !file_exists( $experimentFolder->getPathname() . '/.imported' ) ) {
+				$experimentsImportedLock = $experimentFolder->getPathname() . '/.imported';
+				if( !file_exists( $experimentsImportedLock ) ) {
 					continue;
 				}
 
-				if( file_exists( $task->getPathname() . '/.imported' ) ) {
+				$taskImportedLock = $task->getPathname() . '/.imported';
+				if( file_exists( $taskImportedLock ) ) {
 					continue;
-				}
-
+				} 
+				
+				touch( $taskImportedLock );
 
 				echo "New task called ". $task->getBaseName() ." was found in experiment " . $experimentFolder->getBaseName() . "\n";
 			}

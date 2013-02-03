@@ -27,7 +27,7 @@ class BackgroundCommandWatcher {
 	}
 	
 	public function kill() {
-		//@posix_kill( $this->pid, 9 );
+		@posix_kill( $this->pid, 9 );
 		@unlink( $this->log );
 		@unlink( $this->error );
 	}

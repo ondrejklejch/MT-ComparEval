@@ -100,6 +100,16 @@ class TasksImportContext extends BaseImportContext {
 		$this->assertLogDoesNotContain( $pattern, $message );
 	}
 
+	/**
+	 * @Then /^task watcher should find "([^"]*)" in "([^"]*)" only once$/
+	 */
+	public function taskWatcherShouldFindInOnlyOnce( $taskName, $experimentName ) {
+		$pattern = $this->getWatcherMessage( $taskName, $experimentName );
+		$message = 'New task was found more than once';
+		
+		$this->assertLogContainsExactlyOccurences( $pattern, $message, 1 );
+	}
+
 	private function getWatcherMessage( $taskName, $experimentName ) {
 		return sprintf(  'New task called %s was found in experiment %s', $taskName, $experimentName );
 	}

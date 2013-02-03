@@ -26,3 +26,9 @@ Feature: Tasks background import
 		And tasks watcher is running
 		When there is already imported task called "old-task" in "old-experiment"
 		Then tasks watcher should not find "old-task" in "old-experiment"
+
+	Scenario: New task is imported only once
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		Then task watcher should find "new-task" in "old-experiment" only once
