@@ -6,10 +6,15 @@ class BackgroundCommandWatcher {
 	private $log;
 	private $error;
 	private $folder;
+	private $isRunning = FALSE;
 
 	public function __construct( $name, $folder ) {
 		$this->name = $name;
 		$this->folder = $folder;
+	}
+
+	public function __destruct() {
+		$this->kill();
 	}
 
 	public function start() {
@@ -23,13 +28,19 @@ class BackgroundCommandWatcher {
 		); 
 
 		$this->pid = exec( $cmd );
+		$this->isRunning = TRUE;
 		usleep( 200000 );
 	}
 	
 	public function kill() {
+		if( !$this->isRunning ) {
+			return;
+		}
+
 		@posix_kill( $this->pid, 9 );
 		@unlink( $this->log );
 		@unlink( $this->error );
+		$this->isRunning = FALSE;
 	}
 
 	public function getOutput( $timeout = 1 ) {

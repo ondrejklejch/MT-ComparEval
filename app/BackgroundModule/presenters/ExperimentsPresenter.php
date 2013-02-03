@@ -4,21 +4,21 @@ namespace BackgroundModule;
 
 class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 
-	public function renderWatch( $folder ) {
+	public function renderWatch( $folder, $sleep = 500000 ) {
 		echo "Experiments watcher is watching folder: $folder\n";
 		
-		while( true ) {
-			$experiments = \Nette\Utils\Finder::find( '*' )->in( $folder );	
+		while( TRUE ) {
+			usleep( $sleep );
+
+			$experiments = \Nette\Utils\Finder::findDirectories( '*' )
+				->from( $folder )
+				->imported( FALSE );	
 			foreach( $experiments as $experiment ) {
-				if( file_exists( $experiment->getPathname() . '/.imported' ) ) {
-					continue;
-				}
+				$experimentFolder = new \Folder( $experiment );
+				$experimentFolder->lock();
 
-				echo "New experiment called ". $experiment->getBaseName() ." was found\n";
-				touch( $experiment->getPathname() . '/.imported' );
+				echo "New experiment called ". $experimentFolder->getName() ." was found\n";
 			}
-
-			usleep( 500000 );
 		}
 
 		$this->terminate();
