@@ -28,10 +28,35 @@ class TasksImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @Given /^tasks watcher is running$/
+	 */
+	public function tasksWatcherIsRunning() {
+		self::$watcher->start();
+	}
+
+	/**
+	 * @Given /^there is unimported experiment called "([^"]*)"$/
+	 */
+	public function thereIsUnimportedExperimentCalled( $experimentName ) {
+		$experimentFolder = self::$dataFolder . '/' . $experimentName;
+
+		mkdir( $experimentFolder );
+	}
+
+	/**
 	 * @When /^I start tasks watcher$/
 	 */
 	public function iStartTasksWatcher() {
 		self::$watcher->start();
+	}
+
+	/**
+	 * @When /^I upload task called "([^"]*)" to "([^"]*)"$/
+	 */
+	public function iUploadTaskCalledTo( $taskName, $experimentName ) {
+		$taskFolder = self::$dataFolder . '/' . $experimentName . '/' . $taskName;
+
+		mkdir( $taskFolder );
 	}
 
 	/**
@@ -42,6 +67,26 @@ class TasksImportContext extends BaseImportContext {
 		$message =  'Tasks watcher is not watching given folder';
 
 		$this->assertLogContains( $pattern, $message );
+	}
+
+	/**
+	 * @Then /^tasks watcher should find it$/
+	 */
+	public function tasksWatcherShouldFindIt() {
+		$pattern = 'New task called new-task was found in experiment old-experiment';
+		$message = 'New task was not found';
+
+		$this->assertLogContains( $pattern, $message );
+	}
+
+	/**
+	 * @Then /^tasks watcher should not find it$/
+	 */
+	public function tasksWatcherShouldNotFindIt() {
+		$pattern = 'New task called new-task was found in experiment new-experiment';
+		$message = 'New task was not found';
+
+		$this->assertLogDoesNotContain( $pattern, $message );
 	}
 
 }

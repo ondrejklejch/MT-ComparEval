@@ -8,3 +8,15 @@ Feature: Tasks background import
 		Given there is a folder where I can upload tasks
 		When I start tasks watcher
 		Then tasks watcher should watch that folder
+
+	Scenario: New tasks in imported experiments are found
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		Then tasks watcher should find it
+		
+	Scenario: Tasks in unimported experiments are not found
+		Given there is unimported experiment called "new-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "new-experiment"
+		Then tasks watcher should not find it
