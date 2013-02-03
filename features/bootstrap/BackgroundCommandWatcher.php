@@ -1,14 +1,14 @@
 <?php
 
-
-class ExperimentsWatcher {
+class BackgroundCommandWatcher {
 
 	private $pid;
 	private $log;
 	private $error;
 	private $folder;
 
-	public function __construct( $folder ) {
+	public function __construct( $name, $folder ) {
+		$this->name = $name;
 		$this->folder = $folder;
 	}
 
@@ -18,8 +18,8 @@ class ExperimentsWatcher {
 		$this->error = "/tmp/" . $hash . ".error.log"; 
 
 		$cmd = sprintf(
-			"nohup php -f www/index.php Background:Experiments:watch --folder=%s > %s 2> %s & echo $!",
-			$this->folder, $this->log, $this->error
+			"nohup php -f www/index.php Background:%s:watch --folder=%s > %s 2> %s & echo $!",
+			$this->name, $this->folder, $this->log, $this->error
 		); 
 
 		$this->pid = exec( $cmd );

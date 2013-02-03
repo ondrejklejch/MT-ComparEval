@@ -22,6 +22,7 @@ class FeatureContext extends BehatContext {
 	public function __construct(array $parameters)	{
 		$this->useContext( 'detailPage', new DetailPageContext( $parameters ) );
 		$this->useContext( 'experimentsImport', new ExperimentsImportContext( $parameters ) );
+		$this->useContext( 'tasksImport', new TasksImportContext( $parameters ) );
 	}
 
 }

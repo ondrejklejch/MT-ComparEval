@@ -1,9 +1,10 @@
+@experimentsImport @import
 Feature: Experiments background import
 	In order to be able to automate experiments import
 	As a MT developer
 	I need to be able to copy experiment to given folder and create new experiment from it
 
-	Scenario: Experiments watcher watch given folder
+	Scenario: Experiments watcher is watching given folder
 		Given there is a folder where I can upload experiments
 		When I start experiments watcher
 		Then experiments watcher should watch that folder		

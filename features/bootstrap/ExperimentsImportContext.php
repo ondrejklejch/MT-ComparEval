@@ -11,25 +11,27 @@ use Behat\Gherkin\Node\PyStringNode,
 /**
  * Features context.
  */
-class ExperimentsImportContext extends BehatContext {
+class ExperimentsImportContext extends BaseImportContext {
 
-	private static $watcher;
-
-	private $dataFolder = './data';
-
+	/**
+	 * @BeforeScenario @experimentsImport
+	 */	
+	public static function setUp() {
+		self::$watcher = new BackgroundCommandWatcher( 'Experiments', self::$dataFolder );
+	}
 
 	/**
 	 * @Given /^there is a folder where I can upload experiments$/
 	 */
 	public function thereIsAFolderWhereICanUploadExperiments() {
-		$this->assert( is_dir( $this->dataFolder ), 'Target folder does not exist' );
+		$this->assert( is_dir( self::$dataFolder ), 'Target folder does not exist' );
 	}
 
 	/**
 	 * @Given /^there is no experiment called "([^"]*)"$/
 	 */
 	public function thereIsNoExperimentCalled( $experimentName ) {
-		$experimentFolder = $this->dataFolder . '/' . $experimentName;
+		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 
 		if( file_exists( $experimentFolder ) ) {
 			rmdir( $experimentFolder );
@@ -40,7 +42,6 @@ class ExperimentsImportContext extends BehatContext {
 	 * @Given /^experiments watcher is running$/
 	 */
 	public function experimentsWatcherIsRunning() {
-		self::$watcher = new ExperimentsWatcher( $this->dataFolder );
 		self::$watcher->start();
 	}
 
@@ -48,7 +49,7 @@ class ExperimentsImportContext extends BehatContext {
 	 * @When /^there is already imported experiment called "([^"]*)"$/
 	 */
 	public function thereIsAlreadyImportedExperimentCalled( $experimentName ) {
-		$experimentFolder = $this->dataFolder . '/' . $experimentName;
+		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		$importedLock = $experimentFolder . '/.imported';
 
 		if( !file_exists( $experimentFolder ) ) {
@@ -61,7 +62,6 @@ class ExperimentsImportContext extends BehatContext {
 	 * @When /^I start experiments watcher$/
 	 */
 	public function iStartExperimentsWatcher() {
-		self::$watcher = new ExperimentsWatcher( './data' );
 		self::$watcher->start();
 	}
 
@@ -69,7 +69,7 @@ class ExperimentsImportContext extends BehatContext {
 	 * @When /^I upload experiment called "([^"]*)"$/
 	 */
 	public function iUploadExperimentCalled( $experimentName ) {
-		$experimentFolder = $this->dataFolder . '/' . $experimentName;
+		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
 	}
 
@@ -111,42 +111,6 @@ class ExperimentsImportContext extends BehatContext {
 		$message = 'Imported experiment was found';
 
 		$this->assertLogDoesNotContain( $pattern, $message );
-	}
-
-	/**
-	 * @AfterScenario
-	 */
-	public static function closeWatcher() {
-		self::$watcher->kill();
-
-		`rm -rf data/*`;
-	}
-
-	
-	private function assertLogContains( $pattern, $message ) {
-		$logContents = self::$watcher->getOutput();
-		
-		$this->assert( strpos( $logContents, $pattern ) !== FALSE, $message );
-	}
-
-	private function assertLogContainsExactlyOccurences( $pattern, $message, $occurences ) {
-		$logContents = self::$watcher->getOutput();
-
-		$this->assert( substr_count( $logContents, $pattern ) == $occurences, $message );
-	}
-
-	private function assertLogDoesNotContain( $pattern, $message ) {
-		$logContents = self::$watcher->getOutput();
-		
-		$this->assert( strpos( $logContents, $pattern ) === FALSE, $message );
-	}
-
-	private function assert( $condition, $message ) {
-		if( !$condition ) {
-			throw new Exception( $message );
-		}
-
-		return TRUE;
 	}
 
 }
