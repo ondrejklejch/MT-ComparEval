@@ -15,6 +15,10 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 					continue;
 				}
 
+				if( file_exists( $task->getPathname() . '/.imported' ) ) {
+					continue;
+				}
+
 
 				echo "New task called ". $task->getBaseName() ." was found in experiment " . $experimentFolder->getBaseName() . "\n";
 			}

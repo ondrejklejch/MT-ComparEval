@@ -60,6 +60,17 @@ class TasksImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @When /^there is already imported task called "([^"]*)" in "([^"]*)"$/
+	 */
+	public function thereIsAlreadyImportedTaskCalled( $taskName, $experimentName ) {
+		$taskFolder = self::$dataFolder . '/' . $experimentName . '/' . $taskName;
+		$importedLock = $taskFolder . '/.imported';
+
+		mkdir( $taskFolder );
+		touch( $importedLock );	
+	}
+
+	/**
 	 * @Then /^tasks watcher should watch that folder$/
 	 */
 	public function tasksWatcherShouldWatchThatFolder() {
@@ -70,24 +81,29 @@ class TasksImportContext extends BaseImportContext {
 	}
 
 	/**
-	 * @Then /^tasks watcher should find it$/
+	 * @Then /^tasks watcher should find "([^"]*)" in "([^"]*)"$/
 	 */
-	public function tasksWatcherShouldFindIt() {
-		$pattern = 'New task called new-task was found in experiment old-experiment';
+	public function tasksWatcherShouldFindIn( $taskName, $experimentName ) {
+		$pattern = $this->getWatcherMessage( $taskName, $experimentName );
 		$message = 'New task was not found';
 
 		$this->assertLogContains( $pattern, $message );
 	}
 
 	/**
-	 * @Then /^tasks watcher should not find it$/
+	 * @Then /^tasks watcher should not find "([^"]*)" in "([^"]*)"$/
 	 */
-	public function tasksWatcherShouldNotFindIt() {
-		$pattern = 'New task called new-task was found in experiment new-experiment';
-		$message = 'New task was not found';
+	public function tasksWatcherShouldNotFindIn( $taskName, $experimentName ) {
+		$pattern = $this->getWatcherMessage( $taskName, $experimentName );
+		$message = 'New task was found';
 
 		$this->assertLogDoesNotContain( $pattern, $message );
 	}
+
+	private function getWatcherMessage( $taskName, $experimentName ) {
+		return sprintf(  'New task called %s was found in experiment %s', $taskName, $experimentName );
+	}
+
 
 }
 

@@ -13,10 +13,16 @@ Feature: Tasks background import
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
 		When I upload task called "new-task" to "old-experiment"
-		Then tasks watcher should find it
+		Then tasks watcher should find "new-task" in "old-experiment"
 		
 	Scenario: Tasks in unimported experiments are not found
 		Given there is unimported experiment called "new-experiment"
 		And tasks watcher is running
 		When I upload task called "new-task" to "new-experiment"
-		Then tasks watcher should not find it
+		Then tasks watcher should not find "new-task" in "new-experiment"
+
+	Scenario: Imported tasks are not imported again 
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When there is already imported task called "old-task" in "old-experiment"
+		Then tasks watcher should not find "old-task" in "old-experiment"
