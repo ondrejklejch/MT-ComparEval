@@ -137,7 +137,7 @@ class ExperimentsImportContext extends BaseImportContext {
 	 * @Then /^experiments watcher should use "([^"]*)" for "([^"]*)" in "([^"]*)"$/
 	 */
 	public function experimentsWatcherShouldUseForIn( $file, $resource, $experimentName ) {
-		$pattern = "Using $file as $resource source in $experimentName";		
+		$pattern = "$file will be used as a $resource source in $experimentName";		
 		$message = "Using bad source for sentences"; 
 
 		$this->assertLogContains( $pattern, $message );
