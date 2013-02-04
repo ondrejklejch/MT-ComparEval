@@ -151,8 +151,8 @@ class ExperimentsImportContext extends BaseImportContext {
 	 */
 	public function experimentsWatcherShouldComplainAboutMissingFor( $resource, $experimentName ) {
 		$pattern = "Missing $resource in $experimentName";
-		$message = "Missing file with source sentences";
-
+		$message = "Missing file with $resource sentences";
+		
 		$this->assertLogContains( $pattern, $message );
 	}
 
@@ -176,7 +176,7 @@ class ExperimentsImportContext extends BaseImportContext {
 	public function experimentsWatcherShouldSayThatHas( $experimentName, $count, $resource ) {
 		$pattern = "$experimentName has $count $resource";
 		$message = "Number of resources parsed correctly";
-
+		
 		$this->assertLogContains( $pattern, $message );
 	}
 

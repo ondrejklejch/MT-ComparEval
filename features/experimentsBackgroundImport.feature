@@ -46,6 +46,12 @@ Feature: Experiments background import
 		source: config-source.txt
 		reference: config-reference.txt
 		"""
+		And "new-experiment" has "config-source.txt" with contents:
+		"""
+		"""
+		And "new-experiment" has "config-reference.txt" with contents:
+		"""
+		"""
 		Then experiments watcher should use "config-source.txt" for "source sentences" in "new-experiment"
 		Then experiments watcher should use "config-reference.txt" for "reference sentences" in "new-experiment"
 	
