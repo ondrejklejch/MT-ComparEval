@@ -74,6 +74,17 @@ class ExperimentsImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @Given /^I forget to upload "([^"]*)" for "([^"]*)"$/
+	 */
+	public function iForgetToUploadFor( $file, $experimentName ) {
+		$path = self::$dataFolder . '/' . $experimentName . '/'. $file;
+
+		if( file_exists( $path ) ) {
+			unlink( $path );
+		}
+	}
+
+	/**
 	 * @Then /^experiments watcher should watch that folder$/
 	 */
 	public function experimentsWatcherShouldWatchThatFolder() {
@@ -111,6 +122,16 @@ class ExperimentsImportContext extends BaseImportContext {
 		$message = 'Imported experiment was found';
 
 		$this->assertLogDoesNotContain( $pattern, $message );
+	}
+
+	/**
+	 * @Then /^experiments watcher should use "([^"]*)" for "([^"]*)" in "([^"]*)"$/
+	 */
+	public function experimentsWatcherShouldUseForIn( $file, $resource, $experimentName ) {
+		$pattern = "Using $file as $resource source in $experimentName";		
+		$message = "Using bad source for sentences"; 
+
+		$this->assertLogContains( $pattern, $message );
 	}
 
 }

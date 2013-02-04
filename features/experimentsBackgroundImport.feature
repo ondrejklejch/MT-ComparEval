@@ -28,3 +28,12 @@ Feature: Experiments background import
 		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		Then experiments watcher should find only once 
+
+	Scenario: Watcher is using default paths without config
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		And I forget to upload "config.neon" for "new-experiment"
+		Then experiments watcher should use "source.txt" for "source sentences" in "new-experiment"
+		Then experiments watcher should use "reference.txt" for "reference sentences" in "new-experiment"
+

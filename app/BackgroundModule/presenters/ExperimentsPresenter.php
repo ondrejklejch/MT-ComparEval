@@ -17,7 +17,10 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				$experimentFolder = new \Folder( $experiment );
 				$experimentFolder->lock();
 
-				echo "New experiment called ". $experimentFolder->getName() ." was found\n";
+				$experimentName = $experimentFolder->getName();
+				echo "New experiment called $experimentName was found\n";
+				echo "Using source.txt as source sentences source in $experimentName\n";		
+				echo "Using reference.txt as reference sentences source in $experimentName\n";		
 			}
 		}
 
