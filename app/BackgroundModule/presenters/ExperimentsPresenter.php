@@ -23,6 +23,14 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				echo "New experiment called $experimentName was found\n";
 				echo "Using {$config['source']} as source sentences source in $experimentName\n";		
 				echo "Using {$config['reference']} as reference sentences source in $experimentName\n";		
+
+				if( !$experimentFolder->fileExists( $config['source'] ) ) {
+					echo "Missing source sentences in $experimentName\n";
+				} 
+
+				if( !$experimentFolder->fileExists( $config['reference'] ) ) {
+					echo "Missing reference sentences in $experimentName\n";
+				}
 			}
 		}
 

@@ -143,4 +143,13 @@ class ExperimentsImportContext extends BaseImportContext {
 		$this->assertLogContains( $pattern, $message );
 	}
 
+	/**
+	 * @Then /^experiments watcher should complain about missing "([^"]*)" for "([^"]*)"$/
+	 */
+	public function experimentsWatcherShouldComplainAboutMissingFor( $resource, $experimentName ) {
+		$pattern = "Missing $resource in $experimentName";
+		$message = "Missing file with source sentences";
+
+		$this->assertLogContains( $pattern, $message );
+	}
 }
