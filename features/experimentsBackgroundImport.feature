@@ -101,3 +101,21 @@ Feature: Experiments background import
 			| source.txt	| source sentences	|
 			| reference.txt	| reference sentences	|
 	
+	Scenario: Watcher asserts that has correct number of source/reference sentences
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		And "new-experiment" has "source.txt" with contents:
+		"""
+		Line1
+		Line2
+		Line3
+		"""
+		And "new-experiment" has "reference.txt" with contents:
+		"""
+		Line1
+		Line2
+		"""
+		Then experiments watcher should say that "new-experiment" has bad source/reference count
+
+

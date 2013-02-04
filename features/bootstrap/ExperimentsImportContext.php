@@ -180,4 +180,14 @@ class ExperimentsImportContext extends BaseImportContext {
 		$this->assertLogContains( $pattern, $message );
 	}
 
+	/**
+	 * @Then /^experiments watcher should say that "([^"]*)" has bad source\/reference count$/
+	 */
+	public function experimentsWatcherShouldSayThatHasBadSourceReferenceCount( $experimentName ) {
+		$pattern = "$experimentName has bad number of source/reference sentences";
+		$message = "Number of source/reference sentences doesn't match";
+
+		$this->assertLogContains( $pattern, $message );
+	}
+
 }

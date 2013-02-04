@@ -30,8 +30,8 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 					echo "Starting parsing of source sentences located in {$config['source']} for $experimentName\n";
 
 					$sentences =  $this->getSentences( $experimentFolder, $config['source'] );
-					$count = count( $sentences );
-					echo "$experimentName has $count source sentences\n";
+					$sourceCount = count( $sentences );
+					echo "$experimentName has $sourceCount source sentences\n";
 				} 
 
 				if( !$experimentFolder->fileExists( $config['reference'] ) ) {
@@ -40,8 +40,12 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 					echo "Starting parsing of reference sentences located in {$config['reference']} for $experimentName\n";
 
 					$sentences =  $this->getSentences( $experimentFolder, $config['reference'] );
-					$count = count( $sentences );
-					echo "$experimentName has $count reference sentences\n";
+					$referenceCount = count( $sentences );
+					echo "$experimentName has $referenceCount reference sentences\n";
+				}
+
+				if( $sourceCount != $referenceCount ) {
+					echo "$experimentName has bad number of source/reference sentences\n";
 				}
 				
 			}
