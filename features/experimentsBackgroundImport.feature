@@ -41,7 +41,7 @@ Feature: Experiments background import
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
 		When I upload experiment called "new-experiment"
-		And "new-experiment" has config:
+		And "new-experiment" has "config.neon" with contents:
 		"""
 		source: config-source.txt
 		reference: config-reference.txt
@@ -53,7 +53,7 @@ Feature: Experiments background import
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
 		When I upload experiment called "new-experiment"
-		And "new-experiment" has config:
+		And "new-experiment" has "config.neon" with contents:
 		"""
 		"""
 		Then experiments watcher should use "source.txt" for "source sentences" in "new-experiment"
@@ -83,3 +83,21 @@ Feature: Experiments background import
 			| file		| source		|
 			| source.txt	| source sentences	|
 			| reference.txt	| reference sentences	|
+
+	Scenario Outline: Watcher can parse sentences from files
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		And "new-experiment" has "<file>" with contents:
+		"""
+		Line1
+		Line2
+		Line3
+		"""
+		Then experiments watcher should say that "new-experiment" has 3 "<source>"
+
+		Examples:
+			| file		| source		|
+			| source.txt	| source sentences	|
+			| reference.txt	| reference sentences	|
+	

@@ -27,19 +27,35 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				if( !$experimentFolder->fileExists( $config['source'] ) ) {
 					echo "Missing source sentences in $experimentName\n";
 				} else {
-					echo "Starting parsing of source sentences located in {$config['source']} for $experimentName";
+					echo "Starting parsing of source sentences located in {$config['source']} for $experimentName\n";
+
+					$sentences =  $this->getSentences( $experimentFolder, $config['source'] );
+					$count = count( $sentences );
+					echo "$experimentName has $count source sentences\n";
 				} 
 
 				if( !$experimentFolder->fileExists( $config['reference'] ) ) {
 					echo "Missing reference sentences in $experimentName\n";
 				} else {
-					echo "Starting parsing of reference sentences located in {$config['reference']} for $experimentName";
+					echo "Starting parsing of reference sentences located in {$config['reference']} for $experimentName\n";
+
+					$sentences =  $this->getSentences( $experimentFolder, $config['reference'] );
+					$count = count( $sentences );
+					echo "$experimentName has $count reference sentences\n";
 				}
 				
 			}
 		}
 
 		$this->terminate();
+	}
+
+	
+	private function getSentences( \Folder $experimentFolder, $filename ) {
+		$filepath = $experimentFolder->getChildrenPath( $filename );
+		$contents = trim( file_get_contents( $filepath ) );
+
+		return explode( "\n", $contents );
 	}
 
 

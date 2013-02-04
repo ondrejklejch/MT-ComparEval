@@ -88,12 +88,12 @@ class ExperimentsImportContext extends BaseImportContext {
 	}
 
 	/**
-	 * @Given /^"([^"]*)" has config:$/
+	 * @Given /^"([^"]*)" has "([^"]*)" with contents:$/
 	 */
-	public function hasConfig( $experimentName, PyStringNode $config ) {
-		$path = self::$dataFolder . '/' . $experimentName . '/config.neon';
+	public function hasWithContents( $experimentName, $filename, PyStringNode $contents ) {
+		$path = self::$dataFolder . '/' . $experimentName . '/' . $filename;
 
-		file_put_contents( $path, (string) $config );
+		file_put_contents( $path, (string) $contents );
 	}
 
 	/**
@@ -168,6 +168,16 @@ class ExperimentsImportContext extends BaseImportContext {
 		} else {
 			$this->assertLogContains( $pattern, $message );
 		}
+	}
+
+	/**
+	 * @Then /^experiments watcher should say that "([^"]*)" has (\d+) "([^"]*)"$/
+	 */
+	public function experimentsWatcherShouldSayThatHas( $experimentName, $count, $resource ) {
+		$pattern = "$experimentName has $count $resource";
+		$message = "Number of resources parsed correctly";
+
+		$this->assertLogContains( $pattern, $message );
 	}
 
 }
