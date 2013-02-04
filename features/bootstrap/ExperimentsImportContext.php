@@ -71,6 +71,9 @@ class ExperimentsImportContext extends BaseImportContext {
 	public function iUploadExperimentCalled( $experimentName ) {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
+
+		touch( $experimentFolder . '/source.txt' );
+		touch( $experimentFolder . '/reference.txt' );
 	}
 
 	/**
@@ -152,4 +155,19 @@ class ExperimentsImportContext extends BaseImportContext {
 
 		$this->assertLogContains( $pattern, $message );
 	}
+
+	/**
+	 * @Then /^experiments watcher should (not )?parse "([^"]*)" in "([^"]*)" for "([^"]*)"$/
+	 */
+	public function experimentsWatcherShouldParseInFor( $shouldNotParse, $resource, $file, $experimentName ) {
+		$pattern = "Starting parsing of $resource located in $file for $experimentName";
+		$message = "Parsing of resources didn't start";
+
+		if( $shouldNotParse ) {
+			$this->assertLogDoesNotContain( $pattern, $message );
+		} else {
+			$this->assertLogContains( $pattern, $message );
+		}
+	}
+
 }

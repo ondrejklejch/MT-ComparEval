@@ -65,9 +65,21 @@ Feature: Experiments background import
 		When I upload experiment called "new-experiment"
 		And I forget to upload "<file>" for "new-experiment"
 		Then experiments watcher should complain about missing "<source>" for "new-experiment"
+		Then experiments watcher should not parse "<source>" in "<file>" for "new-experiment"
 
 		Examples:
 			| file		| source		|
 			| source.txt	| source sentences 	|
 			| reference.txt	| reference sentences	|
 
+
+	Scenario Outline: Watcher will inform that is starting to parse resource
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		Then experiments watcher should parse "<source>" in "<file>" for "new-experiment"
+
+		Examples:
+			| file		| source		|
+			| source.txt	| source sentences	|
+			| reference.txt	| reference sentences	|

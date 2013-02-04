@@ -26,11 +26,16 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 
 				if( !$experimentFolder->fileExists( $config['source'] ) ) {
 					echo "Missing source sentences in $experimentName\n";
+				} else {
+					echo "Starting parsing of source sentences located in {$config['source']} for $experimentName";
 				} 
 
 				if( !$experimentFolder->fileExists( $config['reference'] ) ) {
 					echo "Missing reference sentences in $experimentName\n";
+				} else {
+					echo "Starting parsing of reference sentences located in {$config['reference']} for $experimentName";
 				}
+				
 			}
 		}
 
