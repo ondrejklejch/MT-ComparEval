@@ -57,7 +57,7 @@ Feature: Experiments background import
 		"""
 		"""
 		Then experiments watcher should use "source.txt" for "source sentences" in "new-experiment"
-		Then experiments watcher should use "reference.txt" for "reference sentences" in "new-experiment"
+		And experiments watcher should use "reference.txt" for "reference sentences" in "new-experiment"
 
 	Scenario Outline: Watcher is complaining about missing sources
 		Given there is a folder where I can upload experiments
@@ -65,7 +65,8 @@ Feature: Experiments background import
 		When I upload experiment called "new-experiment"
 		And I forget to upload "<file>" for "new-experiment"
 		Then experiments watcher should complain about missing "<source>" for "new-experiment"
-		Then experiments watcher should not parse "<source>" in "<file>" for "new-experiment"
+		And experiments watcher should not parse "<source>" in "<file>" for "new-experiment"
+		And experiments watcher should abort parsing of "new-experiment" 
 
 		Examples:
 			| file		| source		|
@@ -117,5 +118,8 @@ Feature: Experiments background import
 		Line2
 		"""
 		Then experiments watcher should say that "new-experiment" has bad source/reference count
+		And experiments watcher should abort parsing of "new-experiment" 
+
+
 
 

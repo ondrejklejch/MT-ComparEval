@@ -24,30 +24,28 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				echo "{$config['source']} will be used as a source sentences source in $experimentName\n";		
 				echo "{$config['reference']} will be used as a reference sentences source in $experimentName\n";		
 
-				if( !$experimentFolder->fileExists( $config['source'] ) ) {
-					echo "Missing source sentences in $experimentName\n";
-				} else {
-					echo "Starting parsing of source sentences located in {$config['source']} for $experimentName\n";
-
-					$sentences =  $this->getSentences( $experimentFolder, $config['source'] );
-					$sourceCount = count( $sentences );
-					echo "$experimentName has $sourceCount source sentences\n";
-				} 
-
-				if( !$experimentFolder->fileExists( $config['reference'] ) ) {
-					echo "Missing reference sentences in $experimentName\n";
-				} else {
-					echo "Starting parsing of reference sentences located in {$config['reference']} for $experimentName\n";
-
-					$sentences =  $this->getSentences( $experimentFolder, $config['reference'] );
-					$referenceCount = count( $sentences );
-					echo "$experimentName has $referenceCount reference sentences\n";
+				foreach( array( 'source', 'reference' ) as $resource ) {
+					if( !$experimentFolder->fileExists( $config[$resource] ) ) {
+						echo "Missing $resource sentences in $experimentName\n";
+						echo "Parsing of $experimentName aborted!";
+						continue 2;
+					}
 				}
 
-				if( $sourceCount != $referenceCount ) {
+				$sentences = array();
+				foreach( array( 'source', 'reference' ) as $resource ) {
+					echo "Starting parsing of $resource sentences located in {$config[$resource]} for $experimentName\n";
+					$sentences[$resource] =  $this->getSentences( $experimentFolder, $config[$resource] );
+					$count = count( $sentences[$resource] );
+
+					echo "$experimentName has $count $resource sentences\n";
+				}
+
+				if( count( $sentences['source'] ) != count( $sentences['reference'] ) ) {
 					echo "$experimentName has bad number of source/reference sentences\n";
+					echo "Parsing of $experimentName aborted!";
+					continue;
 				}
-				
 			}
 		}
 

@@ -190,4 +190,14 @@ class ExperimentsImportContext extends BaseImportContext {
 		$this->assertLogContains( $pattern, $message );
 	}
 
+	/**
+	 * @Given /^experiments watcher should abort parsing of "([^"]*)"$/
+	 */
+	public function experimentsWatcherShouldAbortParsingOf( $experimentName ) {
+		$pattern = "Parsing of $experimentName aborted!";
+		$message = "Parsing of experiment aborted due to incorrect input";
+
+		$this->assertLogContains( $pattern, $message );
+	}
+
 }
