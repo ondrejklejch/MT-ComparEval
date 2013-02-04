@@ -85,6 +85,15 @@ class ExperimentsImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @Given /^"([^"]*)" has config:$/
+	 */
+	public function hasConfig( $experimentName, PyStringNode $config ) {
+		$path = self::$dataFolder . '/' . $experimentName . '/config.neon';
+
+		file_put_contents( $path, (string) $config );
+	}
+
+	/**
 	 * @Then /^experiments watcher should watch that folder$/
 	 */
 	public function experimentsWatcherShouldWatchThatFolder() {
