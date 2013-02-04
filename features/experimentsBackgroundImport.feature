@@ -49,3 +49,12 @@ Feature: Experiments background import
 		Then experiments watcher should use "config-source.txt" for "source sentences" in "new-experiment"
 		Then experiments watcher should use "config-reference.txt" for "reference sentences" in "new-experiment"
 	
+	Scenario: Watcher is using default paths if path is missing in config.neon
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		And "new-experiment" has config:
+		"""
+		"""
+		Then experiments watcher should use "source.txt" for "source sentences" in "new-experiment"
+		Then experiments watcher should use "reference.txt" for "reference sentences" in "new-experiment"

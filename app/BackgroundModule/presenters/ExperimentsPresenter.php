@@ -31,15 +31,24 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 
 
 	private function getConfig( \Folder $experimentFolder ) {
+		$config = array();
 		if( $experimentFolder->fileExists( 'config.neon' ) ) {
 			$path = $experimentFolder->getChildrenPath( 'config.neon' );
 
-			return \Nette\Utils\Neon::decode( file_get_contents( $path ) );
+			$config = (array) \Nette\Utils\Neon::decode( file_get_contents( $path ) );
+		}
+
+		$config['source'] = $this->getFromArrayWithDefault( $config, 'source', 'source.txt' ); 
+		$config['reference'] = $this->getFromArrayWithDefault( $config, 'reference', 'reference.txt' ); 
+
+		return $config;
+	}
+
+	private function getFromArrayWithDefault( $array, $key, $default ) {
+		if( isset( $array[ $key ] ) ) {
+			return $array[ $key ];
 		} else {
-			return array(
-				'source' => 'source.txt',
-				'reference' => 'reference.txt'
-			);
+			return $default;
 		}
 	}
 
