@@ -49,3 +49,13 @@ Feature: Tasks background import
 		translation: config-translation.txt
 		"""
 		Then tasks watcher should use "config-translation.txt" for "translation sentences" in "new-task"
+
+	Scenario: Watcher is using default paths if path is missing in config.neon
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And "old-experiment/new-task" has "config.neon" with contents:
+		"""
+		"""
+		Then tasks watcher should use "translation.txt" for "translation sentences" in "new-task"
+
