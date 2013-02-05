@@ -39,3 +39,13 @@ Feature: Tasks background import
 		When I upload task called "new-task" to "old-experiment"
 		And I forget to upload "config.neon" for "old-experiment/new-task"
 		Then tasks watcher should use "translation.txt" for "translation sentences" in "new-task"
+
+	Scenario: Watcher is using paths provided in config.neon
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And "old-experiment/new-task" has "config.neon" with contents:
+		"""
+		translation: config-translation.txt
+		"""
+		Then tasks watcher should use "config-translation.txt" for "translation sentences" in "new-task"
