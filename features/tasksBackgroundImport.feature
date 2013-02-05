@@ -59,3 +59,10 @@ Feature: Tasks background import
 		"""
 		Then tasks watcher should use "translation.txt" for "translation sentences" in "new-task"
 
+	Scenario: Watcher is complaining about missing resources
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And I forget to upload "translation.txt" for "old-experiment/new-task"
+		Then tasks watcher should complain about missing "translation sentences" for "new-task"
+

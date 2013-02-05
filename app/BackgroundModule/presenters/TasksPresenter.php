@@ -32,7 +32,10 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				$config = $this->getConfig( $taskFolder );
 
 				echo "New task called $taskName was found in experiment $experimentName\n";
-				echo "{$config['translation']} will be used as a translation sentences source in $taskName";		
+				echo "{$config['translation']} will be used as a translation sentences source in $taskName\n";		
+				if( !file_exists( $config['translation'] ) ) {
+					echo "Missing translation sentences in $taskName\n";
+				}	
 			}
 		}
 

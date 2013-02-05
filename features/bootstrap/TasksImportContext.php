@@ -124,5 +124,15 @@ class TasksImportContext extends BaseImportContext {
 		$this->assertLogContains( $pattern, $message );
 	}
 
+	/**
+	 * @Then /^tasks watcher should complain about missing "([^"]*)" for "([^"]*)"$/
+	 */
+	public function tasksWatcherShouldComplainAboutMissingFor( $resource, $taskName ) {
+		$pattern = "Missing $resource in $taskName";
+		$message = "Missing file with $resource sentences";
+		
+		$this->assertLogContains( $pattern, $message );
+	}
+
 }
 
