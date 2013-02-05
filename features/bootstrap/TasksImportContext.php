@@ -57,6 +57,7 @@ class TasksImportContext extends BaseImportContext {
 		$taskFolder = self::$dataFolder . '/' . $experimentName . '/' . $taskName;
 
 		mkdir( $taskFolder );
+		touch( $taskFolder . '/translation.txt' );
 	}
 
 	/**
@@ -132,6 +133,20 @@ class TasksImportContext extends BaseImportContext {
 		$message = "Missing file with $resource sentences";
 		
 		$this->assertLogContains( $pattern, $message );
+	}
+
+	/**
+	 * @Then /^tasks watcher should (not )?parse "([^"]*)" in "([^"]*)" for "([^"]*)"$/
+	 */
+	public function tasksWatcherShouldParseInFor( $shouldNotParse, $resource, $file, $taskName ) {
+		$pattern = "Starting parsing of $resource located in $file for $taskName";
+		$message = "Parsing of resources didn't start";
+
+		if( $shouldNotParse ) {
+			$this->assertLogDoesNotContain( $pattern, $message );
+		} else {
+			$this->assertLogContains( $pattern, $message );
+		}
 	}
 
 }

@@ -65,4 +65,11 @@ Feature: Tasks background import
 		When I upload task called "new-task" to "old-experiment"
 		And I forget to upload "translation.txt" for "old-experiment/new-task"
 		Then tasks watcher should complain about missing "translation sentences" for "new-task"
+		And tasks watcher should not parse "translation sentences" in "translation.txt" for "new-task"
 
+
+	Scenario: Watcher will inform that is starting to parse resource
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		Then tasks watcher should parse "translation sentences" in "translation.txt" for "new-task"
