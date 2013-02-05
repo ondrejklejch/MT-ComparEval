@@ -27,7 +27,11 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				$taskFolder = new \Folder( $task );
 				$taskFolder->lock();
 
-				echo "New task called ". $taskFolder->getName() ." was found in experiment " . $taskFolder->getParent()->getName() . "\n";
+				$taskName = $taskFolder->getName();
+				$experimentName = $taskFolder->getParent()->getName();
+
+				echo "New task called $taskName was found in experiment $experimentName\n";
+				echo "translation.txt will be used as a translation sentences source in $taskName";		
 			}
 		}
 

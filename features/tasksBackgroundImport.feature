@@ -32,3 +32,10 @@ Feature: Tasks background import
 		And tasks watcher is running
 		When I upload task called "new-task" to "old-experiment"
 		Then task watcher should find "new-task" in "old-experiment" only once
+
+	Scenario: Watcher is using default paths without config
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And I forget to upload "config.neon" for "old-experiment/new-task"
+		Then tasks watcher should use "translation.txt" for "translation sentences" in "new-task"

@@ -114,6 +114,15 @@ class TasksImportContext extends BaseImportContext {
 		return sprintf(  'New task called %s was found in experiment %s', $taskName, $experimentName );
 	}
 
+	/**
+	 * @Then /^tasks watcher should use "([^"]*)" for "([^"]*)" in "([^"]*)"$/
+	 */
+	public function tasksWatcherShouldUseForIn( $file, $resource, $taskName ) {
+		$pattern = "$file will be used as a $resource source in $taskName";		
+		$message = "Using bad source for $resource"; 
+
+		$this->assertLogContains( $pattern, $message );
+	}
 
 }
 
