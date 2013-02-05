@@ -126,6 +126,13 @@ Feature: Experiments background import
 		Then experiments watcher should say that "new-experiment" has bad source/reference count
 		And experiments watcher should abort parsing of "new-experiment" 
 
+	Scenario: Successfully uploaded experiment should appear in the experiments list
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		When I upload experiment called "new-experiment"
+		And "new-experiment" is uploaded successfully
+		And I open page with experiments list
+		Then I should see "new-experiment" in the experiments list
 
 
 

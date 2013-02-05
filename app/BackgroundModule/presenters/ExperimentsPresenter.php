@@ -26,7 +26,6 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 
 	private function parseExperiment( $experiment ) {
 		$experimentFolder = new \Folder( $experiment );
-		$experimentFolder->lock();
 
 		$config = $this->getConfig( $experimentFolder );
 		$experimentName = $experimentFolder->getName();
@@ -42,6 +41,10 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				$this->handleNotMatchingNumberOfSentences( $experimentName );
 				continue;
 			}
+
+			$this->getService( 'experiments' )->saveExperiment( $experimentName );
+			echo "Experiment $experimentName uploaded successfully.\n";	
+			$experimentFolder->lock();
 		} catch( \InvalidSentencesResourceException $exception ) {
 			$this->handleInvalidSentencesResource( $experimentName, $resource );
 			continue;

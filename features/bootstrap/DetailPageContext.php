@@ -2,8 +2,6 @@
 
 class DetailPageContext extends BasePageContext {
 
-
-	private $page;
 	private $sentencesBeforeLoad = array();
 
 	/**
@@ -21,17 +19,30 @@ class DetailPageContext extends BasePageContext {
 	}
 
 	/**
-	 * @When /^I open page with (.*)$/
+	 * @When /^I open page with comparison$/
 	 */
-	public function iOpenPageWithResult( $view ) {
-		if( $view == 'result' ) {
-			$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
-		} else {
-			$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
+	public function iOpenPageWithComparison() {
+		$this->openPage( 'comparison' );
+	}
+
+	/**
+	 * @When /^I open page with result$/
+	 */
+	public function iOpenPageWithResult() {
+		$this->openPage( 'result' );
+	}
+
+	private function openPage( $view ) {
+		switch( $view ) {
+			case 'result':
+				$this->getSession()->visit( $this->getUrl( 'tasks/1/detail' ) );
+				break;
+			case 'comparison':
+				$this->getSession()->visit( $this->getUrl( 'tasks/1-2/compare' ) );
+				break;
 		}
 
 		$this->getSession()->wait(200);
-
 		$this->page = new TaskDetailPage( $this->getSession()->getPage() );
 	}
 

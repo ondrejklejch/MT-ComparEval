@@ -97,6 +97,16 @@ class ExperimentsImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @When /^"([^"]*)" is uploaded successfully$/
+	 */
+	public function isUploadedSuccessfully( $experimentName ) {
+		$pattern = "Experiment $experimentName uploaded successfully";
+		$message = "Experiment is not uploaded successfully";
+
+		$this->assertLogContains( $pattern, $message );
+	}
+
+	/**
 	 * @Then /^experiments watcher should watch that folder$/
 	 */
 	public function experimentsWatcherShouldWatchThatFolder() {

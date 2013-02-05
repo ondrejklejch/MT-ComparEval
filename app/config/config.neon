@@ -23,6 +23,7 @@ common:
 
 
 	services:
+		experiments: Experiments
 		sentences: Sentences
 		authenticator: Authenticator
 		routerFactory: RouterFactory( %consoleMode% )

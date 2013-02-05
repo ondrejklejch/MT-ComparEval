@@ -27,11 +27,11 @@ class RouterFactory
 		if( $this->consoleMode ) {
 			$router[] = new CliRouter(); 
 		} else {
-			$router[] = new Route('index.php', 'Homepage:default', Route::ONE_WAY);
+			$router[] = new Route('index.php', 'Experiments:list', Route::ONE_WAY);
 			$router[] = new Route('api/sentences', 'Api:Sentences:default');
 			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
 			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
-			$router[] = new Route('<presenter>/<action>[/<id>]', 'Homepage:default');
+			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
 		}		
 
 		return $router;

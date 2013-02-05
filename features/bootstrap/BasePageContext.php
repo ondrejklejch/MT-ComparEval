@@ -1,8 +1,10 @@
 <?php
 
-use Behat\MinkExtension\Context\MinkContext;
+use Behat\MinkExtension\Context\RawMinkContext;
 
-abstract class BasePageContext extends MinkContext {
+abstract class BasePageContext extends RawMinkContext {
+	
+	protected $page;
 
 	protected function getUrl( $relativeUrl ) {
 		return 'http://localhost:8000/' . $relativeUrl;
