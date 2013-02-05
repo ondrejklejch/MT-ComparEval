@@ -34,8 +34,11 @@ class ExperimentsImportContext extends BaseImportContext {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 
 		if( file_exists( $experimentFolder ) ) {
-			rmdir( $experimentFolder );
+			`rm -rf $experimentFolder`;
 		}
+
+		$experiments = $this->getMainContext()->getSubcontext( 'nette' )->getService( 'experiments' );
+		$experiments->deleteExperimentByName( $experimentName );
 	}
 
 	/**
@@ -72,8 +75,7 @@ class ExperimentsImportContext extends BaseImportContext {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
 
-		touch( $experimentFolder . '/source.txt' );
-		touch( $experimentFolder . '/reference.txt' );
+		`cp -r examples/small-project/* $experimentFolder`;
 	}
 
 	/**

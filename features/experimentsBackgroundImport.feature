@@ -134,5 +134,14 @@ Feature: Experiments background import
 		And I open page with experiments list
 		Then I should see "new-experiment" in the experiments list
 
+	Scenario: User can browse sentences of uploaded experiments
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		And there is no experiment called "new-experiment"
+		When I upload experiment called "new-experiment"
+		And "new-experiment" is uploaded successfully
+		And I open page with experiments list
+		And I click on sentences link of "new-experiment"
+		Then I should see source and reference sentences of "new-experiment"
 
 

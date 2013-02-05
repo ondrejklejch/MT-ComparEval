@@ -42,7 +42,9 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 				continue;
 			}
 
-			$this->getService( 'experiments' )->saveExperiment( $experimentName );
+			$experimentId = $this->getService( 'experiments' )->saveExperiment( $experimentName );
+			$this->getService( 'experiments' )->addSentences( $experimentId, new \ZipperIterator( $sentences ) );
+
 			echo "Experiment $experimentName uploaded successfully.\n";	
 			$experimentFolder->lock();
 		} catch( \InvalidSentencesResourceException $exception ) {

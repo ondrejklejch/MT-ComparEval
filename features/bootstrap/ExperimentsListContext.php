@@ -21,15 +21,36 @@ class ExperimentsListContext extends BasePageContext {
 		);
 	}
 
+	/**
+	 * @Given /^I click on sentences link of "([^"]*)"$/
+	 */
+	public function iClickOnSentencesLinkOf( $experimentName ) {
+		$this->page->goToExperimentsSentences( $experimentName );
+
+		$this->getSession()->wait(200);
+		$this->page = new SentencesListPage( $this->getSession()->getPage() );
+	}
+
+	/**
+	 * @Then /^I should see source and reference sentences of "([^"]*)"$/
+	 */
+	public function iShouldSeeSourceAndReferenceSentencesOf( $experimentName ) {
+		$sentences = $this->page->getSentences();
+		$this->assert(
+			count( $sentences ) > 0,
+			'No source/reference sentence is available'
+		);
+	}
 
 	public function openPage( $view ) {
 		switch( $view ) {
 			case 'experiments list':
-				$this->getSession()->visit( $this->getUrl( '' ) );
+				$this->getSession()->visit( $this->getUrl( '/' ) );
 				break;
 		}
 
 		$this->getSession()->wait(200);
+
 		$this->page = new ExperimentsListPage( $this->getSession()->getPage() );
 	}
 

@@ -9,4 +9,11 @@ class ExperimentsPresenter extends BasePresenter {
 		$this->template->experiments = $experimentsModel->getExperiments();
 	}
 
+
+	public function renderSentences( $id ) {
+		$experimentsModel = $this->getService( 'experiments' );
+
+		$this->template->sentences = $experimentsModel->getSentences( $id );
+	}
+
 }

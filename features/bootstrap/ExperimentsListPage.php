@@ -16,4 +16,10 @@ class ExperimentsListPage {
 		}, $experimentsNodes );
 	}
 
+
+	public function goToExperimentsSentences( $experimentName ) {
+		$xpath = "//tr[@class='experiment' and td[@class='name']/text()='$experimentName']/td[@class='sentences']/a"; 
+		$button = $this->page->find( 'xpath', $xpath )->click();
+	}
+
 }

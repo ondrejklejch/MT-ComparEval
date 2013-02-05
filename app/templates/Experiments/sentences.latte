@@ -1,0 +1,7 @@
+<h1>Sentences</h1>
+<ul>
+	<li n:foreach="$sentences as $sentence" class="sentence" data-id="{$sentence['id']}">
+		<div class="source">{$sentence['source']}</div>
+		<div class="reference">{$sentence['reference']}</div>
+	</li>
+</ul>
