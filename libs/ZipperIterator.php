@@ -29,7 +29,7 @@ class ZipperIterator implements Iterator {
 
 		$sameLengths = count( array_unique( $lengths ) ) <= 1;
 		if( !$sameLengths && $reportLengthsMismatch ) {
-			throw new InvalidArgumentException( 'Zipped iterators lengths are not equal' );
+			throw new IteratorsLengthsMismatchException( 'Zipped iterators lengths are not equal' );
 		} 
 	}
 

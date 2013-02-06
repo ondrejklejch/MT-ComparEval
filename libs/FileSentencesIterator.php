@@ -2,7 +2,7 @@
 
 class FileSentencesIterator implements ISentencesIterator {
 
-	const INVALID = "###INVALID_LINE###";
+	const INVALID = "";
 
 	private $handle;
 	private $line = "";
