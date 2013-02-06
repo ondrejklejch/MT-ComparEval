@@ -22,19 +22,19 @@ class ExperimentsListContext extends BasePageContext {
 	}
 
 	/**
-	 * @Given /^I click on sentences link of "([^"]*)"$/
+	 * @Given /^I click on "([^"]*)" link of "([^"]*)"$/
 	 */
-	public function iClickOnSentencesLinkOf( $experimentName ) {
-		$this->page->goToExperimentsSentences( $experimentName );
+	public function iClickOnLinkOf( $button, $experimentName ) {
+		$this->page->clickOnButton( $experimentName, $button );
 
 		$this->getSession()->wait(200);
-		$this->page = new SentencesListPage( $this->getSession()->getPage() );
 	}
 
 	/**
 	 * @Then /^I should see source and reference sentences of "([^"]*)"$/
 	 */
 	public function iShouldSeeSourceAndReferenceSentencesOf( $experimentName ) {
+		$this->page = new SentencesListPage( $this->getSession()->getPage() );
 		$sentences = $this->page->getSentences();
 		$this->assert(
 			count( $sentences ) > 0,

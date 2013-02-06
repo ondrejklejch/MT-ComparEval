@@ -141,7 +141,7 @@ Feature: Experiments background import
 		When I upload experiment called "new-experiment"
 		And "new-experiment" is uploaded successfully
 		And I open page with experiments list
-		And I click on sentences link of "new-experiment"
+		And I click on "sentences" link of "new-experiment"
 		Then I should see source and reference sentences of "new-experiment"
 
 

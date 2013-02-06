@@ -23,8 +23,9 @@ class FeatureContext extends BehatContext {
 		$this->useContext( 'nette', new NetteContext( $parameters ) );
 		$this->useContext( 'detailPage', new DetailPageContext( $parameters ) );
 		$this->useContext( 'experimentsImport', new ExperimentsImportContext( $parameters ) );
-		$this->useContext( 'experimentsListPage', new ExperimentsListContext( $parameters ) );
+		$this->useContext( 'experimentsList', new ExperimentsListContext( $parameters ) );
 		$this->useContext( 'tasksImport', new TasksImportContext( $parameters ) );
+		$this->useContext( 'tasksList', new TasksListContext( $parameters ) );
 	}
 
 }

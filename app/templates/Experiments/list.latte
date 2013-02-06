@@ -4,6 +4,7 @@
 {foreach $experiments as $experiment}
 	<tr class="experiment">	
 		<td class="name">{$experiment['name']}</td>
+		<td class="tasks"><a href="{plink Tasks:list $experiment['id']}">tasks</a></td>
 		<td class="sentences"><a href="{plink Experiments:sentences $experiment['id']}">sentences</a></td>
 	</tr>
 {/foreach}

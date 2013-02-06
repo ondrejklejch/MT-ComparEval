@@ -39,8 +39,9 @@ class TasksImportContext extends BaseImportContext {
 	 */
 	public function thereIsUnimportedExperimentCalled( $experimentName ) {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
-
 		mkdir( $experimentFolder );
+
+		`cp examples/small-project/*.* $experimentFolder`;
 	}
 
 	/**
@@ -55,9 +56,9 @@ class TasksImportContext extends BaseImportContext {
 	 */
 	public function iUploadTaskCalledTo( $taskName, $experimentName ) {
 		$taskFolder = self::$dataFolder . '/' . $experimentName . '/' . $taskName;
-
 		mkdir( $taskFolder );
-		touch( $taskFolder . '/translation.txt' );
+
+		`cp -r examples/small-project/moses/* $taskFolder`;
 	}
 
 	/**
@@ -176,6 +177,16 @@ class TasksImportContext extends BaseImportContext {
 		$pattern = "$taskName has bad number of translation sentences";
 		$message = "Number of translation/reference sentences doesn't match";
 
+		$this->assertLogContains( $pattern, $message );
+	}
+
+	/**
+	 * @Given /^task "([^"]*)" is uploaded successfully$/
+	 */
+	public function taskIsUploadedSuccessfully( $taskName ) {
+		$pattern = "Task $taskName uploaded successfully";
+		$message = "Task is not uploaded successfully";
+		
 		$this->assertLogContains( $pattern, $message );
 	}
 

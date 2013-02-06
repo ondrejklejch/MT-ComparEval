@@ -106,3 +106,12 @@ Feature: Tasks background import
 		"""
 		Then tasks watcher should say that "new-task" has bad translations sentences count
 		And tasks watcher should abort parsing of "new-task" 
+
+	Scenario: Successfully uploaded task should appear in the tasks list
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And task "new-task" is uploaded successfully
+		And I open page with experiments list
+		And I click on "tasks" link of "old-experiment"
+		Then I should see "new-task" in the tasks list

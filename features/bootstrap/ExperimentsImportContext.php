@@ -53,12 +53,12 @@ class ExperimentsImportContext extends BaseImportContext {
 	 */
 	public function thereIsAlreadyImportedExperimentCalled( $experimentName ) {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
-		$importedLock = $experimentFolder . '/.imported';
+		mkdir( $experimentFolder );
 
-		if( !file_exists( $experimentFolder ) ) {
-			mkdir( $experimentFolder );
-			touch( $importedLock );	
-		};
+		`cp -r examples/small-project/* $experimentFolder`;
+		$importer = $this->getMainContext()->getSubcontext( 'nette' )->getService( 'experimentsImporter' );
+		$importer->setLogger( new \EmptyLogger() );
+		$importer->importFromFolder( new \Folder( new \SplFileInfo( $experimentFolder ) ) );	
 	}
 
 	/**

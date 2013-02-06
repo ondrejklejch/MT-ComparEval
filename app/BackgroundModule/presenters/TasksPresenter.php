@@ -25,8 +25,6 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 
 			foreach( $unimportedTasks as $task ) {
 				$taskFolder = new \Folder( $task );
-				$taskFolder->lock();
-
 				$taskName = $taskFolder->getName();
 				$experimentName = $taskFolder->getParent()->getName();
 				$config = $this->getConfig( $taskFolder );
@@ -47,7 +45,12 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				if( iterator_count( $sentences['experiment'] ) != iterator_count( $sentences['translation'] ) ) {
 					echo "$taskName has bad number of translation sentences\n";
 					echo "Parsing of $taskName aborted!\n";
+					continue;
 				} 
+
+				$this->getService( 'tasks' )->saveTask( $taskName, $experiment['id'] );
+				echo "Task $taskName uploaded successfully\n";
+				$taskFolder->lock();
 			}
 		}
 
