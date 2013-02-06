@@ -20,7 +20,7 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 
 	private function getUnimportedExperiments( $folder ) {
 		return \Nette\Utils\Finder::findDirectories( '*' )
-			->from( $folder )
+			->in( $folder )
 			->imported( FALSE );	
 	}
 
@@ -49,7 +49,6 @@ class ExperimentsPresenter extends \Nette\Application\UI\Presenter {
 			$experimentFolder->lock();
 		} catch( \InvalidSentencesResourceException $exception ) {
 			$this->handleInvalidSentencesResource( $experimentName, $resource );
-			continue;
 		}
 	}
 
