@@ -10,20 +10,7 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 		while( TRUE ) {
 			usleep( $sleep );
 
-			$importedExperiments = \Nette\Utils\Finder::findDirectories( '*' )
-				->in( $folder )
-				->imported( TRUE )
-				->toArray();
-
-			if( count( $importedExperiments ) == 0 ) {
-				continue;
-			}
-
-			$unimportedTasks = \Nette\Utils\Finder::findDirectories( '*' )
-				->in( $importedExperiments )
-				->imported( FALSE );
-
-			foreach( $unimportedTasks as $task ) {
+			foreach( $this->getUnimportedTasks( $folder ) as $task ) {
 				$taskFolder = new \Folder( $task );
 				$taskName = $taskFolder->getName();
 				$experimentName = $taskFolder->getParent()->getName();
@@ -47,14 +34,36 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 					echo "Parsing of $taskName aborted!\n";
 					continue;
 				} 
+		
+				$data = array(
+					'name' => $config['name'],
+					'description' => $config['description'],
+					'url_key' => $taskName,
+					'experiments_id' => $experiment['id']
+				);
 
-				$this->getService( 'tasks' )->saveTask( $taskName, $experiment['id'] );
+				$this->getService( 'tasks' )->saveTask( $data );
 				echo "Task $taskName uploaded successfully\n";
 				$taskFolder->lock();
 			}
 		}
 
 		$this->terminate();
+	}
+
+	private function getUnimportedTasks( $folder ) {
+		$importedExperiments = \Nette\Utils\Finder::findDirectories( '*' )
+			->in( $folder )
+			->imported( TRUE )
+			->toArray();
+
+		if( count( $importedExperiments ) == 0 ) {
+			return array();
+		}
+
+		return \Nette\Utils\Finder::findDirectories( '*' )
+			->in( $importedExperiments )
+			->imported( FALSE );
 	}
 
 	private function parseResource( $taskName, $taskFolder, $resource, $config ) {
@@ -76,24 +85,15 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 	}
 
 	private function getConfig( \Folder $taskFolder ) {
-		$config = array();
-		if( $taskFolder->fileExists( 'config.neon' ) ) {
-			$path = $taskFolder->getChildrenPath( 'config.neon' );
+		$defaults = array(
+			'name' => $taskFolder->getName(),
+			'description' => '',
+			'translation' => 'translation.txt'
 
-			$config = (array) \Nette\Utils\Neon::decode( file_get_contents( $path ) );
-		}
-
-		$config['translation'] = $this->getFromArrayWithDefault( $config, 'translation', 'translation.txt' ); 
-
-		return $config;
-	}
-
-	private function getFromArrayWithDefault( $array, $key, $default ) {
-		if( isset( $array[ $key ] ) ) {
-			return $array[ $key ];
-		} else {
-			return $default;
-		}
+		);
+		$configPath = $taskFolder->getChildrenPath( 'config.neon' );
+	
+		return new \ResourcesConfiguration( $configPath, $defaults );
 	}
 
 }

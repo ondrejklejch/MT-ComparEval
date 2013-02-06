@@ -15,4 +15,17 @@ class TasksListContext extends BasePageContext {
 		);
 	}
 
+	/**
+	 * @Given /^task "([^"]*)" should have "([^"]*)" == "([^"]*)"$/
+	 */
+	public function taskShouldHave( $taskName, $key, $value ) {
+		$this->page = new TasksListPage( $this->getSession()->getPage() );
+		$actualValue = $this->page->getValue( $taskName, $key );
+
+		$this->assert(
+			$actualValue == $value,
+			"Experiment had unexpected $key"
+		);
+	}
+
 }

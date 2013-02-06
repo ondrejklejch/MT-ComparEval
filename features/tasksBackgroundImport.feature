@@ -12,6 +12,7 @@ Feature: Tasks background import
 	Scenario: New tasks in imported experiments are found
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		Then tasks watcher should find "new-task" in "old-experiment"
 		
@@ -30,12 +31,14 @@ Feature: Tasks background import
 	Scenario: New task is imported only once
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		Then task watcher should find "new-task" in "old-experiment" only once
 
 	Scenario: Watcher is using default paths without config
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And I forget to upload "config.neon" for "old-experiment/new-task"
 		Then tasks watcher should use "translation.txt" for "translation sentences" in "new-task"
@@ -43,6 +46,7 @@ Feature: Tasks background import
 	Scenario: Watcher is using paths provided in config.neon
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And "old-experiment/new-task" has "config.neon" with contents:
 		"""
@@ -56,6 +60,7 @@ Feature: Tasks background import
 	Scenario: Watcher is using default paths if path is missing in config.neon
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And "old-experiment/new-task" has "config.neon" with contents:
 		"""
@@ -65,6 +70,7 @@ Feature: Tasks background import
 	Scenario: Watcher is complaining about missing resources
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And I forget to upload "translation.txt" for "old-experiment/new-task"
 		Then tasks watcher should complain about missing "translation sentences" for "new-task"
@@ -74,12 +80,14 @@ Feature: Tasks background import
 	Scenario: Watcher will inform that is starting to parse resource
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		Then tasks watcher should parse "translation sentences" in "translation.txt" for "new-task"
 
 	Scenario: Watcher can parse sentences from files
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And "old-experiment/new-task" has "translation.txt" with contents:
 		"""
@@ -92,6 +100,7 @@ Feature: Tasks background import
 	Scenario: Watcher asserts that has correct number of translation sentences
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And "old-experiment/new-task" has "translation.txt" with contents:
 		"""
@@ -110,8 +119,27 @@ Feature: Tasks background import
 	Scenario: Successfully uploaded task should appear in the tasks list
 		Given there is already imported experiment called "old-experiment"
 		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
 		When I upload task called "new-task" to "old-experiment"
 		And task "new-task" is uploaded successfully
 		And I open page with experiments list
 		And I click on "tasks" link of "old-experiment"
 		Then I should see "new-task" in the tasks list
+
+	Scenario: Tasks can have custom names and descriptions
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
+		When I upload task called "new-task" to "old-experiment"
+		And "old-experiment/new-task" has "config.neon" with contents:
+		"""
+		name: My name
+		description: My description 
+		translation: translation.txt
+		"""
+		And task "new-task" is uploaded successfully
+		And I open page with experiments list
+		And I click on "tasks" link of "old-experiment"
+		Then I should see "new-task" in the tasks list
+		And task "new-task" should have "name" == "My name"
+		And task "new-task" should have "description" == "My description"

@@ -73,6 +73,24 @@ class TasksImportContext extends BaseImportContext {
 	}
 
 	/**
+	 * @Given /^there is no task called "([^"]*)" in "([^"]*)"$/
+	 */
+	public function thereIsNoTaskCalledIn( $taskName, $experimentName ) {
+		$experimentFolder = self::$dataFolder . '/' . $experimentName;
+		$taskFolder = $experimentFolder . '/' . $taskName;
+
+		if( file_exists( $taskFolder ) ) {
+			`rm -rf $taskFolder`;
+		}
+
+		$experiments = $this->getMainContext()->getSubcontext( 'nette' )->getService( 'experiments' );
+		$experimentId = $experiments->getExperimentByName( $experimentName )->id;
+
+		$tasks = $this->getMainContext()->getSubcontext( 'nette' )->getService( 'tasks' );
+		$tasks->deleteTaskByName( $experimentId, $taskName );
+	}
+
+	/**
 	 * @Then /^tasks watcher should watch that folder$/
 	 */
 	public function tasksWatcherShouldWatchThatFolder() {

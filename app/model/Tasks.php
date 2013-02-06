@@ -13,13 +13,17 @@ class Tasks {
 			->where( 'experiments_id', $experimentId );
 	}
 
-	public function saveTask( $name, $experimentId ) {
-		$row = $this->db->table( 'tasks' )->insert( array(
-			'name' => $name,
-			'experiments_id' => $experimentId
-		) );
+	public function saveTask( $data ) {
+		$row = $this->db->table( 'tasks' )->insert( $data );
 
 		return $row->getPrimary( TRUE );
+	}
+
+	public function deleteTaskByName( $experimentId, $name ) {
+		$this->db->table( 'tasks' )
+			->where( 'experiments_id', $experimentId )
+			->where( 'url_key', $name )
+			->delete();
 	}
 
 
