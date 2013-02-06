@@ -38,7 +38,6 @@ class NetteContext extends BehatContext {
 		$configurator->addConfig( $root . '/app/config/config.local.neon', $configurator::NONE); // none section
 		
 		self::$container = $configurator->createContainer();
-		var_dump( self::$container->getParameters() ); 
 	}
 
 }
