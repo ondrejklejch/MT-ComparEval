@@ -149,5 +149,15 @@ class TasksImportContext extends BaseImportContext {
 		}
 	}
 
+	/**
+	 * @Given /^tasks watcher should abort parsing of "([^"]*)"$/
+	 */
+	public function tasksWatcherShouldAbortParsingOf( $taskName ) {
+		$pattern = "Parsing of $taskName aborted!";
+		$message = "Parsing of task aborted due to incorrect input";
+
+		$this->assertLogContains( $pattern, $message );
+	}
+
 }
 

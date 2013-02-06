@@ -66,7 +66,7 @@ Feature: Tasks background import
 		And I forget to upload "translation.txt" for "old-experiment/new-task"
 		Then tasks watcher should complain about missing "translation sentences" for "new-task"
 		And tasks watcher should not parse "translation sentences" in "translation.txt" for "new-task"
-
+		And tasks watcher should abort parsing of "new-task" 
 
 	Scenario: Watcher will inform that is starting to parse resource
 		Given there is already imported experiment called "old-experiment"

@@ -35,6 +35,9 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				echo "{$config['translation']} will be used as a translation sentences source in $taskName\n";		
 				if( !$taskFolder->fileExists( $config['translation'] ) ) {
 					echo "Missing translation sentences in $taskName\n";
+					echo "Parsing of $taskName aborted!\n";
+	
+					continue;
 				} else {
 					echo "Starting parsing of translation sentences located in {$config['translation']} for $taskName";
 				}	
