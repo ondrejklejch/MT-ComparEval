@@ -21,7 +21,7 @@ class NetteContext extends BehatContext {
 	 * @BeforeSuite
 	 */
 	public static function createContainer() {
-		$root = __DIR__ . '/../../';
+		$root = __DIR__ . '/../../../';
 
 		$configurator = new Nette\Config\Configurator;
 		$configurator->addParameters( array(
