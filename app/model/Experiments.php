@@ -13,6 +13,12 @@ class Experiments {
 		return $this->db->table( 'experiments' );
 	}
 
+	public function getExperimentByName( $name ) {
+		return $this->db->table( 'experiments' )
+			->where( 'name', $name )
+			->fetch();
+	}
+
 	public function saveExperiment( $name, $description = "" ) {
 		$row = $this->db->table( 'experiments' )->insert( array(
 			'name' => $name,

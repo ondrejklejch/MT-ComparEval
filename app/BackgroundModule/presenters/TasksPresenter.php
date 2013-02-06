@@ -40,6 +40,14 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				} else {
 					$sentences['translation'] = $this->parseResource( $taskName, $taskFolder, 'translation', $config ); 
 				}	
+
+				$experiment = $this->getService( 'experiments' )->getExperimentByName( $experimentName );
+				$sentences['experiment'] = $this->getService( 'experiments' )->getSentences( $experiment['id'] );
+
+				if( iterator_count( $sentences['experiment'] ) != iterator_count( $sentences['translation'] ) ) {
+					echo "$taskName has bad number of translation sentences\n";
+					echo "Parsing of $taskName aborted!\n";
+				} 
 			}
 		}
 

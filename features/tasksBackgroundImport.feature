@@ -89,3 +89,20 @@ Feature: Tasks background import
 		"""
 		Then tasks watcher should say that "new-task" has 3 "translation sentences"
 
+	Scenario: Watcher asserts that has correct number of translation sentences
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And "old-experiment/new-task" has "translation.txt" with contents:
+		"""
+		Line1
+		Line2
+		Line3
+		"""
+		And "old-experiment" has "reference.txt" with contents:
+		"""
+		Line1
+		Line2
+		"""
+		Then tasks watcher should say that "new-task" has bad translations sentences count
+		And tasks watcher should abort parsing of "new-task" 
