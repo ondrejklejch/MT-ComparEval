@@ -28,6 +28,7 @@ common:
 		authenticator: Authenticator
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
+		logger: EchoLogger
 		experimentsImporter: ExperimentsImporter
 
 

@@ -3,15 +3,21 @@
 class ExperimentsImporter {
 
 	private $experimentsModel;
+	private $logger;
 
-	public function __construct( Experiments $model ) {
+	public function __construct( Experiments $model, Logger $logger ) {
 		$this->experimentsModel = $model; 
+		$this->logger = $logger;
+	}
+
+	public function setLogger( $logger ) {
+		$this->logger = $logger;
 	}
 
 	public function importFromFolder( Folder $experimentFolder ) {
 		$experimentName = $experimentFolder->getName();
 		$config = $this->getConfig( $experimentFolder );
-		echo "New experiment called $experimentName was found\n";
+		$this->logger->log( "New experiment called $experimentName was found" );
 
 		try {
 			$sentences = array();
@@ -22,7 +28,7 @@ class ExperimentsImporter {
 			$experimentId = $this->experimentsModel->saveExperiment( $experimentName );
 			$this->experimentsModel->addSentences( $experimentId, new \ZipperIterator( $sentences, TRUE ) );
 
-			echo "Experiment $experimentName uploaded successfully.\n";	
+			$this->logger->log( "Experiment $experimentName uploaded successfully." );	
 			$experimentFolder->lock();
 		} catch( \InvalidSentencesResourceException $exception ) {
 			$this->handleInvalidSentencesResource( $experimentName, $resource );
@@ -32,13 +38,13 @@ class ExperimentsImporter {
 	}
 
 	private function parseResource( $experimentName, $experimentFolder, $resource, $config ) {
-		echo "{$config[$resource]} will be used as a $resource sentences source in $experimentName\n";		
+		$this->logger->log( "{$config[$resource]} will be used as a $resource sentences source in $experimentName" );
 
 		$sentences =  $this->getSentences( $experimentFolder, $config[$resource] );
-		echo "Starting parsing of $resource sentences located in {$config[$resource]} for $experimentName\n";
+		$this->logger->log( "Starting parsing of $resource sentences located in {$config[$resource]} for $experimentName" );
 		$count = $sentences->count();
 
-		echo "$experimentName has $count $resource sentences\n";
+		$this->logger->log( "$experimentName has $count $resource sentences" );
 
 		return $sentences;
 	}
@@ -50,13 +56,13 @@ class ExperimentsImporter {
 	}
 
 	private function handleInvalidSentencesResource( $experimentName, $resource ) {
-		echo "Missing $resource sentences in $experimentName\n";
-		echo "Parsing of $experimentName aborted!";
+		$this->logger->log( "Missing $resource sentences in $experimentName" );
+		$this->logger->log( "Parsing of $experimentName aborted!" );
 	}
 
 	private function handleNotMatchingNumberOfSentences( $experimentName ) {
-		echo "$experimentName has bad number of source/reference sentences\n";
-		echo "Parsing of $experimentName aborted!";
+		$this->logger->log( "$experimentName has bad number of source/reference sentences" );
+		$this->logger->log( "Parsing of $experimentName aborted!" );
 	}
 
 	private function getConfig( \Folder $experimentFolder ) {
