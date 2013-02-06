@@ -159,5 +159,15 @@ class TasksImportContext extends BaseImportContext {
 		$this->assertLogContains( $pattern, $message );
 	}
 
+	/**
+	 * @Then /^tasks watcher should say that "([^"]*)" has (\d+) "([^"]*)"$/
+	 */
+	public function tasksWatcherShouldSayThatHas( $taskName, $count, $resource ) {
+		$pattern = "$taskName has $count $resource";
+		$message = "Number of resources parsed correctly";
+		
+		$this->assertLogContains( $pattern, $message );
+	}
+
 }
 

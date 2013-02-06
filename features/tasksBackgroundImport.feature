@@ -48,6 +48,9 @@ Feature: Tasks background import
 		"""
 		translation: config-translation.txt
 		"""
+		And "old-experiment/new-task" has "config-translation.txt" with contents:
+		"""
+		"""
 		Then tasks watcher should use "config-translation.txt" for "translation sentences" in "new-task"
 
 	Scenario: Watcher is using default paths if path is missing in config.neon
@@ -73,3 +76,16 @@ Feature: Tasks background import
 		And tasks watcher is running
 		When I upload task called "new-task" to "old-experiment"
 		Then tasks watcher should parse "translation sentences" in "translation.txt" for "new-task"
+
+	Scenario: Watcher can parse sentences from files
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		When I upload task called "new-task" to "old-experiment"
+		And "old-experiment/new-task" has "translation.txt" with contents:
+		"""
+		Line1
+		Line2
+		Line3
+		"""
+		Then tasks watcher should say that "new-task" has 3 "translation sentences"
+

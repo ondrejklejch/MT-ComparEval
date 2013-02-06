@@ -32,19 +32,36 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				$config = $this->getConfig( $taskFolder );
 
 				echo "New task called $taskName was found in experiment $experimentName\n";
-				echo "{$config['translation']} will be used as a translation sentences source in $taskName\n";		
 				if( !$taskFolder->fileExists( $config['translation'] ) ) {
 					echo "Missing translation sentences in $taskName\n";
 					echo "Parsing of $taskName aborted!\n";
 	
 					continue;
 				} else {
-					echo "Starting parsing of translation sentences located in {$config['translation']} for $taskName";
+					$sentences['translation'] = $this->parseResource( $taskName, $taskFolder, 'translation', $config ); 
 				}	
 			}
 		}
 
 		$this->terminate();
+	}
+
+	private function parseResource( $taskName, $taskFolder, $resource, $config ) {
+		echo "{$config[$resource]} will be used as a $resource sentences source in $taskName\n";		
+
+		$sentences =  $this->getSentences( $taskFolder, $config[$resource] );
+		echo "Starting parsing of $resource sentences located in {$config[$resource]} for $taskName\n";
+		$count = $sentences->count();
+
+		echo "$taskName has $count $resource sentences\n";
+
+		return $sentences;
+	}
+
+	private function getSentences( \Folder $taskFolder, $filename ) {
+		$filepath = $taskFolder->getChildrenPath( $filename );
+
+		return new \FileSentencesIterator( $filepath );
 	}
 
 	private function getConfig( \Folder $taskFolder ) {
