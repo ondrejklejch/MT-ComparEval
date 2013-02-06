@@ -25,7 +25,13 @@ class ExperimentsImporter {
 				$sentences[$resource] = $this->parseResource( $experimentName, $experimentFolder, $resource, $config );
 			}
 
-			$experimentId = $this->experimentsModel->saveExperiment( $experimentName );
+			$data = array(
+				'name' => $config['name'],
+				'description' => $config['description'],
+				'url_key' => $experimentName
+			);
+
+			$experimentId = $this->experimentsModel->saveExperiment( $data );
 			$this->experimentsModel->addSentences( $experimentId, new \ZipperIterator( $sentences, TRUE ) );
 
 			$this->logger->log( "Experiment $experimentName uploaded successfully." );	
@@ -68,6 +74,8 @@ class ExperimentsImporter {
 	private function getConfig( \Folder $experimentFolder ) {
 		$configPath = $experimentFolder->getChildrenPath( 'config.neon' );
 		$defaults = array(
+			'name' => $experimentFolder->getName(),
+			'description' => '',
 			'source' => 'source.txt',
 			'reference' => 'reference.txt'
 		);

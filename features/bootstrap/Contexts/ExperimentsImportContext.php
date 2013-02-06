@@ -55,8 +55,11 @@ class ExperimentsImportContext extends BaseImportContext {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
 
-		`cp -r examples/small-project/* $experimentFolder`;
-		$importer = $this->getMainContext()->getSubcontext( 'nette' )->getService( 'experimentsImporter' );
+		`cp examples/small-project/*.* $experimentFolder`;
+		$container = $this->getMainContext()->getSubcontext( 'nette' );
+
+		$container->getService( 'experiments' )->deleteExperimentByName( $experimentName );
+		$importer = $container->getService( 'experimentsImporter' );
 		$importer->setLogger( new \EmptyLogger() );
 		$importer->importFromFolder( new \Folder( new \SplFileInfo( $experimentFolder ) ) );	
 	}

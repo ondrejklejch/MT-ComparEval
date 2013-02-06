@@ -22,6 +22,18 @@ class ExperimentsListContext extends BasePageContext {
 	}
 
 	/**
+	 * @Given /^"([^"]*)" should have "([^"]*)" == "([^"]*)"$/
+	 */
+	public function shouldHave( $experimentName, $key, $value ) {
+		$actualValue = $this->page->getValue( $experimentName, $key );
+
+		$this->assert(
+			$actualValue == $value,
+			"Experiment had unexpected $key"
+		);
+	}
+
+	/**
 	 * @Given /^I click on "([^"]*)" link of "([^"]*)"$/
 	 */
 	public function iClickOnLinkOf( $button, $experimentName ) {

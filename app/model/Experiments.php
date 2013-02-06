@@ -15,15 +15,12 @@ class Experiments {
 
 	public function getExperimentByName( $name ) {
 		return $this->db->table( 'experiments' )
-			->where( 'name', $name )
+			->where( 'url_key', $name )
 			->fetch();
 	}
 
-	public function saveExperiment( $name, $description = "" ) {
-		$row = $this->db->table( 'experiments' )->insert( array(
-			'name' => $name,
-			'description' => $description
-		) );
+	public function saveExperiment( $data ) {
+		$row = $this->db->table( 'experiments' )->insert( $data );
 
 		return $row->getPrimary( TRUE );
 	}
@@ -46,7 +43,7 @@ class Experiments {
 
 	public function deleteExperimentByName( $name ) {
 		$this->db->table( 'experiments' )
-			->where( 'name', $name )
+			->where( 'url_key', $name )
 			->delete();
 	}
 

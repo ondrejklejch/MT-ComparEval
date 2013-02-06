@@ -32,6 +32,7 @@ Feature: Experiments background import
 	Scenario: Watcher is using default paths without config
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And I forget to upload "config.neon" for "new-experiment"
 		Then experiments watcher should use "source.txt" for "source sentences" in "new-experiment"
@@ -40,6 +41,7 @@ Feature: Experiments background import
 	Scenario: Watcher is using paths provided config.neon
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And "new-experiment" has "config.neon" with contents:
 		"""
@@ -58,6 +60,7 @@ Feature: Experiments background import
 	Scenario: Watcher is using default paths if path is missing in config.neon
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And "new-experiment" has "config.neon" with contents:
 		"""
@@ -68,6 +71,7 @@ Feature: Experiments background import
 	Scenario Outline: Watcher is complaining about missing sources
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And I forget to upload "<file>" for "new-experiment"
 		Then experiments watcher should complain about missing "<source>" for "new-experiment"
@@ -83,6 +87,7 @@ Feature: Experiments background import
 	Scenario Outline: Watcher will inform that is starting to parse resource
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		Then experiments watcher should parse "<source>" in "<file>" for "new-experiment"
 
@@ -94,6 +99,7 @@ Feature: Experiments background import
 	Scenario Outline: Watcher can parse sentences from files
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And "new-experiment" has "<file>" with contents:
 		"""
@@ -111,6 +117,7 @@ Feature: Experiments background import
 	Scenario: Watcher asserts that has correct number of source/reference sentences
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And "new-experiment" has "source.txt" with contents:
 		"""
@@ -129,6 +136,7 @@ Feature: Experiments background import
 	Scenario: Successfully uploaded experiment should appear in the experiments list
 		Given there is a folder where I can upload experiments
 		And experiments watcher is running
+		And there is no experiment called "new-experiment"
 		When I upload experiment called "new-experiment"
 		And "new-experiment" is uploaded successfully
 		And I open page with experiments list
@@ -144,4 +152,21 @@ Feature: Experiments background import
 		And I click on "sentences" link of "new-experiment"
 		Then I should see source and reference sentences of "new-experiment"
 
+	Scenario: Experiments can have custom names and descriptions
+		Given there is a folder where I can upload experiments
+		And experiments watcher is running
+		And there is no experiment called "new-experiment"
+		When I upload experiment called "new-experiment"
+		And "new-experiment" has "config.neon" with contents:
+		"""
+		name: My name
+		description: My description 
+		source: source.txt
+		reference: reference.txt
+		"""
+		And "new-experiment" is uploaded successfully
+		And I open page with experiments list
+		Then I should see "new-experiment" in the experiments list
+		And "new-experiment" should have "name" == "My name"
+		And "new-experiment" should have "description" == "My description"
 
