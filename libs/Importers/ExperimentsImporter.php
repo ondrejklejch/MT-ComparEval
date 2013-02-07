@@ -8,31 +8,28 @@ class ExperimentsImporter extends Importer {
 		$this->experimentsModel = $model; 
 	}
 
-	public function importFromFolder( Folder $experimentFolder ) {
-		$experimentName = $experimentFolder->getName();
-		$config = $this->getConfig( $experimentFolder );
-		$this->logger->log( "New experiment called $experimentName was found" );
+	protected function logImportStart( $config ) {
+		$this->logger->log( "New experiment called {$config['url_key']} was found" );
+	}
 
-		try {
-			$sentences = $this->parseResources( $experimentFolder, $config );
+	protected function logImportSuccess( $config ) {
+		$this->logger->log( "Experiment {$config['url_key']} uploaded successfully." );	
+	}
 
-			$data = array(
-				'name' => $config['name'],
-				'description' => $config['description'],
-				'url_key' => $experimentName
-			);
+	protected function processMetadata( $config ) {
+		$data = array(
+			'name' => $config['name'],
+			'description' => $config['description'],
+			'url_key' => $config['url_key']
+		);
 
-			$experimentId = $this->experimentsModel->saveExperiment( $data );
-			$this->experimentsModel->addSentences( $experimentId, new \ZipperIterator( $sentences, TRUE ) );
+		return array( 'experiment_id' => $this->experimentsModel->saveExperiment( $data ) );
+	}
 
-			$this->logger->log( "Experiment $experimentName uploaded successfully." );	
-			$experimentFolder->lock();
-		} catch( \IteratorsLengthsMismatchException $exception ) {
-			$this->handleNotMatchingNumberOfSentences( $experimentName );
-		} catch( \ImporterException $exception ) {
-			$this->logger->log( "{$exception->getMessage()}" );
-			$this->logger->log( "Parsing of {$config['url_key']} aborted!" );
-		}
+	protected function processSentences( $config, $metadata, $sentences ) {
+		$experimentId = $metadata['experiment_id'];
+
+		$this->experimentsModel->addSentences( $experimentId, new \ZipperIterator( $sentences, TRUE ) );
 	}
 
 	protected function getResources() {

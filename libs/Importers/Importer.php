@@ -12,6 +12,41 @@ abstract class Importer {
 		$this->logger = $logger;
 	}
 
+	public function importFromFolder( Folder $folder ) {
+		$config = $this->getConfig( $folder );
+
+		$this->logImportStart( $config );
+		try {
+			$sentences = $this->parseResources( $folder, $config );
+			$metadata = $this->processMetadata( $config );
+			$this->processSentences( $config, $metadata, $sentences );
+
+			$this->logImportSuccess( $config );
+			$folder->lock();
+		} catch( \IteratorsLengthsMismatchException $exception ) {
+			$this->handleNotMatchingNumberOfSentences( $config['url_key'] );
+		} catch( \ImporterException $exception ) {
+			$this->logImportAbortion( $config, $exception );
+		}
+	}
+
+	protected abstract function logImportStart( $config );
+
+	protected abstract function logImportSuccess( $config );
+
+	protected function logImportAbortion( $config, ImporterException $exception ) {
+		$this->logger->log( "{$exception->getMessage()}" );
+		$this->logger->log( "Parsing of {$config['url_key']} aborted!" );
+	}
+
+	protected abstract function processMetadata( $config );
+
+	protected abstract function processSentences( $config, $metadata, $sentences );
+
+	protected abstract function getResources();
+
+	protected abstract function getDefaults( Folder $folder );
+
 	protected function getSentences( \Folder $folder, $filename ) {
 		$filepath = $folder->getChildrenPath( $filename );
 
@@ -54,10 +89,5 @@ abstract class Importer {
 	
 		return new \ResourcesConfiguration( $configPath, $defaults );
 	}
-
-	protected abstract function getResources();
-
-	protected abstract function getDefaults( Folder $folder );
-
 
 }
