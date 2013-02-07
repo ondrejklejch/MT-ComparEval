@@ -31,10 +31,11 @@ class TasksImporter extends Importer {
 			echo "Task {$config['url_key']} uploaded successfully\n";
 
 			$taskFolder->lock();
-		} catch( \InvalidSentencesResourceException $exception ) {
-			$this->handleInvalidSentencesResource( $config['url_key'] );
 		} catch( \IteratorsLengthsMismatchException $exception ) {
 			$this->handleNotMatchingNumberOfSentences( $config['url_key'] );
+		} catch( \ImporterException $exception ) {
+			echo "{$exception->getMessage()}\n";
+			echo "Parsing of {$config['url_key']} aborted!\n";
 		}
 	}
 

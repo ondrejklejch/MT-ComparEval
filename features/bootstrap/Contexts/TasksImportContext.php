@@ -192,7 +192,7 @@ class TasksImportContext extends BaseImportContext {
 	 * @Then /^tasks watcher should say that "([^"]*)" has bad translations sentences count$/
 	 */
 	public function tasksWatcherShouldSayThatHasBadTranslationsSentencesCount( $taskName ) {
-		$pattern = "$taskName has bad number of translation sentences";
+		$pattern = "$taskName has bad number of sentences";
 		$message = "Number of translation/reference sentences doesn't match";
 
 		$this->assertLogContains( $pattern, $message );
