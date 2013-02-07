@@ -10,33 +10,26 @@ class TasksImporter extends Importer {
 		$this->tasksModel = $tasksModel;
 	}
 
-	public function importFromFolder( $task ) {
-		$taskFolder = new \Folder( $task );
-		$config = $this->getConfig( $taskFolder );
+	protected function logImportStart( $config ) {
+		$this->logger->log( "New task called {$config['url_key']} was found in experiment {$config['experiment']['url_key']}" );
+	}
 
-		echo "New task called {$config['url_key']} was found in experiment {$config['experiment']['url_key']}\n";
-		try {
-			$sentences = $this->parseResources( $taskFolder, $config );
-			$iterator = new \ZipperIterator( $sentences, TRUE );
+	protected function logImportSuccess( $config ) {
+		$this->logger->log( "Task {$config['url_key']} uploaded successfully" );
+	}
 
-			$data = array(
-				'name' => $config['name'],
-				'description' => $config['description'],
-				'url_key' => $config['url_key'],
-				'experiments_id' => $config['experiment']['id'],
-			);
-			$this->tasksModel->saveTask( $data );
+	protected function processMetadata( $config ) {
+		$data = array(
+			'name' => $config['name'],
+			'description' => $config['description'],
+			'url_key' => $config['url_key'],
+			'experiments_id' => $config['experiment']['id'],
+		);
+		$this->tasksModel->saveTask( $data );
+	}
 
-
-			echo "Task {$config['url_key']} uploaded successfully\n";
-
-			$taskFolder->lock();
-		} catch( \IteratorsLengthsMismatchException $exception ) {
-			$this->handleNotMatchingNumberOfSentences( $config['url_key'] );
-		} catch( \ImporterException $exception ) {
-			echo "{$exception->getMessage()}\n";
-			echo "Parsing of {$config['url_key']} aborted!\n";
-		}
+	protected function processSentences( $config, $metadata, $sentences ) {
+		$iterator = new \ZipperIterator( $sentences, TRUE );
 	}
 
 	protected function parseResources( Folder $folder, $config ) {

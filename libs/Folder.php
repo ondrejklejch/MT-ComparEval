@@ -4,7 +4,7 @@ class Folder {
 
 	protected $path;
 
-	public function __construct( $path ) {
+	public function __construct( SplFileInfo $path ) {
 		$this->path = $path;
 	}
 
@@ -13,7 +13,7 @@ class Folder {
 	}
 
 	public function getParent() {
-		return new \Folder( new \SplFileInfo( dirname( $this->path->getPathname() ) ) );
+		return new Folder( new SplFileInfo( dirname( $this->path->getPathname() ) ) );
 	}
 
 	public function fileExists( $filename ) {
@@ -21,7 +21,7 @@ class Folder {
 	}
 
 	public function getChildrenPath( $filename ) {
-		return $this->path . '/' . $filename;
+		return $this->path->getPathname() . '/' . $filename;
 	}
 
 	public function lock() {
