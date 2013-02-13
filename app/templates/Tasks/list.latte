@@ -4,7 +4,7 @@
 <table>
 {foreach $tasks as $task}
 	<tr class="task" data-id="{$task['url_key']}">	
-		<td class="name">{$task['name']}</td>
+		<td class="name"><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
 		<td class="description">{$task['description']}</td>
 	</tr>
 {/foreach}
