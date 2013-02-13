@@ -19,7 +19,7 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 			usleep( $sleep );
 
 			foreach( $this->getUnimportedTasks( $folder ) as $task ) {
-				$this->importer->importFromFolder( $task );
+				$this->importer->importFromFolder( new \Folder( $task ) );
 			}
 		}
 

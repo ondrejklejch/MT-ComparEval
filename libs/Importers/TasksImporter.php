@@ -10,8 +10,7 @@ class TasksImporter extends Importer {
 		$this->tasksModel = $tasksModel;
 	}
 
-	public function importFromFolder( $task ) {
-		$taskFolder = new \Folder( $task );
+	public function importFromFolder( Folder $taskFolder ) {
 		$config = $this->getConfig( $taskFolder );
 
 		echo "New task called {$config['url_key']} was found in experiment {$config['experiment']['url_key']}\n";
@@ -25,8 +24,8 @@ class TasksImporter extends Importer {
 				'url_key' => $config['url_key'],
 				'experiments_id' => $config['experiment']['id'],
 			);
-			$this->tasksModel->saveTask( $data );
-
+			$taskId = $this->tasksModel->saveTask( $data );
+			$this->tasksModel->addSentences( $taskId, $iterator ); 
 
 			echo "Task {$config['url_key']} uploaded successfully\n";
 
