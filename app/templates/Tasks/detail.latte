@@ -65,7 +65,7 @@ function Sentences( $scope, $http ) {
 				"taskIds[{$i}]": {$id},
 				{/foreach}
 				"offset": $scope.offset,
-				"limit": 5,
+				"limit": 10,
 				"orderBy": ( $scope.order == 'id' ) ? 'id' : $scope.currentMetric,
 				"order": ( $scope.asc ) ? 'asc' : 'desc'
 			}

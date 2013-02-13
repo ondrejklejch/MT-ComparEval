@@ -1,11 +1,33 @@
 {block #content}
 <h1>Tasks</h1>
 
+<script>
+$(document).ready( function() {
+	$('#compare').click( function( event ) {
+		event.preventDefault();
+		var tasksIds = $(this).closest('form')
+			.find( "input:checkbox:checked" )
+			.toArray()
+			.map( function( element ) { return $(element).attr( 'data-task-id' ); } );
+
+		if( tasksIds.length != 2 ) {
+			return alert( "You can compare only 2 tasks." );
+		}
+
+		window.location = "/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
+	} );
+} );
+</script>
+
+<form>
 <table>
 {foreach $tasks as $task}
 	<tr class="task" data-id="{$task['url_key']}">	
-		<td class="name"><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
+		<td class="name"><input type="checkbox" data-task-id="{$task['id']}"/><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
 		<td class="description">{$task['description']}</td>
 	</tr>
 {/foreach}
 </table>
+<input type="submit" value="compare" class="button" id="compare"/>
+</form>
+

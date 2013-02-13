@@ -98,7 +98,7 @@ class DetailPageContext extends BasePageContext {
 		$sentences = $this->page->getSentences();
 
 		$this->assert( 
-			count( $sentences ) == 5,
+			count( $sentences ) == 10,
 			"Sentences aren't shown."
 		);
 	}
