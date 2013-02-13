@@ -1,37 +1,63 @@
-{**
- * My Application layout template.
- *
- * @param string   $basePath web base path
- * @param string   $robots   tell robots how to index the content of a page (optional)
- * @param array    $flashes  flash messages
- *}
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>MT-ComparEval experiments</title>
+		{block scripts}
+		<script src="{$basePath}/js/jquery.js"></script>
+		<script src="{$basePath}/js/netteForms.js"></script>
+		<script src="{$basePath}/js/bootstrap-alerts.js"></script>
+		<script src="{$basePath}/js/main.js"></script>
+		<script src="{$basePath}/js/angular.min.js"></script>
+		<script type="text/javascript">
+			$(".alert-message").alert();
+		</script>
+		{/block}
+		{block head}{/block}
+		<link rel="stylesheet" href="/css/bootstrap.min.css" />
+		<style type="text/css">
+			body, html {
+				background-color: #eee;
+			}
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="description" content="">
-	<meta name="robots" content="{$robots}" n:ifset="$robots">
+			body {
+				padding-top: 40px;
+			}
 
-	<title>{block title|striptags|upper}Nette Application Skeleton{/block}</title>
+			.content {
+				background-color: #fff;
+				padding: 20px;
+				margin: 0 -20px; /* negative indent the amount of the padding to maintain the grid system */
+       				-webkit-border-radius: 0 0 6px 6px;
+        				-moz-border-radius: 0 0 6px 6px;
+                				border-radius: 0 0 6px 6px;
+        			-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+        			   	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
+                				box-shadow: 0 1px 2px rgba(0,0,0,.15);
+			}
 
-	<link rel="stylesheet" media="screen,projection,tv" href="{$basePath}/css/screen.css">
-	<link rel="stylesheet" media="print" href="{$basePath}/css/print.css">
-	<link rel="shortcut icon" href="{$basePath}/favicon.ico">
-	{block scripts}
-	<script src="{$basePath}/js/jquery.js"></script>
-	<script src="{$basePath}/js/netteForms.js"></script>
-	<script src="{$basePath}/js/main.js"></script>
-	<script src="{$basePath}/js/angular.min.js"></script>
-	{/block}
-	{block head}{/block}
-</head>
+		</style>
+	</head>
+	<body>
+		<div id="header">
+			<div class="topbar">
+				<div class="fill">
+					<div class="container">
+						<a class="brand" href="/">MT-ComparEval</a>
+					</div>
+				</div>
+			</div>
+		</div>
 
-<body>
-	<script> document.body.className+=' js' </script>
-
-	<div n:foreach="$flashes as $flash" class="flash {$flash->type}">{$flash->message}</div>
-
-	{include #content}
-</body>
+		<div class="container">
+			<div class="content">
+				<div n:foreach="$flashes as $flash" class="alert-message {$flash->type}" data-alert="alert">
+					<a class="close" href="#">×</a>
+					<p>{$flash->message}</p>
+				</div>
+				
+				{block #content}{/block}
+			</div>
+		</div>
+	</body>
 </html>
