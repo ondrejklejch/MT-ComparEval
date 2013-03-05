@@ -14,6 +14,7 @@ use Behat\Gherkin\Node\PyStringNode,
 abstract class BaseImportContext extends BehatContext {
 
 	protected static $watcher;
+	protected static $timeout = 1;
 	protected static $dataFolder = './data';
 
 	/**
@@ -28,20 +29,27 @@ abstract class BaseImportContext extends BehatContext {
 		`rm -rf data/*`;
 	}
 
+	/**
+	 * @BeforeScenario @slow
+	 */
+	public static function setTimeout() {
+		self::$timeout = 5;
+	}
+
 	protected function assertLogContains( $pattern, $message ) {
-		$logContents = self::$watcher->getOutput();
-		
+		$logContents = self::$watcher->getOutput( self::$timeout );
+
 		$this->assert( strpos( $logContents, $pattern ) !== FALSE, $message );
 	}
 
 	protected function assertLogContainsExactlyOccurences( $pattern, $message, $occurences ) {
-		$logContents = self::$watcher->getOutput();
+		$logContents = self::$watcher->getOutput( self::$timeout );
 
 		$this->assert( substr_count( $logContents, $pattern ) == $occurences, $message );
 	}
 
 	protected function assertLogDoesNotContain( $pattern, $message ) {
-		$logContents = self::$watcher->getOutput();
+		$logContents = self::$watcher->getOutput( self::$timeout );
 		
 		$this->assert( strpos( $logContents, $pattern ) === FALSE, $message );
 	}

@@ -55,7 +55,12 @@ class ExperimentsImportContext extends BaseImportContext {
 		$experimentFolder = self::$dataFolder . '/' . $experimentName;
 		mkdir( $experimentFolder );
 
-		`cp examples/small-project/*.* $experimentFolder`;
+		if( file_exists( "examples/$experimentName" ) ) {
+			`cp examples/$experimentName/*.* $experimentFolder`;
+		} else {
+			`cp examples/small-project/*.* $experimentFolder`;
+		}
+
 		$container = $this->getMainContext()->getSubcontext( 'nette' );
 
 		$container->getService( 'experiments' )->deleteExperimentByName( $experimentName );

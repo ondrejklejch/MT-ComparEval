@@ -58,7 +58,11 @@ class TasksImportContext extends BaseImportContext {
 		$taskFolder = self::$dataFolder . '/' . $experimentName . '/' . $taskName;
 		mkdir( $taskFolder );
 
-		`cp -r examples/small-project/moses/* $taskFolder`;
+		if( file_exists( "examples/$experimentName/$taskName" ) ) {
+			`cp -r examples/$experimentName/$taskName/* $taskFolder`;
+		} else {
+			`cp -r examples/small-project/moses/* $taskFolder`;
+		}
 	}
 
 	/**

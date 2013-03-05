@@ -31,6 +31,16 @@ class Tasks {
 		}
 	}
 
+	public function addMetric( $taskId, $metric, $value ) {
+		$data = array(
+			'tasks_id' => $taskId,
+			'metrics_id' => $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id,
+			'score' => $value
+		);
+
+		$this->db->table( 'tasks_metrics' )->insert( $data );
+	}
+
 	public function deleteTaskByName( $experimentId, $name ) {
 		$this->db->table( 'tasks' )
 			->where( 'experiments_id', $experimentId )

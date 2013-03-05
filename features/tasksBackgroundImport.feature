@@ -143,3 +143,22 @@ Feature: Tasks background import
 		Then I should see "new-task" in the tasks list
 		And task "new-task" should have "name" == "My name"
 		And task "new-task" should have "description" == "My description"
+
+	@slow
+	Scenario Outline: Metrics are computed when importing task
+		Given there is already imported experiment called "large-project"
+		And tasks watcher is running
+		And there is no task called "<task>" in "large-project"
+		When I upload task called "<task>" to "large-project"
+		And task "<task>" is uploaded successfully
+		And I open page with experiments list
+		And I click on "tasks" link of "large-project"
+		Then I should see "<task>" in the tasks list
+		And task "<task>" should have metric "bleu" == "<bleu>"
+
+		Examples:
+			| task		| bleu		|
+			| google	| 0.2783	|
+			| moses		| 0.2005	|
+			| tectomt	| 0.1542	|
+

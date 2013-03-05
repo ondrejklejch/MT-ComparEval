@@ -4,10 +4,12 @@ class TasksImporter extends Importer {
 
 	private $experimentsModel;
 	private $tasksModel;
+	private $bleuMetric;
 
-	public function __construct( Experiments $experimentsModel, Tasks $tasksModel ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BleuMetric $bleuMetric ) {
 		$this->experimentsModel = $experimentsModel;
 		$this->tasksModel = $tasksModel;
+		$this->bleuMetric = $bleuMetric;
 	}
 
 	protected function logImportStart( $config ) {
@@ -32,6 +34,13 @@ class TasksImporter extends Importer {
 	protected function processSentences( $config, $metadata, $sentences ) {
 		$iterator = new \ZipperIterator( $sentences, TRUE );
 		$this->tasksModel->addSentences( $metadata['task_id'], $iterator );
+
+		$this->bleuMetric->init(); 
+		foreach( $iterator as $sentence ) {
+			$this->bleuMetric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
+		}
+
+		$this->tasksModel->addMetric( $metadata['task_id'], 'bleu', $this->bleuMetric->getScore() ); 
 	}
 
 	protected function parseResources( Folder $folder, $config ) {

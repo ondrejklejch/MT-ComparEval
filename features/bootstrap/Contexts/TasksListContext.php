@@ -28,4 +28,20 @@ class TasksListContext extends BasePageContext {
 		);
 	}
 
+	/**
+	 * @Given /^task "([^"]*)" should have metric "([^"]*)" == "([^"]*)"$/
+	 */
+	public function taskShouldHaveMetric( $taskName, $metric, $expectedValue ) {
+		$this->page = new TasksListPage( $this->getSession()->getPage() );
+		$task = $this->page->getTask( $taskName );
+		$currentValue = $task->getMetric( $metric ); 
+
+		$this->assert(
+			$currentValue == $expectedValue,
+			"Incorrect {$metric} value for {$taskName}.\n" . 
+			"Expected:\t$expectedValue\n" .
+			"Got:\t$currentValue"
+		);
+	}
+
 }

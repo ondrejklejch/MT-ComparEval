@@ -25,6 +25,14 @@ $(document).ready( function() {
 	<tr class="task" data-id="{$task['url_key']}">	
 		<td class="name"><input type="checkbox" data-task-id="{$task['id']}"/><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
 		<td class="description">{$task['description']}</td>
+		<td class="metrics">
+			<dl>
+				{foreach $task->related('tasks_metrics') as $metric}
+				<dt>{$metric->ref('metrics')->name}</dt>
+				<dd data-metric="{$metric->ref('metrics')->name}">{$metric['score']}</dd>
+				{/foreach}
+			</dl>
+		</td>
 	</tr>
 {/foreach}
 </table>
