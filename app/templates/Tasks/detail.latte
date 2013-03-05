@@ -88,7 +88,7 @@ function Sentences( $scope, $http ) {
 
 	$scope.predicate = function( sentence ) {
 		if( $scope.order == 'id' ) {
-			return sentence.sentence_id;
+			return parseInt( sentence.sentence_id );
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
 		} else {

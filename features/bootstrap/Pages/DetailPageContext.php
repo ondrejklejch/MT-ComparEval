@@ -59,7 +59,7 @@ class DetailPageContext extends BasePageContext {
 				break;
 		}
 
-		$this->getSession()->wait(500);
+		$this->getSession()->wait(200);
 	}
 
 	/**
@@ -67,6 +67,7 @@ class DetailPageContext extends BasePageContext {
 	 */
 	public function iCancelThisSort() {
 		$this->page->sortSentencesById();
+		$this->getSession()->wait(200);
 	}
 
 	/**
