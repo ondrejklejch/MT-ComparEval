@@ -32,6 +32,8 @@ class Experiments {
 	} 
 
 	public function addSentences( $experimentId, $sentences ) {
+		$this->db->beginTransaction();
+
 		foreach( $sentences as $sentence ) {
 			$this->db->table( 'sentences' )->insert( array(
 				'experiments_id' => $experimentId,
@@ -39,6 +41,8 @@ class Experiments {
 				'reference' => $sentence['reference']
 			) );
 		}
+
+		$this->db->commit();
 	}
 
 	public function deleteExperimentByName( $name ) {

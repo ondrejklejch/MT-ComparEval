@@ -20,6 +20,8 @@ class Tasks {
 	}
 
 	public function addSentences( $taskId, $sentences, $metrics ) {
+		$this->db->beginTransaction();
+
 		foreach( $sentences as $key => $sentence ) {
 			$data = array(
 				'sentences_id' => $sentence['experiment']['id'],
@@ -38,6 +40,8 @@ class Tasks {
 				$this->db->table( 'translations_metrics' )->insert( $data );			
 			}
 		}
+
+		$this->db->commit();
 	}
 
 	public function addMetric( $taskId, $metric, $value ) {
