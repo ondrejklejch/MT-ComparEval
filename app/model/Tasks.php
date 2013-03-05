@@ -19,15 +19,24 @@ class Tasks {
 		return $row->getPrimary( TRUE );
 	}
 
-	public function addSentences( $taskId, $sentences ) {
-		foreach( $sentences as $sentence ) {
+	public function addSentences( $taskId, $sentences, $metrics ) {
+		foreach( $sentences as $key => $sentence ) {
 			$data = array(
 				'sentences_id' => $sentence['experiment']['id'],
 				'tasks_id' => $taskId,
 				'text' => $sentence['translation']
 			);
 
-			$this->db->table( 'translations' )->insert( $data );
+			$translationId = $this->db->table( 'translations' )->insert( $data );
+			
+			foreach( $metrics as $metric => $values ) {
+				$data = array(
+					'translations_id' => $translationId,
+					'metrics_id' => $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id,
+					'score' => $values[ $key ]
+				);
+				$this->db->table( 'translations_metrics' )->insert( $data );			
+			}
 		}
 	}
 

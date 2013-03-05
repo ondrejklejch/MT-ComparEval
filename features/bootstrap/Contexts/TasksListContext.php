@@ -44,4 +44,13 @@ class TasksListContext extends BasePageContext {
 		);
 	}
 
+	/**
+	 * @Given /^I click on task "([^"]*)"$/
+	 */
+	public function iClickOnTask( $taskName ) {
+		$this->page = new TasksListPage( $this->getSession()->getPage() );
+		$this->page->getTask( $taskName )->openSentences();
+		$this->getSession()->wait( 500 );
+	}
+
 }

@@ -33,7 +33,7 @@ abstract class BaseImportContext extends BehatContext {
 	 * @BeforeScenario @slow
 	 */
 	public static function setTimeout() {
-		self::$timeout = 5;
+		self::$timeout = 10;
 	}
 
 	protected function assertLogContains( $pattern, $message ) {

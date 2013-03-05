@@ -28,6 +28,20 @@ class BleuMetric {
 		$matchingNGrams = $this->getMatchingNGrams( $referenceNGrams, $translationNGrams );
 		$this->addReferenceNGrams( $translationNGrams );
 		$this->addMatchingNGrams( $matchingNGrams );
+
+		return $this->getSentenceScore( $referenceNGrams, $translationNGrams, $matchingNGrams );
+	}
+
+	public function getSentenceScore( $referenceNGrams, $translationNGrams, $matchingNGrams ) {
+		$countOccurences = function( $item ) { return count( $item ); };
+		$referenceNGrams = array_map( $countOccurences, $referenceNGrams );
+		$translationNGrams = array_map( $countOccurences, $translationNGrams );
+		$matchingNGrams = array_map( $countOccurences, $matchingNGrams );
+
+		$geometricAverage = $this->computeGeometricAverage( $matchingNGrams, $translationNGrams, 1 );	
+		$brevityPenalty = $this->computeBrevityPenalty( $translationNGrams[1], $referenceNGrams[1] );
+
+		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
 	}
 
 	private function getNGrams( $sentence ) {
@@ -111,15 +125,19 @@ class BleuMetric {
 		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
 	}
 
-	private function computeGeometricAverage( $matchingNGrams, $referenceNGrams) {
+	private function computeGeometricAverage( $matchingNGrams, $referenceNGrams, $default = NULL ) {
 		$geometricAverage = 0;
 
 		for( $length = 1; $length <= 4; $length++ ) {
-			if( !isset( $matchingNGrams[ $length ] ) ) {
+			if( $matchingNGrams[ $length ] == 0 && $default === NULL ) {
 				continue;
 			}
 
-			$precision = $matchingNGrams[ $length ] / $referenceNGrams[ $length ];
+			if( $matchingNGrams[ $length ] == 0 ) {
+				$matchingNGrams[ $length ] = $default;
+			}
+
+			$precision = $matchingNGrams[ $length ] / max( 1, $referenceNGrams[ $length ] );
 			$geometricAverage += 1/4 * log( $precision ); 
 		}
 

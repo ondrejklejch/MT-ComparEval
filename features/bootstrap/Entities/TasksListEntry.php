@@ -15,4 +15,10 @@ class TaskListEntry {
 		return $metrics->find( 'xpath', "//dd[@data-metric='$name']" )->getText();
 	}
 
+
+	public function openSentences() {
+		$link = $this->node->find( 'css', 'td.name a' );
+		$link->click();
+	}
+
 }

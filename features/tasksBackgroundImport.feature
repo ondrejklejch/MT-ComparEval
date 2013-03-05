@@ -145,7 +145,7 @@ Feature: Tasks background import
 		And task "new-task" should have "description" == "My description"
 
 	@slow
-	Scenario Outline: Metrics are computed when importing task
+	Scenario Outline: Bleu metric is computed when importing task
 		Given there is already imported experiment called "large-project"
 		And tasks watcher is running
 		And there is no task called "<task>" in "large-project"
@@ -162,3 +162,16 @@ Feature: Tasks background import
 			| moses		| 0.2005	|
 			| tectomt	| 0.1542	|
 
+
+	Scenario: Bleu metric is computed for each sentence when importing task
+		Given there is already imported experiment called "old-experiment"
+		And tasks watcher is running
+		And there is no task called "new-task" in "old-experiment"
+		When I upload task called "new-task" to "old-experiment"
+		And task "new-task" is uploaded successfully
+		And I open page with experiments list
+		And I click on "tasks" link of "old-experiment"
+		And I click on task "new-task"
+		And I choose bleu metric
+		Then sentences should be shown
+		Then every translation should have text and metric

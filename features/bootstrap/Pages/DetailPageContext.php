@@ -74,7 +74,12 @@ class DetailPageContext extends BasePageContext {
 	 * @When /^I choose (.*) metric$/
 	 */
 	public function iChooseAnotherMetric( $metric ) {
+		if( !isset( $this->page ) ) {
+			$this->page = new TaskDetailPage( $this->getSession()->getPage() );
+		}
+
 		$this->page->chooseMetric( $metric );
+		$this->getSession()->wait( 200 );
 	}
 
 	/**
@@ -96,6 +101,10 @@ class DetailPageContext extends BasePageContext {
 	 * @Then /^sentences should be shown$/
 	 */
 	public function sentencesShouldBeShown() {
+		if( !isset( $this->page ) ) {
+			$this->page = new TaskDetailPage( $this->getSession()->getPage() );
+		}
+
 		$sentences = $this->page->getSentences();
 
 		$this->assert( 

@@ -32,14 +32,15 @@ class TasksImporter extends Importer {
 	}
 
 	protected function processSentences( $config, $metadata, $sentences ) {
-		$iterator = new \ZipperIterator( $sentences, TRUE );
-		$this->tasksModel->addSentences( $metadata['task_id'], $iterator );
+		$sentences = new \ZipperIterator( $sentences, TRUE );
 
 		$this->bleuMetric->init(); 
-		foreach( $iterator as $sentence ) {
-			$this->bleuMetric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
+		$metrics = array( 'bleu' => array() );
+		foreach( $sentences as $sentence ) {
+			$metrics['bleu'][] = $this->bleuMetric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
 		}
 
+		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
 		$this->tasksModel->addMetric( $metadata['task_id'], 'bleu', $this->bleuMetric->getScore() ); 
 	}
 
