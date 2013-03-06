@@ -120,7 +120,8 @@ class ExperimentsImportContext extends BaseImportContext {
 	 * @Then /^experiments watcher should watch that folder$/
 	 */
 	public function experimentsWatcherShouldWatchThatFolder() {
-		$pattern = 'Experiments watcher is watching folder: ./data';
+		
+		$pattern = "Experiments watcher is watching folder: " . self::$dataFolder;
 		$message =  'Experiments watcher is not watching given folder';
 
 		$this->assertLogContains( $pattern, $message );

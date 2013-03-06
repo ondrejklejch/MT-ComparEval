@@ -98,7 +98,7 @@ class TasksImportContext extends BaseImportContext {
 	 * @Then /^tasks watcher should watch that folder$/
 	 */
 	public function tasksWatcherShouldWatchThatFolder() {
-		$pattern = 'Tasks watcher is watching folder: ./data';
+		$pattern = "Tasks watcher is watching folder: " . self::$dataFolder;
 		$message =  'Tasks watcher is not watching given folder';
 
 		$this->assertLogContains( $pattern, $message );

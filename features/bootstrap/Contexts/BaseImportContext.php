@@ -15,7 +15,7 @@ abstract class BaseImportContext extends BehatContext {
 
 	protected static $watcher;
 	protected static $timeout = 1;
-	protected static $dataFolder = './data';
+	protected static $dataFolder = './test_data';
 
 	/**
 	 * @AfterScenario @import
@@ -26,7 +26,8 @@ abstract class BaseImportContext extends BehatContext {
 			self::$watcher = NULL;
 		}
 
-		`rm -rf data/*`;
+		$dataFolder = self::$dataFolder;
+		`rm -rf {$dataFolder}/*`;
 	}
 
 	/**
