@@ -47,12 +47,14 @@ class ZipperIterator implements Iterator {
 		array_walk( $this->iterators, function( $iterator ) {
 			$iterator->next();
 		} );
+		$this->position++;
 	}
 
 	public function rewind() {
 		array_walk( $this->iterators, function( $iterator ) {
 			$iterator->rewind();
 		} );
+		$this->position = 0;
 	}
 
 	public function valid() {
