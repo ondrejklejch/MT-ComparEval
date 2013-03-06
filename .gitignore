@@ -1,6 +1,7 @@
 log/*
 temp/*
 vendor/*
+data/*
 *.swp
 
 .DS_Store
@@ -8,3 +9,4 @@ vendor/*
 !.htaccess
 !web.config
 app/config/config.local.neon
+app/database.test

@@ -49,3 +49,6 @@ common:
 production < common:
 
 development < common:
+	nette:
+		database:
+			dsn: 'sqlite:%appDir%/database.test'
