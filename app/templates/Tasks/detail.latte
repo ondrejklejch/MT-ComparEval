@@ -59,7 +59,7 @@ function Sentences( $scope, $http ) {
 	}
 
 	function loadSentences() {
-		$http.get( 'http://localhost:8000/api/sentences', {
+		$http.get( '{!$baseUri}/api/sentences', {
 			params: {
 				{foreach $taskIds as $i => $id}
 				"taskIds[{$i}]": {$id},
