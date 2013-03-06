@@ -19,9 +19,10 @@ CREATE TABLE "tasks" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "experiments_id" integer NOT NULL,
   "name" text NOT NULL,
-  "url_key" text NOT NULL UNIQUE,
+  "url_key" text NOT NULL,
   "description" text NULL,
-  FOREIGN KEY ("experiments_id") REFERENCES "experiments" ("id") ON DELETE CASCADE
+  FOREIGN KEY ("experiments_id") REFERENCES "experiments" ("id") ON DELETE CASCADE,
+  UNIQUE("experiments_id","url_key")
 );
 
 
@@ -39,6 +40,8 @@ CREATE TABLE "metrics" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL
 );
+
+INSERT INTO "metrics" ("name") VALUES ("bleu");
 
 
 CREATE TABLE "translations_metrics" (
