@@ -100,6 +100,23 @@ function Sentences( $scope, $http ) {
 				}
 			} );
 
+			var improving = getImproving(
+				getNGrams( sentence.reference ),
+				[ getNGrams( sentence.translations[0].text ), getNGrams( sentence.translations[1].text ) ]
+			);
+			
+			sentence.translations.forEach( function( translation, translationNumber ) {
+				console.log( translationNumber );
+
+				console.log( translation.tokens );
+				improving[ translationNumber ].forEach( function( isImproving, token ) {
+					console.log( "token" + token );
+					if( isImproving ) {
+						translation.tokens[ token ].class.push( 'improving' );
+					}
+				} );
+			} );
+
 			$scope.sentences.push( sentence );
 			$scope.offset++;
 		} );
@@ -113,7 +130,7 @@ function Sentences( $scope, $http ) {
 		} else {
 			var metricA = parseFloat( sentence.translations[0].metrics[$scope.currentMetric] ); 
 			var metricB = parseFloat( sentence.translations[1].metrics[$scope.currentMetric] ); 
-			console.log( metricA - metricB );
+
 			return metricA - metricB;
 		}
 	}
@@ -139,6 +156,14 @@ function Sentences( $scope, $http ) {
 	background-color: #51A351;
 	color: white;
 	padding: 0em 0.2em;
+}
+
+.matching-0.improving {
+	background-color: yellow;
+}
+
+.matching-1.improving {
+	background-color: blue;
 }
 
 </style>

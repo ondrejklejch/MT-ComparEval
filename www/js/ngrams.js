@@ -185,17 +185,38 @@ var idOrDefault = function( value, defaultValue ) {
 	return value;
 }
 
+var getMatchingNGrams = function( reference, translation ) {
+	return intersection( reference, translation );
+}
+
 var getNotMatchingNGrams = function( reference, translation ) {
 	return diff( reference, translation );
 }
 
-var getImproving = function( matchingA, matchingB ) {
-	return diff( matchingA, matchingB );
+var getImproving = function( reference, translations ) {
+	var matching = translations.map( function( translation ) { return getMatchingNGrams( reference, translation ); } );
+	var commonMatching = intersection( matching[0], matching[1] );
+	
+	var improving = [];
+	translations.forEach( function( translation, translationNumber ) {
+		var matchingPositions = globalAlignment( reference[1], translation[1] );
+		var matchingInOneTranslation = guessAllMatchingPositions( matching[ translationNumber ], translation, matchingPositions.translation ); 
+		var matchingInBothTranslations = guessAllMatchingPositions( commonMatching, translation, matchingPositions.translation );
+		var currentImproving = [];
+		for( var i in matchingInOneTranslation ) {
+			currentImproving[i] = matchingInOneTranslation[i] && !matchingInBothTranslations[i];
+		}
+
+		improving.push( currentImproving );
+	} ); 
+
+	return improving;
 }
 
 var getWorsening = function( notMatchingA, notMatchingB ) {
 	return diff( notMatchingA, notMatchingB );
 }
+
 
 var intersection = function( setA, setB ) {
 	return iterateElements( setA, setB, function( aCount, bCount ) {
