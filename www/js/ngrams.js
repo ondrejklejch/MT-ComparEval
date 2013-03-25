@@ -18,15 +18,41 @@ var tokenize = function( sentence ) {
 	return sentence.split( /\s+/ );
 }
 
-var getMatchingNGrams = function( reference, translation ) {
-	var matching = intersection( reference, translation );
-	var matchingInReference = guessPositionsOfMatching( matching, reference );
-	var matchingInTranslation = guessPositionsOfMatching( matching, translation ); 
+var getMatchingPositions = function( referenceNGrams, translationNGrams ) {
+	var matchingNGrams = intersection( referenceNGrams, translationNGrams );
+	var matchingPositions = globalAlignment( referenceNGrams[1], translationNGrams[1] );
 
-	return { "reference": matchingInReference, "translation": matchingInTranslation }; 
+	var matchingInReference = guessAllMatchingPositions( matchingNGrams, referenceNGrams, matchingPositions.reference );
+	var matchingInTranslation = guessAllMatchingPositions( matchingNGrams, translationNGrams, matchingPositions.translation ); 
+
+	return {
+		"reference": matchingInReference,
+		"translation": matchingInTranslation
+	}; 
 }
 
-var guessPositionsOfMatching = function( matching, all ) {
+
+var guessAllMatchingPositions = function( matchingNGrams, allNGrams, alignedPositions ) {
+	var isMatching = [];
+	for( var i = 0; i < allNGrams[1].length; i++ ) {
+		isMatching[i] = false;
+	}
+
+	var matchingPositionsByLength = guessPositionsOfMatching( matchingNGrams, allNGrams, alignedPositions );
+	for( var length in matchingPositionsByLength ) {
+		for( var ngram in matchingPositionsByLength[ length ] ) {
+			matchingPositionsByLength[ length ][ ngram ].forEach( function( position ) {
+				for( var i = 0; i < length; i++ ) {
+					isMatching[ position + i ] = true;
+				}
+			} );
+		}
+	}
+
+	return isMatching;
+}
+
+var guessPositionsOfMatching = function( matching, all, alignedPositions ) {
 	var matchingOccurences = countOccurences( matching );
 	var allOccurences = countOccurences( all );
 	var allPositions = getPositions( all );
@@ -42,7 +68,7 @@ var guessPositionsOfMatching = function( matching, all ) {
 			for( var pos in allPositions[i][key] ) {
 				for( var j = 0; j < i; j++ ) {
 					var index = allPositions[i][key][pos] + j; 
-					tmpScore[index] = idOrDefault( tmpScore[index], 0 ) + 1;
+					tmpScore[index] = idOrDefault( tmpScore[index], 0 ) + idOrDefault( alignedPositions[index], 0 ) + 1;
 				}	
 			}
 		}
@@ -85,6 +111,70 @@ var guessPositionsOfMatching = function( matching, all ) {
 	}
 	
 	return positions;
+}
+
+var globalAlignment = function( reference, translation ) {
+	var traceBack = computeTracebackMatrix( reference, translation, function( a, b ) { return ( a == b ) ? 1 : 0; }, -1 );
+
+	var matchingPositions = {
+		'reference': {},
+		'translation': {},
+	};
+	var i = reference.length;
+	var j = translation.length;
+	while( i != 0 && j != 0 ) {
+		switch( traceBack[j][i] ) {
+			case 'M':
+				i--;
+				j--;
+				matchingPositions.reference[i] = 1;
+				matchingPositions.translation[j] = 1;
+				break;
+			case 'D':
+				j--;
+				break;
+			case 'I':
+				i--;
+				break;
+		}
+	}
+
+	return matchingPositions;
+}
+
+var computeTracebackMatrix = function( reference, translation, s, d ) {
+	var matrix = [];
+	var traceBack = [];
+	for( var j = 0; j <= translation.length; j++ ) {
+		traceBack[j] = [];
+		traceBack[j][0] = 'D';
+		matrix[j] = [];
+		matrix[j][0] = j * d;
+	}
+
+	for( var i = 0; i <= reference.length; i++ ) {
+		traceBack[0][i] = 'I';
+		matrix[0][i] = i * d;
+	}
+
+	for( var i = 1; i <= reference.length; i++ ) {
+		for( var j = 1; j <= translation.length; j++ ) {
+			var match = matrix[j-1][i-1] + s( reference[i], translation[j] );
+			var del = matrix[j-1][i] + d;
+			var ins = matrix[j][i-1] + d;
+
+			matrix[j][i] = Math.max( match, Math.max( del, ins ) );
+			if( match == matrix[j][i] ) {
+				traceBack[j][i] = 'M';
+			} else if( del == matrix[j][i] ) {
+				traceBack[j][i] = 'D';
+			} else {
+				traceBack[j][i] = 'I';
+			}
+		}
+	}
+
+	return traceBack;
 }
 
 var idOrDefault = function( value, defaultValue ) {
@@ -166,9 +256,15 @@ var getPositions = function( set ) {
 	return positions;
 }
 
+initClasses = function( tokens ) {
+	return tokens.map( function( token ) {
+		return {
+			'token': token,
+			'class': []
+		};
+	} );
+}
 
-var reference = getNGrams( "a b c d e f g bla bla bla bla bla a b c d e f g h" );
-var translation = getNGrams( "a b c d e f g h" );
 
 
-console.log( getMatchingNGrams( reference, translation ).reference );
+

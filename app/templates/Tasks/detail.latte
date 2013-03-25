@@ -1,5 +1,6 @@
 {block scripts}
 {include #parent}
+<script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
 <script type="text/javascript">
 
 angular.module('scroll', []).directive('whenScrolled', function() {
@@ -73,17 +74,35 @@ function Sentences( $scope, $http ) {
 	}
 
 	function addSentences( data ) {
-		for( var i in data.sentences ) {
-			if( data.sentences[i].translations.length == 2 ) {
-				metricA = data.sentences[i].translations[0].metrics[$scope.currentMetric];
-				metricB = data.sentences[i].translations[1].metrics[$scope.currentMetric];
+		data.sentences.forEach( function( sentence ) {
+			if( sentence.translations.length == 2 ) {
+				metricA = sentence.translations[0].metrics[$scope.currentMetric];
+				metricB = sentence.translations[1].metrics[$scope.currentMetric];
 
-				data.sentences[i].diff = metricA - metricB;
+				sentence.diff = metricA - metricB;
 			}
 
-			$scope.sentences.push( data.sentences[i] );
+			sentence.reference_tokens = initClasses( tokenize( sentence.reference ) );
+			sentence.translations.forEach( function( translation, translationNumber ) {
+				translation.tokens = initClasses( tokenize( translation.text ) );
+
+				var matchingPositions = getMatchingPositions( getNGrams( sentence.reference ), getNGrams( translation.text ) );
+				for ( var i in matchingPositions.reference ) {
+					if( matchingPositions.reference[i] == true ) {
+						sentence.reference_tokens[i].class.push( 'matching-' + translationNumber );
+					}
+				}
+
+				for ( var i in matchingPositions.translation ) {
+					if( matchingPositions.translation[i] == true ) {
+						translation.tokens[i].class.push( 'matching-' + translationNumber );
+					}
+				}
+			} );
+
+			$scope.sentences.push( sentence );
 			$scope.offset++;
-		}
+		} );
 	}
 
 	$scope.predicate = function( sentence ) {
@@ -103,7 +122,27 @@ function Sentences( $scope, $http ) {
 {/block}
 
 {block #content}
-<div ng-app="scroll" ng-controller="Sentences" when-scrolled="loadMore()">
+<style>
+.matching-active .matching-0 {
+	background-color: #F89406;
+	color: white;
+	padding: 0em 0.2em;
+}
+
+.matching-active .matching-1 {
+	background-color: #006DCC;
+	color: white;
+	padding: 0em 0.2em;
+}
+
+.matching-active .matching-0.matching-1 {
+	background-color: #51A351;
+	color: white;
+	padding: 0em 0.2em;
+}
+
+</style>
+<div ng-app="scroll" ng-controller="Sentences" when-scrolled="loadMore()" class="matching-active">
 	<a ng-click="sortSentencesAscending()" id="sort-asc">sort ascending</a>
 	<a ng-click="sortSentencesDescending()" id="sort-desc">sort descending</a>
 	<a ng-click="cancelSort()" id="sort-cancel">cancel sort</a>
@@ -120,10 +159,14 @@ function Sentences( $scope, $http ) {
 			data-id="{{ sentence.sentence_id }}">
 
 			<div class="source">{{ sentence.source }}</div>
-			<div class="reference">{{ sentence.reference }}</div>
+			<div class="reference">
+				<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+			</div>
 
 			<div ng-repeat="translation in sentence.translations" class="translation">
-				<div class="text">{{ translation.text }}</div>
+				<div class="text">
+					<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+				</div>
 				<div class="metric">{{ translation.metrics[currentMetric] }}</div>
 			</div>
 			<strong class="diff-metric">{{ sentence.diff }}</strong>
