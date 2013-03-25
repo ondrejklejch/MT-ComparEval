@@ -104,15 +104,22 @@ function Sentences( $scope, $http ) {
 				getNGrams( sentence.reference ),
 				[ getNGrams( sentence.translations[0].text ), getNGrams( sentence.translations[1].text ) ]
 			);
+
+			var worsening = getWorsening(
+				getNGrams( sentence.reference ),
+				[ getNGrams( sentence.translations[0].text ), getNGrams( sentence.translations[1].text ) ]
+			);
 			
 			sentence.translations.forEach( function( translation, translationNumber ) {
-				console.log( translationNumber );
-
-				console.log( translation.tokens );
 				improving[ translationNumber ].forEach( function( isImproving, token ) {
-					console.log( "token" + token );
 					if( isImproving ) {
 						translation.tokens[ token ].class.push( 'improving' );
+					}
+				} );
+
+				worsening[ translationNumber ].forEach( function( isWorsening, token ) {
+					if( isWorsening ) {
+						translation.tokens[ token ].class.push( 'worsening' );
 					}
 				} );
 			} );
@@ -164,6 +171,11 @@ function Sentences( $scope, $http ) {
 
 .matching-1.improving {
 	background-color: blue;
+}
+
+.worsening {
+	background-color: red;
+	color: white;
 }
 
 </style>

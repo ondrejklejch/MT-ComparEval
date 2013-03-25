@@ -190,7 +190,7 @@ var getMatchingNGrams = function( reference, translation ) {
 }
 
 var getNotMatchingNGrams = function( reference, translation ) {
-	return diff( reference, translation );
+	return diff( translation, reference );
 }
 
 var getImproving = function( reference, translations ) {
@@ -213,8 +213,29 @@ var getImproving = function( reference, translations ) {
 	return improving;
 }
 
-var getWorsening = function( notMatchingA, notMatchingB ) {
-	return diff( notMatchingA, notMatchingB );
+var getWorsening = function( reference, translations ) {
+	var matching = translations.map( function( translation ) { return getMatchingNGrams( reference, translation ); } );
+	var notMatching = translations.map( function( translation ) { return getNotMatchingNGrams( reference, translation ); } );
+	var commonNotMatching = intersection( notMatching[0], notMatching[1] );
+	
+	var worsening = [];
+	translations.forEach( function( translation, translationNumber ) {
+		var notMatchingPositions = globalAlignment( translations[ 1 - translationNumber ][1], translation[1] );
+		var notMatchingInOneTranslation = guessAllMatchingPositions( notMatching[ translationNumber ], translation, notMatchingPositions.translation ); 
+		var notMatchingInBothTranslations = guessAllMatchingPositions( commonNotMatching, translation, notMatchingPositions.translation );
+
+		var matchingPositions = globalAlignment( reference[1], translation[1] );
+		var matchingInOneTranslation = guessAllMatchingPositions( matching[ translationNumber ], translation, matchingPositions.translation ); 
+
+		var currentImproving = [];
+		for( var i in notMatchingInOneTranslation ) {
+			currentImproving[i] = notMatchingInOneTranslation[i] && !notMatchingInBothTranslations[i] && !matchingInOneTranslation[i];
+		}
+
+		worsening.push( currentImproving );
+	} ); 
+
+	return worsening;
 }
 
 
