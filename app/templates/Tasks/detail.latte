@@ -1,6 +1,7 @@
 {block scripts}
 {include #parent}
 <script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
+<script type="text/javascript" src="{$baseUri}/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
 angular.module('scroll', []).directive('whenScrolled', function() {
@@ -19,18 +20,26 @@ angular.module('scroll', []).directive('whenScrolled', function() {
 });
 
 function Sentences( $scope, $http ) {
+	{foreach $taskIds as $i => $id}
+	$scope.task{$i} = {$id};
+	{/foreach}
+	$scope.tasks = [];
+	$scope.taskNames = {};
+
 	$scope.sentences = [];
 	$scope.offset = 0;
-	$scope.currentMetric = 'rand';
 	$scope.order = 'id';
 	$scope.asc = true;
 	$scope.isMatchingActive = false;
 	$scope.isImprovingActive = false;
 	$scope.isWorseningActive = false;
+	$scope.showSource = true;
+	$scope.showReference = true;
 
 	loadSentences();
+	loadTasks();
 
-	$scope.$watch( 'currentMetric+order+asc', reloadSentences );
+	$scope.$watch( 'currentMetric+order+asc+task0+task1', reloadSentences );
 
 	function reloadSentences( oldValue, newValue ) {
 		if( oldValue == newValue ) {
@@ -55,6 +64,7 @@ function Sentences( $scope, $http ) {
 
 	$scope.cancelSort = function() {
 		$scope.order = 'id';
+		$scope.currentMetric = "";
 		$scope.asc = true;
 	}
 
@@ -62,15 +72,36 @@ function Sentences( $scope, $http ) {
 		loadSentences();
 	}
 
+	$scope.swapTasks = function() {
+		var tmp = $scope.task0;
+		$scope.task0 = $scope.task1;
+		$scope.task1 = tmp;
+	}
+
+	function loadTasks() {
+		$http.get( '{!$baseUri}/api/tasks', {
+			params: {
+				"experimentId": {$experimentId},
+			}
+		} ).success( addTasks );
+	}
+
+	function addTasks( data ) {
+		data.tasks.forEach( function( task ) {
+			$scope.taskNames[ task.id ] = task.name;
+			$scope.tasks.push( task );
+		} );
+	}
+
+
 	function loadSentences() {
 		$http.get( '{!$baseUri}/api/sentences', {
 			params: {
-				{foreach $taskIds as $i => $id}
-				"taskIds[{$i}]": {$id},
-				{/foreach}
+				"taskIds[0]": $scope.task0,
+				"taskIds[1]": $scope.task1,
 				"offset": $scope.offset,
 				"limit": 10,
-				"orderBy": ( $scope.order == 'id' ) ? 'id' : $scope.currentMetric,
+				"orderBy": ( $scope.order == 'id' || $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
 				"order": ( $scope.asc ) ? 'asc' : 'desc'
 			}
 		} ).success( addSentences );
@@ -145,6 +176,11 @@ function Sentences( $scope, $http ) {
 		}
 	}
 };
+
+$(document).ready( function() {
+	$('.dropdown-toggle').dropdown();
+} );
+
 </script>
 {/block}
 
@@ -184,6 +220,10 @@ span {
 	color: #b94a48;
 }
 
+.hidden {
+	display: none;
+}
+
 </style>
 <div
 	ng-app="scroll"
@@ -191,14 +231,42 @@ span {
 	when-scrolled="loadMore()"
 	ng-class="{ 'matching-active': isMatchingActive, 'improving-active': isImprovingActive, 'worsening-active': isWorseningActive }"
 >
-	<a ng-click="sortSentencesAscending()" id="sort-asc">sort ascending</a>
-	<a ng-click="sortSentencesDescending()" id="sort-desc">sort descending</a>
-	<a ng-click="cancelSort()" id="sort-cancel">cancel sort</a>
 
-	<select ng-model="currentMetric" id="metrics">
-		<option value="bleu">bleu</option>
-		<option value="rand">rand</option>
-	</select>
+	<div class="navbar">
+		<div class="navbar-inner">
+			<ul class="nav pull-left">
+				<li>
+					<form class="navbar-form">
+						<select ng-model="task0" ng-options="task.id as task.name for task in tasks">
+							<option value="">Choose task for comparison</option>
+						</select>
+
+						<a ng-click="swapTasks()" class="btn"><i class="icon-refresh"> </i></a>
+
+						<select ng-model="task1" ng-options="task.id as task.name for task in tasks">
+							<option value="">Choose task for comparison</option>
+						</select>
+					</form>
+				</li>
+			</ul>
+			<ul class="nav pull-right">
+				<li>
+					<form class="navbar-form form-inline">
+						<select ng-model="currentMetric" id="metrics">
+							<option value="">Choose metric for sort</option>
+							<option value="bleu">bleu</option>
+							<option value="rand">rand</option>
+						</select>
+						<div class="btn-group">
+							<a ng-click="sortSentencesAscending()" class="btn" ng-class="{'btn-success': asc && order != 'id'}" id="sort-asc"><i class="icon-arrow-up"> </i></a>
+							<a ng-click="sortSentencesDescending()" class="btn" ng-class="{'btn-success': !asc}" id="sort-desc"><i class="icon-arrow-down"> </i></a>
+							<a ng-click="cancelSort()" class="btn" id="sort-cancel"><i class="icon-off"> </i></a>
+						</div>
+					</form>
+				</li>
+			</ul>
+		</div>
+	</div>
 
 	<form class="form-horizontal">
 		<div class="control-group">
@@ -219,7 +287,19 @@ span {
 		</div>
 	</form>
 
+	<form class="form-horizontal">
+		<div class="control-group">
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showSource" />
+				Show source
+			</label>
 
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showReference" />
+				Show reference
+			</label>
+		</div>
+	</form>
 
 	<ul class="unstyled">
 		<li
@@ -229,20 +309,26 @@ span {
 		>
 
 			<dl class="dl-horizontal">
-				<dt>Source</dt>
-				<dd class="source">{{ sentence.source }}</dd>
-				<dt>Reference</dt>
-				<dd class="reference">
-					<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
-				</dd>
+				<div ng-class="{ 'hidden': !showSource }">
+					<dt>Source</dt>
+					<dd class="source">{{ sentence.source }}</dd>
+				</div>
+
+				<div ng-class="{ 'hidden': !showReference }">
+					<dt>Reference</dt>
+					<dd class="reference">
+						<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+					</dd>
+				</div>
 
 				<div ng-repeat="translation in sentence.translations" class="translation">
-					<dt>Task_{{ translation.task_id }}</dt>
+					<dt>{{ taskNames[ translation.task_id ] }}</dt>
 					<dd class="text">
 						<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
 					</dd>
 					<dd class="metric">{{ translation.metrics[currentMetric] }}</dd>
 				</div>
+
 				<dt>{{ currentMetric }}</dt>
 				<dd>{{ sentence.diff }}</dd>
 			</dl>

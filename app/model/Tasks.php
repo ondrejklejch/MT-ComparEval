@@ -8,6 +8,10 @@ class Tasks {
 		$this->db = $db;
 	}
 
+	public function getTask( $taskId ) {
+		return $this->db->table( 'tasks' )->find( $taskId )->fetch();
+	}
+
 	public function getTasks( $experimentId ) {
 		return $this->db->table( 'tasks' )
 			->where( 'experiments_id', $experimentId );
