@@ -221,28 +221,32 @@ span {
 
 
 
-	<ul>
+	<ul class="unstyled">
 		<li
 			ng-repeat="sentence in sentences | orderBy:predicate:!asc"
 			class="sentence"
 			data-id="{{ sentence.sentence_id }}"
 		>
 
-			<div class="source">{{ sentence.source }}</div>
-			<div class="reference">
-				<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
-			</div>
+			<dl class="dl-horizontal">
+				<dt>Source</dt>
+				<dd class="source">{{ sentence.source }}</dd>
+				<dt>Reference</dt>
+				<dd class="reference">
+					<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+				</dd>
 
-			<div ng-repeat="translation in sentence.translations" class="translation">
-				<div class="text">
-					<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+				<div ng-repeat="translation in sentence.translations" class="translation">
+					<dt>Task_{{ translation.task_id }}</dt>
+					<dd class="text">
+						<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+					</dd>
+					<dd class="metric">{{ translation.metrics[currentMetric] }}</dd>
 				</div>
-				<div class="metric">{{ translation.metrics[currentMetric] }}</div>
-			</div>
-			<strong class="diff-metric">{{ sentence.diff }}</strong>
-			<hr><br><br>
+				<dt>{{ currentMetric }}</dt>
+				<dd>{{ sentence.diff }}</dd>
+			</dl>
 		</li>
 	</ul>
-	<div id="load-next">load next</div>
 </div>
 {/block}
