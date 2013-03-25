@@ -24,6 +24,9 @@ function Sentences( $scope, $http ) {
 	$scope.currentMetric = 'rand';
 	$scope.order = 'id';
 	$scope.asc = true;
+	$scope.isMatchingActive = false;
+	$scope.isImprovingActive = false;
+	$scope.isWorseningActive = false;
 
 	loadSentences();
 
@@ -165,21 +168,31 @@ function Sentences( $scope, $http ) {
 	padding: 0em 0.2em;
 }
 
-.matching-0.improving {
+.improving-active .matching-0.improving {
 	background-color: yellow;
+	color: white;
+	padding: 0em 0.2em;
 }
 
-.matching-1.improving {
+.improving-active .matching-1.improving {
 	background-color: blue;
+	color: white;
+	padding: 0em 0.2em;
 }
 
-.worsening {
+.worsening-active .worsening {
 	background-color: red;
 	color: white;
+	padding: 0em 0.2em;
 }
 
 </style>
-<div ng-app="scroll" ng-controller="Sentences" when-scrolled="loadMore()" class="matching-active">
+<div
+	ng-app="scroll"
+	ng-controller="Sentences"
+	when-scrolled="loadMore()"
+	ng-class="{ 'matching-active': isMatchingActive, 'improving-active': isImprovingActive, 'worsening-active': isWorseningActive }"
+>
 	<a ng-click="sortSentencesAscending()" id="sort-asc">sort ascending</a>
 	<a ng-click="sortSentencesDescending()" id="sort-desc">sort descending</a>
 	<a ng-click="cancelSort()" id="sort-cancel">cancel sort</a>
@@ -189,11 +202,33 @@ function Sentences( $scope, $http ) {
 		<option value="rand">rand</option>
 	</select>
 
-	<ul >
+	<form class="form-horizontal">
+		<div class="control-group">
+			<label class="checkbox">
+				<input type="checkbox" ng-model="isMatchingActive" />
+				Highlight matching ngrams
+			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" ng-model="isImprovingActive" />
+				Highlight improving ngrams
+			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" ng-model="isWorseningActive" />
+				Highlight worsening ngrams
+			</label>
+		</div>
+	</form>
+
+
+
+	<ul>
 		<li
 			ng-repeat="sentence in sentences | orderBy:predicate:!asc"
 			class="sentence"
-			data-id="{{ sentence.sentence_id }}">
+			data-id="{{ sentence.sentence_id }}"
+		>
 
 			<div class="source">{{ sentence.source }}</div>
 			<div class="reference">
