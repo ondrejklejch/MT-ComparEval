@@ -20,7 +20,7 @@ $(document).ready( function() {
 </script>
 
 <form>
-<table>
+<table class="table">
 {foreach $tasks as $task}
 	<tr class="task" data-id="{$task['url_key']}">	
 		<td class="name"><input type="checkbox" data-task-id="{$task['id']}"/><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
