@@ -122,7 +122,7 @@ var globalAlignment = function( reference, translation ) {
 	};
 	var i = reference.length;
 	var j = translation.length;
-	while( i != 0 && j != 0 ) {
+	while( i != 0 || j != 0 ) {
 		switch( traceBack[j][i] ) {
 			case 'M':
 				i--;
@@ -157,9 +157,9 @@ var computeTracebackMatrix = function( reference, translation, s, d ) {
 		matrix[0][i] = i * d;
 	}
 
-	for( var i = 1; i <= reference.length; i++ ) {
-		for( var j = 1; j <= translation.length; j++ ) {
-			var match = matrix[j-1][i-1] + s( reference[i], translation[j] );
+	for( var j = 1; j <= translation.length; j++ ) {
+		for( var i = 1; i <= reference.length; i++ ) {
+			var match = matrix[j-1][i-1] + s( reference[i-1], translation[j-1] );
 			var del = matrix[j-1][i] + d;
 			var ins = matrix[j][i-1] + d;
 
@@ -298,7 +298,7 @@ var getPositions = function( set ) {
 	return positions;
 }
 
-initClasses = function( tokens ) {
+var initClasses = function( tokens ) {
 	return tokens.map( function( token ) {
 		return {
 			'token': token,

@@ -33,6 +33,9 @@ function Sentences( $scope, $http ) {
 	$scope.isMatchingActive = false;
 	$scope.isImprovingActive = false;
 	$scope.isWorseningActive = false;
+	$scope.showDiffWithReference = false;
+	$scope.showDiffWithEachOther = false;
+	$scope.showDiffFor = 0;
 	$scope.showSource = true;
 	$scope.showReference = true;
 
@@ -95,16 +98,20 @@ function Sentences( $scope, $http ) {
 
 
 	function loadSentences() {
-		$http.get( '{!$baseUri}/api/sentences', {
-			params: {
+		var payload = {};
+		payload.params = {
 				"taskIds[0]": $scope.task0,
-				"taskIds[1]": $scope.task1,
 				"offset": $scope.offset,
 				"limit": 10,
 				"orderBy": ( $scope.order == 'id' || $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
 				"order": ( $scope.asc ) ? 'asc' : 'desc'
-			}
-		} ).success( addSentences );
+		};
+
+		if( $scope.task1 != "" ) {
+			payload.params[ "taskIds[1]" ] = $scope.task1;
+		}
+
+		$http.get( '{!$baseUri}/api/sentences', payload ).success( addSentences );
 	}
 
 	function addSentences( data ) {
@@ -132,31 +139,95 @@ function Sentences( $scope, $http ) {
 						translation.tokens[i].class.push( 'matching-' + translationNumber );
 					}
 				}
+
+				var traceBack = computeTracebackMatrix(
+					sentence.reference_tokens.map( function( t ) { return t.token } ),
+					translation.tokens.map( function( t ) { return t.token } ),
+					function( a, b ) { return ( a == b ) ? 1 : -10; }, -1
+				);
+
+
+				var i = sentence.reference_tokens.length;
+				var j = translation.tokens.length;
+				while( i != 0 || j != 0 ) {
+					switch( traceBack[j][i] ) {
+						case 'M':
+							i--;
+							j--;
+							sentence.reference_tokens[i].class.push( 'diff-matching-' + translationNumber );
+							translation.tokens[j].class.push( 'diff-matching-' + translationNumber );
+							break;
+						case 'D':
+							j--;
+							translation.tokens[j].class.push( 'diff-del-' + translationNumber );
+							break;
+						case 'I':
+							i--;
+							console.log( "insertion" );
+							sentence.reference_tokens[i].class.push( 'diff-ins-' + translationNumber );
+							break;
+					}
+				}
+
 			} );
 
+			if( sentence.translations.length == 2 ) {
+				var traceBack = computeTracebackMatrix(
+					sentence.translations[0].tokens.map( function( t ) { return t.token } ),
+					sentence.translations[1].tokens.map( function( t ) { return t.token } ),
+					function( a, b ) { return ( a == b ) ? 1 : -10; }, -1
+				);
+
+				var i = sentence.translations[0].tokens.length;
+				var j = sentence.translations[1].tokens.length;
+				while( i != 0 || j != 0 ) {
+					switch( traceBack[j][i] ) {
+						case 'M':
+							i--;
+							j--;
+							sentence.translations[0].tokens[i].class.push( 'diff-matching-both' );
+							sentence.translations[1].tokens[j].class.push( 'diff-matching-both' );
+							break;
+						case 'D':
+							j--;
+							sentence.translations[1].tokens[j].class.push( 'diff-del-both' );
+							break;
+						case 'I':
+							i--;
+							console.log( "insertion" );
+							sentence.translations[0].tokens[i].class.push( 'diff-ins-both' );
+							break;
+					}
+				}
+			}
+
+
+			var translationNGrams = sentence.translations.map( function( translation ) { return getNGrams( translation.text ); } );
 			var improving = getImproving(
 				getNGrams( sentence.reference ),
-				[ getNGrams( sentence.translations[0].text ), getNGrams( sentence.translations[1].text ) ]
+				translationNGrams
 			);
 
 			var worsening = getWorsening(
 				getNGrams( sentence.reference ),
-				[ getNGrams( sentence.translations[0].text ), getNGrams( sentence.translations[1].text ) ]
+				translationNGrams
 			);
-			
-			sentence.translations.forEach( function( translation, translationNumber ) {
-				improving[ translationNumber ].forEach( function( isImproving, token ) {
-					if( isImproving ) {
-						translation.tokens[ token ].class.push( 'improving' );
-					}
-				} );
 
-				worsening[ translationNumber ].forEach( function( isWorsening, token ) {
-					if( isWorsening ) {
-						translation.tokens[ token ].class.push( 'worsening' );
-					}
+			if( sentence.translations.length > 1 ) {
+				sentence.translations.forEach( function( translation, translationNumber ) {
+					improving[ translationNumber ].forEach( function( isImproving, token ) {
+						if( isImproving ) {
+							translation.tokens[ token ].class.push( 'improving' );
+						}
+					} );
+
+					worsening[ translationNumber ].forEach( function( isWorsening, token ) {
+						if( isWorsening ) {
+							translation.tokens[ token ].class.push( 'worsening' );
+						}
+					} );
 				} );
-			} );
+			}
 
 			$scope.sentences.push( sentence );
 			$scope.offset++;
@@ -176,10 +247,6 @@ function Sentences( $scope, $http ) {
 		}
 	}
 };
-
-$(document).ready( function() {
-	$('.dropdown-toggle').dropdown();
-} );
 
 </script>
 {/block}
@@ -224,20 +291,46 @@ span {
 	display: none;
 }
 
+.diff-active-1 .diff-ins-1, .diff-active-0 .diff-ins-0 {
+	border-bottom: 3px solid #c09853; 
+}
+
+.diff-active-1 .diff-matching-1, .diff-active-0 .diff-matching-0 {
+	border-bottom: 3px solid #468847;
+}
+
+.diff-active-1 .diff-del-1, .diff-active-0 .diff-del-0 {
+	border-bottom: 3px solid #b94a48;
+}
+
+.diff-active-both .worsening.diff-ins-both, .diff-active-both .worsening.diff-del-both {
+	border-bottom: 3px solid #b94a48;
+}
+
+.diff-active-both .improving.diff-ins-both, .diff-active-both .improving.diff-del-both {
+	border-bottom: 3px solid #468847;
+}
+
 </style>
 <div
 	ng-app="scroll"
 	ng-controller="Sentences"
 	when-scrolled="loadMore()"
-	ng-class="{ 'matching-active': isMatchingActive, 'improving-active': isImprovingActive, 'worsening-active': isWorseningActive }"
+	ng-class="{
+		'matching-active': isMatchingActive,
+		'improving-active': isImprovingActive,
+		'worsening-active': isWorseningActive,
+		'diff-active-0': showDiffWithReference && showDiffFor == 0,
+		'diff-active-1': showDiffWithReference && showDiffFor == 1,
+		'diff-active-both': showDiffWithEachOther
+	}"
 >
-
 	<div class="navbar">
 		<div class="navbar-inner">
 			<ul class="nav pull-left">
 				<li>
 					<form class="navbar-form">
-						<select ng-model="task0" ng-options="task.id as task.name for task in tasks">
+						<select ng-model="task0" ng-required ng-options="task.id as task.name for task in tasks">
 							<option value="">Choose task for comparison</option>
 						</select>
 
@@ -268,6 +361,7 @@ span {
 		</div>
 	</div>
 
+	<h3>Matching ngrams options</h3>
 	<form class="form-horizontal">
 		<div class="control-group">
 			<label class="checkbox">
@@ -283,6 +377,32 @@ span {
 			<label class="checkbox">
 				<input type="checkbox" ng-model="isWorseningActive" />
 				Highlight worsening ngrams
+			</label>
+		</div>
+	</form>
+
+	<h3>Diff options</h3>
+	<form class="form-horizontal">
+		<div class="control-group">
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showDiffWithReference" />
+				Show diff with reference
+			</label>
+
+			<label class="radio">
+				<input ng-model="showDiffFor" value="0" type="radio" name="show-diff-for" />
+				Show diff for {{ taskNames[ task0 ] }}
+			</label>
+			<label class="radio">
+				<input ng-model="showDiffFor" value="1" type="radio" name="show-diff-for" />
+				Show diff for {{ taskNames[ task1 ] }}
+			</label>
+
+			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showDiffWithEachOther" />
+				Show diff with each other
 			</label>
 		</div>
 	</form>
