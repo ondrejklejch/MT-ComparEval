@@ -26,6 +26,7 @@ common:
 		experiments: Experiments
 		tasks: Tasks
 		sentences: Sentences
+		metrics: Metrics
 		authenticator: Authenticator
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter

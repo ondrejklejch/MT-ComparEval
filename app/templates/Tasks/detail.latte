@@ -25,10 +25,11 @@ function Sentences( $scope, $http ) {
 	{/foreach}
 	$scope.tasks = [];
 	$scope.taskNames = {};
+	$scope.metrics = [];
 
 	$scope.sentences = [];
 	$scope.offset = 0;
-	$scope.currentMetric = 'id';
+	$scope.currentMetric = '';
 	$scope.asc = true;
 	$scope.isMatchingActive = false;
 	$scope.isImprovingActive = false;
@@ -75,6 +76,18 @@ function Sentences( $scope, $http ) {
 		$scope.task1 = tmp;
 	}
 
+	function loadMetrics() {
+		$http.get( '{!$baseUri}/api/metrics' ).success( addMetrics );
+
+	}
+
+	function addMetrics( data ) {
+		data.metrics.forEach( function( metric ) {
+			$scope.metrics.push( metric );
+		} );
+	}
+
+
 	function loadTasks() {
 		$http.get( '{!$baseUri}/api/tasks', {
 			params: {
@@ -97,7 +110,7 @@ function Sentences( $scope, $http ) {
 				"taskIds[0]": $scope.task0,
 				"offset": $scope.offset,
 				"limit": 10,
-				"orderBy": $scope.currentMetric,
+				"orderBy": ( $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
 				"order": ( $scope.asc ) ? 'asc' : 'desc'
 		};
 
@@ -110,7 +123,7 @@ function Sentences( $scope, $http ) {
 
 	function addSentences( data ) {
 		data.sentences.forEach( function( sentence ) {
-			if( sentence.translations.length == 2 ) {
+			if( sentence.translations.length == 2 && $scope.currentMetric != '' ) {
 				metricA = sentence.translations[0].metrics[$scope.currentMetric];
 				metricB = sentence.translations[1].metrics[$scope.currentMetric];
 
@@ -342,10 +355,8 @@ span {
 			<ul class="nav pull-right">
 				<li>
 					<form class="navbar-form form-inline">
-						<select ng-model="currentMetric" id="metrics">
-							<option value="id">Sort sentences by id</option>
-							<option value="bleu">bleu</option>
-							<option value="rand">rand</option>
+						<select ng-model="currentMetric" id="metrics" ng-options="metric for metric in metrics">
+							<option value="">Sort sentences by id</option>
 						</select>
 						<div class="btn-group">
 							<a ng-click="sortSentencesAscending()" class="btn" ng-class="{'btn-success': asc}" id="sort-asc"><i class="icon-arrow-up"> </i></a>
@@ -467,7 +478,7 @@ span {
 					</ul>
 				</div>
 
-				<div ng-class="{ 'hidden': currentMetric == 'id' || sentence.diff == null }">
+				<div ng-class="{ 'hidden': currentMetric == '' || sentence.diff == null }">
 					<dt>Diff {{ currentMetric }}</dt>
 					<dd>{{ sentence.diff }}</dd>
 				</div>

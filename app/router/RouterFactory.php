@@ -30,6 +30,7 @@ class RouterFactory
 			$router[] = new Route('index.php', 'Experiments:list', Route::ONE_WAY);
 			$router[] = new Route('api/sentences', 'Api:Sentences:default');
 			$router[] = new Route('api/tasks', 'Api:Tasks:default');
+			$router[] = new Route('api/metrics', 'Api:Metrics:default');
 			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
 			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
 			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');

@@ -5,8 +5,11 @@ class Sentences {
 
 	private $db;
 
-	public function __construct( Nette\Database\Connection $db ) {
+	private $metrics;
+
+	public function __construct( Nette\Database\Connection $db, Metrics $metrics ) {
 		$this->db = $db;
+		$this->metrics = $metrics;
 	}
 
 	public function getDb() {
@@ -75,7 +78,7 @@ class Sentences {
 	}
 
 	private function getSentencesIdsSortedByMetric( $taskIds, $orderBy, $order, $offset, $limit ) {
-		$metricsId = $this->getMetricsId( $orderBy ); 
+		$metricsId = $this->metrics->getMetricsId( $orderBy ); 
 
 		return array_keys( $this->db
 			->table( 'translations' )
@@ -87,20 +90,13 @@ class Sentences {
 	}
 
 	private function getSentencesSortedByDiffMetric( $taskIds, $orderBy, $order, $offset, $limit ) {
-		$metricsId = $this->getMetricsId( $orderBy );
+		$metricsId = $this->metrics->getMetricsId( $orderBy );
 		$resultsA = $this->getTranslationsMetricsForTask( $taskIds[0], $metricsId ); 
 		$resultsB = $this->getTranslationsMetricsForTask( $taskIds[1], $metricsId ); 
 		$rawResult = $this->joinResults( $resultsA, $resultsB );
 		$sortedResult = $this->sortResult( $rawResult, $order );
 
 		return $this->sliceResult( $sortedResult, $offset, $limit );
-	}
-
-	private function getMetricsId( $name ) {
-		return  $this->db
-			->table( 'metrics' )
-			->where( 'name', $name )
-			->fetch()->id;
 	}
 
 	private function getTranslationsMetricsForTask( $task, $metric ) {
