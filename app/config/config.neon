@@ -30,15 +30,20 @@ common:
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
 		logger: EchoLogger
-		tokenizer: Tokenizer( true )
-		bleuMetric: BleuMetric
+		caseSensitiveTokenizer: Tokenizer( true )
+		caseInsensitiveTokenizer: Tokenizer( false )
+		caseSensitiveBleuMetric: BleuMetric( @caseSensitiveTokenizer )
+		caseInsensitiveBleuMetric: BleuMetric( @caseInsensitiveTokenizer )
 
 		experimentsImporter:
 			class: ExperimentsImporter
 			setup:
 				- setLogger( @logger )
 		tasksImporter:
-			class: TasksImporter
+			class: TasksImporter( @experiments, @tasks, [
+				bleu: @caseSensitiveBleuMetric,
+				bleu-cis: @caseInsensitiveBleuMetric
+			] )
 			setup:
 				- setLogger( @logger )
 

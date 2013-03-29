@@ -42,6 +42,7 @@ CREATE TABLE "metrics" (
 );
 
 INSERT INTO "metrics" ("name") VALUES ("bleu");
+INSERT INTO "metrics" ("name") VALUES ("bleu-cis");
 
 
 CREATE TABLE "translations_metrics" (

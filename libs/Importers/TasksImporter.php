@@ -4,12 +4,12 @@ class TasksImporter extends Importer {
 
 	private $experimentsModel;
 	private $tasksModel;
-	private $bleuMetric;
+	private $metrics;
 
-	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BleuMetric $bleuMetric ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, $metrics ) {
 		$this->experimentsModel = $experimentsModel;
 		$this->tasksModel = $tasksModel;
-		$this->bleuMetric = $bleuMetric;
+		$this->metrics = $metrics;
 	}
 
 	protected function logImportStart( $config ) {
@@ -34,14 +34,23 @@ class TasksImporter extends Importer {
 	protected function processSentences( $config, $metadata, $sentences ) {
 		$sentences = new \ZipperIterator( $sentences, TRUE );
 
-		$this->bleuMetric->init(); 
-		$metrics = array( 'bleu' => array() );
+		$metrics = array();
+		foreach( $this->metrics as $name => $metric ) {
+			$metric->init(); 
+			$metrics[ $name ] = array();
+		}
+
 		foreach( $sentences as $sentence ) {
-			$metrics['bleu'][] = $this->bleuMetric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
+			foreach( $this->metrics as $name => $metric ) {
+				$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
+			}
+		}
+
+		foreach( $this->metrics as $name => $metric ) {
+			$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
 		}
 
 		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
-		$this->tasksModel->addMetric( $metadata['task_id'], 'bleu', $this->bleuMetric->getScore() ); 
 	}
 
 	protected function parseResources( Folder $folder, $config ) {

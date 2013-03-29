@@ -125,19 +125,15 @@ class BleuMetric {
 		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
 	}
 
-	private function computeGeometricAverage( $matchingNGrams, $referenceNGrams, $default = NULL ) {
+	private function computeGeometricAverage( $matchingNGrams, $referenceNGrams, $default = 0 ) {
 		$geometricAverage = 0;
 
 		for( $length = 1; $length <= 4; $length++ ) {
-			if( $matchingNGrams[ $length ] == 0 && $default === NULL ) {
+			if( $matchingNGrams[ $length ] == 0 && $default === 0 ) {
 				continue;
 			}
 
-			if( $matchingNGrams[ $length ] == 0 ) {
-				$matchingNGrams[ $length ] = $default;
-			}
-
-			$precision = $matchingNGrams[ $length ] / max( 1, $referenceNGrams[ $length ] );
+			$precision = ( $default + $matchingNGrams[ $length ] ) / ( $default + $referenceNGrams[ $length ] );
 			$geometricAverage += 1/4 * log( $precision ); 
 		}
 
