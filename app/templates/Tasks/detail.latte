@@ -38,6 +38,8 @@ function Sentences( $scope, $http ) {
 	$scope.showDiffFor = 0;
 	$scope.showSource = true;
 	$scope.showReference = true;
+	$scope.showTask0 = true;
+	$scope.showTask1 = true;
 
 	loadSentences();
 	loadTasks();
@@ -412,6 +414,16 @@ span {
 				<input type="checkbox" ng-model="showReference" />
 				Show reference
 			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showTask0" />
+				Show {{ taskNames[ task0 ] }}
+			</label>
+
+			<label class="checkbox">
+				<input type="checkbox" ng-model="showTask1" />
+				Show {{ taskNames[ task1 ] }}
+			</label>
 		</div>
 	</form>
 
@@ -435,7 +447,11 @@ span {
 					</dd>
 				</div>
 
-				<div ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)" class="translation">
+				<div
+					ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)"
+					class="translation"
+					ng-class="{'hidden': ( translation.task_id == task0 && !showTask0 ) || ( translation.task_id == task1 && !showTask1 ) }"
+				>
 					<dt>{{ taskNames[ translation.task_id ] }}</dt>
 					<dd class="text">
 						<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
