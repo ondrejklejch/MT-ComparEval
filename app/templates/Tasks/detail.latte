@@ -28,7 +28,7 @@ function Sentences( $scope, $http ) {
 
 	$scope.sentences = [];
 	$scope.offset = 0;
-	$scope.order = 'id';
+	$scope.currentMetric = 'id';
 	$scope.asc = true;
 	$scope.isMatchingActive = false;
 	$scope.isImprovingActive = false;
@@ -42,7 +42,7 @@ function Sentences( $scope, $http ) {
 	loadSentences();
 	loadTasks();
 
-	$scope.$watch( 'currentMetric+order+asc+task0+task1', reloadSentences );
+	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
 
 	function reloadSentences( oldValue, newValue ) {
 		if( oldValue == newValue ) {
@@ -56,20 +56,12 @@ function Sentences( $scope, $http ) {
 	}
 
 	$scope.sortSentencesAscending = function() {
-		$scope.order = 'metric';
 		$scope.asc = true;
 	}	
 
 	$scope.sortSentencesDescending = function() {
-		$scope.order = 'metric';
 		$scope.asc = false;
 	}	
-
-	$scope.cancelSort = function() {
-		$scope.order = 'id';
-		$scope.currentMetric = "";
-		$scope.asc = true;
-	}
 
 	$scope.loadMore = function() {
 		loadSentences();
@@ -103,7 +95,7 @@ function Sentences( $scope, $http ) {
 				"taskIds[0]": $scope.task0,
 				"offset": $scope.offset,
 				"limit": 10,
-				"orderBy": ( $scope.order == 'id' || $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
+				"orderBy": $scope.currentMetric,
 				"order": ( $scope.asc ) ? 'asc' : 'desc'
 		};
 
@@ -235,7 +227,7 @@ function Sentences( $scope, $http ) {
 	}
 
 	$scope.predicate = function( sentence ) {
-		if( $scope.order == 'id' ) {
+		if( $scope.currentMetric == 'id' ) {
 			return parseInt( sentence.sentence_id );
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
@@ -253,6 +245,10 @@ function Sentences( $scope, $http ) {
 
 {block #content}
 <style>
+.hidden {
+	display: none;
+}
+
 span {
 	padding: 0em 0.1em;
 }
@@ -285,10 +281,6 @@ span {
 .worsening-active .worsening {
 	background-color: #f2dede;
 	color: #b94a48;
-}
-
-.hidden {
-	display: none;
 }
 
 .diff-active-1 .diff-ins-1, .diff-active-0 .diff-ins-0 {
@@ -346,14 +338,13 @@ span {
 				<li>
 					<form class="navbar-form form-inline">
 						<select ng-model="currentMetric" id="metrics">
-							<option value="">Choose metric for sort</option>
+							<option value="id">Sort sentences by id</option>
 							<option value="bleu">bleu</option>
 							<option value="rand">rand</option>
 						</select>
 						<div class="btn-group">
-							<a ng-click="sortSentencesAscending()" class="btn" ng-class="{'btn-success': asc && order != 'id'}" id="sort-asc"><i class="icon-arrow-up"> </i></a>
+							<a ng-click="sortSentencesAscending()" class="btn" ng-class="{'btn-success': asc}" id="sort-asc"><i class="icon-arrow-up"> </i></a>
 							<a ng-click="sortSentencesDescending()" class="btn" ng-class="{'btn-success': !asc}" id="sort-desc"><i class="icon-arrow-down"> </i></a>
-							<a ng-click="cancelSort()" class="btn" id="sort-cancel"><i class="icon-off"> </i></a>
 						</div>
 					</form>
 				</li>
@@ -449,8 +440,10 @@ span {
 					<dd class="metric">{{ translation.metrics[currentMetric] }}</dd>
 				</div>
 
-				<dt>{{ currentMetric }}</dt>
-				<dd>{{ sentence.diff }}</dd>
+				<div ng-class="{ 'hidden': currentMetric == 'id' || sentence.diff == null }">
+					<dt>Diff {{ currentMetric }}</dt>
+					<dd>{{ sentence.diff }}</dd>
+				</div>
 			</dl>
 		</li>
 	</ul>
