@@ -155,7 +155,6 @@ function Sentences( $scope, $http ) {
 							break;
 						case 'I':
 							i--;
-							console.log( "insertion" );
 							sentence.reference_tokens[i].class.push( 'diff-ins-' + translationNumber );
 							break;
 					}
@@ -432,7 +431,7 @@ span {
 					</dd>
 				</div>
 
-				<div ng-repeat="translation in sentence.translations" class="translation">
+				<div ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)" class="translation">
 					<dt>{{ taskNames[ translation.task_id ] }}</dt>
 					<dd class="text">
 						<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
