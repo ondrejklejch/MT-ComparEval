@@ -2,14 +2,15 @@
 
 class BleuMetric {
 
+	private $ngramizer;
 	private $referenceLength;
 	private $translationLength;
 	private $referenceNGrams;
 	private $matchingNGrams;
 
 
-	public function __construct( Tokenizer $tokenizer ) {
-		$this->tokenizer = $tokenizer;
+	public function __construct( NGramizer $ngramizer ) {
+		$this->ngramizer = $ngramizer;
 	}
 
 	public function init() {
@@ -19,8 +20,8 @@ class BleuMetric {
 	}
 
 	public function addSentence( $reference, $translation ) {
-		$referenceNGrams = $this->getNGrams( $reference );
-		$translationNGrams = $this->getNGrams( $translation );
+		$referenceNGrams = $this->ngramizer->getNGrams( $reference );
+		$translationNGrams = $this->ngramizer->getNGrams( $translation );
 
 		$this->referenceLength += count( $referenceNGrams[1] );
 		$this->translationLength += count( $translationNGrams[1] );
@@ -42,28 +43,6 @@ class BleuMetric {
 		$brevityPenalty = $this->computeBrevityPenalty( $translationNGrams[1], $referenceNGrams[1] );
 
 		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
-	}
-
-	private function getNGrams( $sentence ) {
-		$tokens = $this->tokenizer->tokenize( $sentence );
-
-		$ngrams = array();
-		$ngrams[ 1 ] = $tokens;	
-		for( $length = 2; $length <= 4; $length ++ ) {
-			array_shift( $tokens );
-			$ngrams[ $length ] = $this->joinNGrams( $ngrams[ $length - 1 ], $tokens );
-		}
-
-		return $ngrams;
-	}
-
-	private function joinNGrams( $ngrams, $tokens ) {
-		$result = array();
-		for( $i = 0; $i < count( $tokens ); $i++ ) {
-			$result[] = "{$ngrams[ $i ]} {$tokens[ $i ]}"; 
-		}
-
-		return $result;
 	}
 
 	private function getMatchingNGrams( $referenceNGrams, $translationNGrams ) {
