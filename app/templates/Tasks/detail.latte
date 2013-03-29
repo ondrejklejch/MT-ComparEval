@@ -302,6 +302,10 @@ span {
 	border-bottom: 3px solid #468847;
 }
 
+.active-metric {
+	color: #468847;
+}
+
 </style>
 <div
 	ng-app="scroll"
@@ -436,7 +440,15 @@ span {
 					<dd class="text">
 						<span ng-repeat="token in translation.tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
 					</dd>
-					<dd class="metric">{{ translation.metrics[currentMetric] }}</dd>
+					<ul>
+						<li
+							ng-repeat="(metric, score) in translation.metrics"
+							ng-class="{'active-metric': metric == currentMetric}"
+						>
+							<dt>{{ metric }}</dd>
+							<dd class="metric">{{ score }}</dd>
+						</li>
+					</ul>
 				</div>
 
 				<div ng-class="{ 'hidden': currentMetric == 'id' || sentence.diff == null }">
