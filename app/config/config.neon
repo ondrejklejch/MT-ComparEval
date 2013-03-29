@@ -30,7 +30,7 @@ common:
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
 		logger: EchoLogger
-		tokenizer: Tokenizer
+		tokenizer: Tokenizer( true )
 		bleuMetric: BleuMetric
 
 		experimentsImporter:
