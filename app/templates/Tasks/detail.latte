@@ -350,14 +350,12 @@ span {
 			<ul class="nav pull-left">
 				<li>
 					<form class="navbar-form">
-						<select ng-model="task0" ng-required ng-options="task.id as task.name for task in tasks">
-							<option value="">Choose task for comparison</option>
+						<select ng-model="task0" ng-required ng-options="task.id as task.name for task in tasks | filter: { 'id': '!'+task1 }">
 						</select>
 
 						<a ng-click="swapTasks()" class="btn"><i class="icon-refresh"> </i></a>
 
-						<select ng-model="task1" ng-options="task.id as task.name for task in tasks">
-							<option value="">Choose task for comparison</option>
+						<select ng-model="task1" ng-options="task.id as task.name for task in tasks | filter: { 'id': '!'+task0 }">
 						</select>
 					</form>
 				</li>
