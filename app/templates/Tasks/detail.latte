@@ -29,7 +29,7 @@ function Sentences( $scope, $http ) {
 
 	$scope.sentences = [];
 	$scope.offset = 0;
-	$scope.currentMetric = '';
+	$scope.currentMetric = 'bleu-cis';
 	$scope.asc = true;
 	$scope.isMatchingActive = false;
 	$scope.isImprovingActive = false;
@@ -44,6 +44,7 @@ function Sentences( $scope, $http ) {
 
 	loadSentences();
 	loadTasks();
+	loadMetrics();
 
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
 
@@ -241,7 +242,7 @@ function Sentences( $scope, $http ) {
 	}
 
 	$scope.predicate = function( sentence ) {
-		if( $scope.currentMetric == 'id' ) {
+		if( $scope.currentMetric == '' ) {
 			return parseInt( sentence.sentence_id );
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
