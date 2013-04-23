@@ -41,6 +41,7 @@ function Sentences( $scope, $http ) {
 	$scope.showReference = true;
 	$scope.showTask0 = true;
 	$scope.showTask1 = true;
+	$scope.loading = false;
 
 	loadSentences();
 	loadTasks();
@@ -106,20 +107,26 @@ function Sentences( $scope, $http ) {
 
 
 	function loadSentences() {
-		var payload = {};
-		payload.params = {
-				"taskIds[0]": $scope.task0,
-				"offset": $scope.offset,
-				"limit": 10,
-				"orderBy": ( $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
-				"order": ( $scope.asc ) ? 'asc' : 'desc'
-		};
+		if ( $scope.loading == true ) {
+			return;
+		} else {
+			$scope.loading = true;
 
-		if( $scope.task1 != "" ) {
-			payload.params[ "taskIds[1]" ] = $scope.task1;
+			var payload = {};
+			payload.params = {
+					"taskIds[0]": $scope.task0,
+					"offset": $scope.offset,
+					"limit": 10,
+					"orderBy": ( $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
+					"order": ( $scope.asc ) ? 'asc' : 'desc'
+			};
+
+			if( $scope.task1 != "" ) {
+				payload.params[ "taskIds[1]" ] = $scope.task1;
+			}
+
+			$http.get( '{!$baseUri}/api/sentences', payload ).success( addSentences );
 		}
-
-		$http.get( '{!$baseUri}/api/sentences', payload ).success( addSentences );
 	}
 
 	function addSentences( data ) {
@@ -239,6 +246,8 @@ function Sentences( $scope, $http ) {
 			$scope.sentences.push( sentence );
 			$scope.offset++;
 		} );
+
+		$scope.loading = false;
 	}
 
 	$scope.predicate = function( sentence ) {
@@ -486,5 +495,7 @@ span {
 			</dl>
 		</li>
 	</ul>
+
+	<div ng-class="{ 'hidden': !loading }">Loading...</div>
 </div>
 {/block}
