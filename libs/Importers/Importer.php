@@ -12,6 +12,10 @@ abstract class Importer {
 		$this->logger = $logger;
 	}
 
+	public function setNormalizer( $normalizer ) {
+		$this->normalizer = $normalizer;
+	}
+
 	public function importFromFolder( Folder $folder ) {
 		$config = $this->getConfig( $folder );
 
@@ -49,8 +53,11 @@ abstract class Importer {
 
 	protected function getSentences( \Folder $folder, $filename ) {
 		$filepath = $folder->getChildrenPath( $filename );
+		$normalizer = $this->normalizer;
 
-		return new \FileSentencesIterator( $filepath );
+		return new \MapIterator( new \FileSentencesIterator( $filepath ), function( $sentence ) use ( $normalizer ) {
+			return $normalizer->normalize( $sentence );
+		} );
 	}
 
 	protected function parseResources( Folder $folder, $config ) {

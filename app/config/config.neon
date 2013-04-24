@@ -31,6 +31,7 @@ common:
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
 		logger: EchoLogger
+		normalizer: Normalizer
 		caseSensitiveTokenizer: Tokenizer( true )
 		caseInsensitiveTokenizer: Tokenizer( false )
 		caseSensitiveBleuMetric: BleuMetric( NGramizer( @caseSensitiveTokenizer ) )
