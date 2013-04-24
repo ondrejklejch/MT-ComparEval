@@ -2,9 +2,10 @@
 {include #parent}
 <script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
 <script type="text/javascript" src="{$baseUri}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$baseUri}/js/highcharts.src.js"></script>
 <script type="text/javascript">
 
-angular.module('scroll', []).directive('whenScrolled', function() {
+angular.module( 'scroll', [] ).directive( 'whenScrolled', function() {
 	return function(scope, elm, attr) {
 		var raw = elm[0];
 
@@ -18,6 +19,39 @@ angular.module('scroll', []).directive('whenScrolled', function() {
 		});
 	};
 });
+
+angular.module( 'scroll', [] ).directive( 'chart', function() {
+	return {
+		restrict: 'E',
+		template: '<div></div>',
+		transclude:true,
+		replace: true,
+
+		link: function (scope, element, attrs) {
+			var chartsDefaults = {
+				chart: {
+					renderTo: element[0],
+					type: attrs.type || null,
+					height: attrs.height || null,
+					width: attrs.width || null,
+				}
+			};
+
+			//Update when charts data changes
+			scope.$watch(function() { return attrs.value; }, function(value) {
+				if(!attrs.value) return;
+					// We need deep copy in order to NOT override original chart object.
+					// This allows us to override chart data member and still the keep
+					// our original renderTo will be the same
+					var deepCopy = true;
+					var newSettings = {};
+					$.extend(deepCopy, newSettings, chartsDefaults, JSON.parse(attrs.value));
+					var chart = new Highcharts.Chart(newSettings);
+			});
+		}
+	}
+});
+
 
 function Sentences( $scope, $http ) {
 	{foreach $taskIds as $i => $id}
@@ -48,6 +82,7 @@ function Sentences( $scope, $http ) {
 	loadMetrics();
 
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
+	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
 
 	function reloadSentences( oldValue, newValue ) {
 		if( oldValue == newValue ) {
@@ -77,6 +112,53 @@ function Sentences( $scope, $http ) {
 		$scope.task0 = $scope.task1;
 		$scope.task1 = tmp;
 	}
+
+	function loadCharts() {
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1,
+				"metric": ( $scope.currentMetric == '' ) ? 'bleu-cis' : $scope.currentMetric
+		};
+
+		$http.get( '{!$baseUri}/api/metrics/results', payload ).success( function( data ) {
+			$scope.chart = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": $scope.currentMetric + " diffs",
+				},
+				"yAxis": {
+					"title": {
+						"text": "Scores"
+					}
+				},
+				"legend": {
+					"enabled": false
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": false,
+						"color": "#468847",
+						"negativeColor": "#b94a48"
+					}
+				},
+
+				"series": [ data.diffs ]
+			};
+		} );
+	}
+
 
 	function loadMetrics() {
 		$http.get( '{!$baseUri}/api/metrics' ).success( addMetrics );
@@ -208,7 +290,6 @@ function Sentences( $scope, $http ) {
 							break;
 						case 'I':
 							i--;
-							console.log( "insertion" );
 							sentence.translations[0].tokens[i].class.push( 'diff-ins-both' );
 							break;
 					}
@@ -374,6 +455,10 @@ span {
 				</li>
 			</ul>
 		</div>
+	</div>
+
+	<div class="row">
+		<chart value="{{ chart }}" type="area"></chart>
 	</div>
 
 	<h3>Matching ngrams options</h3>
