@@ -4,11 +4,13 @@ class TasksImporter extends Importer {
 
 	private $experimentsModel;
 	private $tasksModel;
+	private $sampler;
 	private $metrics;
 
-	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, $metrics ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BootstrapSampler $sampler, $metrics ) {
 		$this->experimentsModel = $experimentsModel;
 		$this->tasksModel = $tasksModel;
+		$this->sampler = $sampler;
 		$this->metrics = $metrics;
 	}
 
@@ -47,7 +49,10 @@ class TasksImporter extends Importer {
 		}
 
 		foreach( $this->metrics as $name => $metric ) {
+			$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
+
 			$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
+			$this->tasksModel->addSamples( $metadata['task_id'], $name, $samples );
 		}
 
 		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );

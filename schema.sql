@@ -43,6 +43,7 @@ CREATE TABLE "metrics" (
 
 INSERT INTO "metrics" ("name") VALUES ("bleu");
 INSERT INTO "metrics" ("name") VALUES ("bleu-cis");
+INSERT INTO "metrics" ("name") VALUES ("random");
 
 
 CREATE TABLE "translations_metrics" (
@@ -57,6 +58,15 @@ CREATE TABLE "translations_metrics" (
 CREATE TABLE "tasks_metrics" (
   "tasks_id" integer NOT NULL,
   "metrics_id" integer NOT NULL,
+  "score" real NOT NULL,
+  FOREIGN KEY ("tasks_id") REFERENCES "tasks" ("id") ON DELETE CASCADE,
+  FOREIGN KEY ("metrics_id") REFERENCES "metrics" ("id") ON DELETE CASCADE
+);
+
+CREATE TABLE "tasks_metrics_samples" (
+  "tasks_id" integer NOT NULL,
+  "metrics_id" integer NOT NULL,
+  "sample_position" integer NOT NULL,
   "score" real NOT NULL,
   FOREIGN KEY ("tasks_id") REFERENCES "tasks" ("id") ON DELETE CASCADE,
   FOREIGN KEY ("metrics_id") REFERENCES "metrics" ("id") ON DELETE CASCADE

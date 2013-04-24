@@ -58,6 +58,24 @@ class Tasks {
 		$this->db->table( 'tasks_metrics' )->insert( $data );
 	}
 
+	public function addSamples( $taskId, $metric, $samples ) {
+		$this->db->beginTransaction();
+
+		$metricId = $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id;
+		foreach( $samples as $position => $score ) {
+			$data = array(
+				'tasks_id' => $taskId,
+				'metrics_id' => $metricId, 
+				'sample_position' => $position,
+				'score' => $score
+			);
+
+			$this->db->table( 'tasks_metrics_samples' )->insert( $data );
+		}
+
+		$this->db->commit();
+	}
+
 	public function deleteTaskByName( $experimentId, $name ) {
 		$this->db->table( 'tasks' )
 			->where( 'experiments_id', $experimentId )

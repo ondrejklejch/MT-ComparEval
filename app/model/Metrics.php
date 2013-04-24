@@ -48,4 +48,31 @@ class Metrics {
 			->where( 'tasks_id', $taskId )
 			->order( 'translations.sentences_id' );
 	}
+
+
+	public function getMetricSamples( $metricId, $task1, $task2 ) {
+		$samples = new ZipperIterator( array(
+			$this->getSamplesForTask( $metricId, $task1 ),
+			$this->getSamplesForTask( $metricId, $task2 )
+		) );
+
+		$diffSamples = array();
+		foreach( $samples as $sample ) {
+			$diffSamples[] = $sample[0][ 'score' ] - $sample[1][ 'score' ];
+		}
+
+		sort( $diffSamples );
+		return $diffSamples;
+	}
+
+
+	private function getSamplesForTask( $metricId, $taskId ) {
+		return $this->db
+			->table( 'tasks_metrics_samples' )
+			->select( 'score' )
+			->where( 'metrics_id', $metricId )
+			->where( 'tasks_id', $taskId )
+			->order( 'sample_position' );
+	}
+
 }

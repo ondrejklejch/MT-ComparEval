@@ -122,7 +122,7 @@ function Sentences( $scope, $http ) {
 		};
 
 		$http.get( '{!$baseUri}/api/metrics/results', payload ).success( function( data ) {
-			$scope.chart = {
+			$scope.diffs = {
 				"chart": {
 					"zoomType": "x"
 				},
@@ -155,6 +155,43 @@ function Sentences( $scope, $http ) {
 				},
 
 				"series": [ data.diffs ]
+			};
+		} );
+
+		$http.get( '{!$baseUri}/api/metrics/samples', payload ).success( function( data ) {
+			$scope.samples = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": $scope.currentMetric + " pair bootstrap sampling",
+				},
+				"yAxis": {
+					"title": {
+						"text": "Scores"
+					}
+				},
+				"legend": {
+					"enabled": false
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": false,
+						"color": "#468847",
+						"negativeColor": "#b94a48"
+					}
+				},
+
+				"series": [ data.samples ]
 			};
 		} );
 	}
@@ -458,7 +495,12 @@ span {
 	</div>
 
 	<div class="row">
-		<chart value="{{ chart }}" type="area"></chart>
+		<div class="span6">
+			<chart value="{{ diffs }}" type="area"></chart>
+		</div>
+		<div class="span6">
+			<chart value="{{ samples }}" type="line"></chart>
+		</div>
 	</div>
 
 	<h3>Matching ngrams options</h3>

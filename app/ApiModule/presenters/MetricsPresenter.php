@@ -29,4 +29,17 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
+
+	public function renderSamples( $metric, $task1, $task2 ) {
+		$metricsModel = $this->getService( 'metrics' );
+		$metricId = $metricsModel->getMetricsId( $metric );
+
+		$response = array();
+		$response[ 'samples' ] = array();
+		$response[ 'samples' ][ 'name' ] = $metric;
+		$response[ 'samples' ][ 'data' ] = $metricsModel->getMetricSamples( $metricId, $task1, $task2 );
+
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+	}
+
 }

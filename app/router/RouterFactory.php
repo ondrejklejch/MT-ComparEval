@@ -32,6 +32,7 @@ class RouterFactory
 			$router[] = new Route('api/tasks', 'Api:Tasks:default');
 			$router[] = new Route('api/metrics', 'Api:Metrics:default');
 			$router[] = new Route('api/metrics/results', 'Api:Metrics:results');
+			$router[] = new Route('api/metrics/samples', 'Api:Metrics:samples');
 			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
 			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
 			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
