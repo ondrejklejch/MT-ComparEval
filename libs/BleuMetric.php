@@ -2,16 +2,10 @@
 
 class BleuMetric {
 
-	private $ngramizer;
 	private $referenceLength;
 	private $translationLength;
 	private $translationNGrams;
 	private $confirmedNGrams;
-
-
-	public function __construct( NGramizer $ngramizer ) {
-		$this->ngramizer = $ngramizer;
-	}
 
 	public function init() {
 		$this->referenceLength = 0;

@@ -44,6 +44,7 @@ CREATE TABLE "metrics" (
 INSERT INTO "metrics" ("name") VALUES ("bleu");
 INSERT INTO "metrics" ("name") VALUES ("bleu-cis");
 INSERT INTO "metrics" ("name") VALUES ("random");
+INSERT INTO "metrics" ("name") VALUES ("random-cis");
 
 
 CREATE TABLE "translations_metrics" (

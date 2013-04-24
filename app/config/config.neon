@@ -34,7 +34,7 @@ common:
 		normalizer: Normalizer
 		tokenizer: Tokenizer( true )
 		ngramizer: NGramizer
-		caseSensitiveBleuMetric: BleuMetric
+		bleuMetric: BleuMetric
 		randomMetric: RandomMetric
 		bootstrapSampler: BootstrapSampler( 100, 1000 )
 
@@ -61,7 +61,7 @@ common:
 					@ngramsCounterPreprocessor
 				] ),
 				[
-					bleu: @caseSensitiveBleuMetric,
+					bleu: @bleuMetric,
 					random: @randomMetric
 				]
 			)

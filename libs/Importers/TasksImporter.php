@@ -35,35 +35,51 @@ class TasksImporter extends Importer {
 		return array( 'task_id' => $this->tasksModel->saveTask( $data ) );
 	}
 
-	protected function processSentences( $config, $metadata, $sentences ) {
-		$preprocessor = $this->preprocessor;
-		$sentences = new MapIterator( 
-			new \ZipperIterator( $sentences, TRUE ),
-			function( $sentence ) use ( $preprocessor ) {
-				return $preprocessor->preprocess( $sentence );
-			}
-		);
-
+	protected function processSentences( $config, $metadata, $rawSentences ) {
 		$metrics = array();
-		foreach( $this->metrics as $name => $metric ) {
-			$metric->init(); 
-			$metrics[ $name ] = array();
-		}
 
-		foreach( $sentences as $sentence ) {
+		foreach( array( true, false ) as $isCaseSensitive ) {
+			$preprocessor = $this->preprocessor;
+			$sentences = new MapIterator( 
+				new \ZipperIterator( $rawSentences, TRUE ),
+				function( $sentence ) use ( $preprocessor, $isCaseSensitive ) {
+					$sentence[ 'is_case_sensitive' ] = $isCaseSensitive;
+
+					return $preprocessor->preprocess( $sentence );
+				}
+			);
+
 			foreach( $this->metrics as $name => $metric ) {
-				$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
+				$metric->init(); 
+				$name = $this->getMetricName( $name, $isCaseSensitive );
+				$metrics[ $name ] = array();
 			}
-		}
 
-		foreach( $this->metrics as $name => $metric ) {
-			$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
+			foreach( $sentences as $sentence ) {
+				foreach( $this->metrics as $name => $metric ) {
+					$name = $this->getMetricName( $name, $isCaseSensitive );
+					$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
+				}
+			}
 
-			$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
-			$this->tasksModel->addSamples( $metadata['task_id'], $name, $samples );
+			foreach( $this->metrics as $name => $metric ) {
+				$name = $this->getMetricName( $name, $isCaseSensitive );
+				$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
+
+				$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
+				$this->tasksModel->addSamples( $metadata['task_id'], $name, $samples );
+			}
 		}
 
 		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
+	}
+
+	private function getMetricName( $name, $isCaseSensitive ) {
+		if( $isCaseSensitive ) {
+			return $name;
+		} else {
+			return $name . '-cis';
+		}
 	}
 
 	protected function parseResources( Folder $folder, $config ) {
