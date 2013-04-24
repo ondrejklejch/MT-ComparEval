@@ -35,6 +35,7 @@ common:
 		caseInsensitiveTokenizer: Tokenizer( false )
 		caseSensitiveBleuMetric: BleuMetric( NGramizer( @caseSensitiveTokenizer ) )
 		caseInsensitiveBleuMetric: BleuMetric( NGramizer( @caseInsensitiveTokenizer ) )
+		randomMetric: RandomMetric
 
 		experimentsImporter:
 			class: ExperimentsImporter
@@ -44,6 +45,7 @@ common:
 			class: TasksImporter( @experiments, @tasks, [
 				bleu: @caseSensitiveBleuMetric,
 				bleu-cis: @caseInsensitiveBleuMetric
+				random: @randomMetric
 			] )
 			setup:
 				- setLogger( @logger )
