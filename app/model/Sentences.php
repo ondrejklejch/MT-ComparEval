@@ -51,6 +51,10 @@ class Sentences {
 				$row[ 'translations' ][] = $rowTranslation;
 			}
 
+			if( count( $taskIds ) == 2 && $taskIds[0] > $taskIds[1] ) {
+				$row[ 'translations' ] = array_reverse( $row[ 'translations' ] );
+			}
+
 			$rows[] = $row;
 		}
 
@@ -120,7 +124,7 @@ class Sentences {
 	private function sortResult( $result, $order ) {
 		asort( $result, SORT_NUMERIC );
 		if( $order == 'desc' ) {
-			array_reverse( $result );
+			$result = array_reverse( $result );
 		}
 
 		return $result;
