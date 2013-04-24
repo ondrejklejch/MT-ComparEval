@@ -8,6 +8,9 @@ class NGramsCounterPreprocessor implements Preprocessor {
 		$sentence[ 'meta' ][ 'translation_ngrams_counts' ] = $this->countNGrams( $sentence[ 'meta' ][ 'translation_ngrams' ] );
 		$sentence[ 'meta' ][ 'confirmed_ngrams_counts' ] = $this->countNGrams( $sentence[ 'meta' ][ 'confirmed_ngrams' ] );
 
+		unset( $sentence[ 'meta' ][ 'reference_ngrams' ] );
+		unset( $sentence[ 'meta' ][ 'translation_ngrams' ] );
+
 		return $sentence;
 	}
 

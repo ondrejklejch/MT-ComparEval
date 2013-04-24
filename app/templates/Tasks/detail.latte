@@ -127,15 +127,21 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": $scope.currentMetric + " diffs",
+					"text": "Sentence level " + $scope.currentMetric + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "Scores"
+						"text": "diff " + $scope.currentMetric + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+					}
+				},
+				"xAxis": {
+					"title": {
+						"text": "sentences"
 					}
 				},
 				"legend": {
-					"enabled": false
+					"enabled": true,
+					"borderWidth": 0,
 				},
 				"tooltip": {
 					"enabled": false
@@ -149,12 +155,25 @@ function Sentences( $scope, $http ) {
 							"enabled": false,
 						},
 						"enableMouseTracking": false,
-						"color": "#468847",
-						"negativeColor": "#b94a48"
-					}
-				},
+						"negativeColor": "#b94a48",
+					},
+					"area": {
 
-				"series": [ data.diffs ]
+
+					},
+				},
+				"series": [ 
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " wins",
+						"data": data.diffs.data,
+						"color": "#468847"
+					},
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " loses",
+						"data": [],
+						"color": "#b94a48"
+					}
+				]
 			};
 		} );
 
@@ -164,15 +183,22 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": $scope.currentMetric + " pair bootstrap sampling",
+					"text": "Paired Bootstrap Resampling " + $scope.currentMetric + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "Scores"
+						"text": "diff " + $scope.currentMetric + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+					}
+				},
+				"xAxis": {
+					"endOnTick": true,
+					"title": {
+						"text": "samples"
 					}
 				},
 				"legend": {
-					"enabled": false
+					"enabled": true,
+					"borderWidth": 0,
 				},
 				"tooltip": {
 					"enabled": false
@@ -186,12 +212,22 @@ function Sentences( $scope, $http ) {
 							"enabled": false,
 						},
 						"enableMouseTracking": false,
-						"color": "#468847",
 						"negativeColor": "#b94a48"
 					}
 				},
 
-				"series": [ data.samples ]
+				"series": [
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " wins",
+						"data": data.samples.data,
+						"color": "#468847"
+					},
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " loses",
+						"data": [],
+						"color": "#b94a48"
+					}
+				]
 			};
 		} );
 	}
@@ -499,7 +535,7 @@ span {
 			<chart value="{{ diffs }}" type="area"></chart>
 		</div>
 		<div class="span6">
-			<chart value="{{ samples }}" type="line"></chart>
+			<chart value="{{ samples }}" type="area"></chart>
 		</div>
 	</div>
 

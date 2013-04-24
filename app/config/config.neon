@@ -36,7 +36,7 @@ common:
 		ngramizer: NGramizer
 		bleuMetric: BleuMetric
 		randomMetric: RandomMetric
-		bootstrapSampler: BootstrapSampler( 100, 1000 )
+		bootstrapSampler: BootstrapSampler( 100, 500 )
 
 		experimentsImporter:
 			class: ExperimentsImporter

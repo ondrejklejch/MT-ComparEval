@@ -14,8 +14,7 @@ class BootstrapSampler {
 
 
 	public function generateSamples( $metric, $sentences ) {
-		echo "generating samples\n";
-		srand( 0 );
+		mt_srand( 0 );
 		$count = count( $sentences );
 
 		$samples = array();
@@ -23,14 +22,13 @@ class BootstrapSampler {
 			$metric->init();
 
 			for( $j = 0; $j < $this->testSetSize; $j++ ) {
-				$rand = rand( 0, $count - 1 );
+				$rand = mt_rand( 0, $count - 1 );
 
 				$metric->addSentence( $sentences[ $rand ][ 'experiment' ][ 'reference' ], $sentences[ $rand ][ 'translation' ], $sentences[ $rand ][ 'meta' ] );
 			}
 
 			$samples[] = $metric->getScore();
 		}
-		echo "samples generated\n";
 
 		return $samples;
 	}
