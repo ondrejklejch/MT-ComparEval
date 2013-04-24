@@ -5,8 +5,8 @@ class BleuMetric {
 	private $ngramizer;
 	private $referenceLength;
 	private $translationLength;
-	private $referenceNGrams;
-	private $matchingNGrams;
+	private $translationNGrams;
+	private $confirmedNGrams;
 
 
 	public function __construct( NGramizer $ngramizer ) {
@@ -16,103 +16,58 @@ class BleuMetric {
 	public function init() {
 		$this->referenceLength = 0;
 		$this->translationLength = 0;
-		$this->referenceNGrams = $this->matchingNGrams = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0 );
+		$this->translationNGrams = $this->confirmedNGrams = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0 );
 	}
 
-	public function addSentence( $reference, $translation ) {
-		$referenceNGrams = $this->ngramizer->getNGrams( $reference );
-		$translationNGrams = $this->ngramizer->getNGrams( $translation );
+	public function addSentence( $reference, $translation, $meta ) {
+		$this->referenceLength += $meta[ 'reference_ngrams_counts' ][1];
+		$this->translationLength += $meta[ 'translation_ngrams_counts' ][1];
 
-		$this->referenceLength += count( $referenceNGrams[1] );
-		$this->translationLength += count( $translationNGrams[1] );
+		$this->addTranslationNGrams( $meta[ 'translation_ngrams_counts' ] );
+		$this->addConfirmedNgrams( $meta[ 'confirmed_ngrams_counts' ] );
 
-		$matchingNGrams = $this->getMatchingNGrams( $referenceNGrams, $translationNGrams );
-		$this->addReferenceNGrams( $translationNGrams );
-		$this->addMatchingNGrams( $matchingNGrams );
-
-		return $this->getSentenceScore( $referenceNGrams, $translationNGrams, $matchingNGrams );
+		return $this->getSentenceScore(
+			$meta[ 'reference_ngrams_counts' ],
+			$meta[ 'translation_ngrams_counts' ],
+			$meta[ 'confirmed_ngrams_counts' ]
+		);
 	}
 
-	public function getSentenceScore( $referenceNGrams, $translationNGrams, $matchingNGrams ) {
-		$countOccurences = function( $item ) { return count( $item ); };
-		$referenceNGrams = array_map( $countOccurences, $referenceNGrams );
-		$translationNGrams = array_map( $countOccurences, $translationNGrams );
-		$matchingNGrams = array_map( $countOccurences, $matchingNGrams );
-
-		$geometricAverage = $this->computeGeometricAverage( $matchingNGrams, $translationNGrams, 1 );	
-		$brevityPenalty = $this->computeBrevityPenalty( $translationNGrams[1], $referenceNGrams[1] );
+	public function getSentenceScore( $referenceNGramsCounts, $translationNGramsCounts, $confirmedNGramsCounts ) {
+		$geometricAverage = $this->computeGeometricAverage( $confirmedNGramsCounts, $translationNGramsCounts, 1 );	
+		$brevityPenalty = $this->computeBrevityPenalty( $translationNGramsCounts[1], $referenceNGramsCounts[1] );
 
 		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
 	}
 
-	private function getMatchingNGrams( $referenceNGrams, $translationNGrams ) {
-		$matchingNGrams = array();
+	private function addTranslationNGrams( $translationNGrams ) {
 		for( $length = 1; $length <= 4; $length++ ) {
-			$matchingNGrams[ $length ] = $this->intersect( $referenceNGrams[ $length ], $translationNGrams[ $length ] );	
+			$this->translationNGrams[ $length ] += $translationNGrams[ $length ];
 		}
-
-		return $matchingNGrams;
 	}
 
-	private function intersect( $a, $b ) {
-		$aOccurences = $this->countOccurences( $a );
-		$bOccurences = $this->countOccurences( $b );
-
-		$intersection = array();
-		foreach( $aOccurences as $ngram => $count ) {
-			if( !isset( $bOccurences[ $ngram ] ) ) {
-				continue;
-			}
-
-			for( $i = 0; $i < min( $count, $bOccurences[ $ngram ] ); $i++ ) {
-				$intersection[] = $ngram;
-			}
-		}
-
-		return $intersection;
-	}
-
-	private function countOccurences( $array ) {
-		$occurences = array();
-		foreach( $array as $value ) {
-			if( !isset( $occurences[ $value ] ) ) {
-				$occurences[ $value ] = 0;
-			}
-
-			$occurences[ $value ]++;
-		}
-
-		return $occurences;
-	}
-
-	private function addReferenceNGrams( $translationNGrams ) {
+	private function addConfirmedNgrams( $confirmedNGrams ) {
 		for( $length = 1; $length <= 4; $length++ ) {
-			$this->referenceNGrams[ $length ] += count( $translationNGrams[ $length ] );
-		}
-	}
-
-	private function addMatchingNGrams( $matchingNGrams ) {
-		for( $length = 1; $length <= 4; $length++ ) {
-			$this->matchingNGrams[ $length ] += count( $matchingNGrams[ $length ] );
+			$this->confirmedNGrams[ $length ] += $confirmedNGrams[ $length ];
 		}
 	}
 
 	public function getScore() {
-		$geometricAverage = $this->computeGeometricAverage( $this->matchingNGrams, $this->referenceNGrams );	
+		$geometricAverage = $this->computeGeometricAverage( $this->confirmedNGrams, $this->translationNGrams );	
 		$brevityPenalty = $this->computeBrevityPenalty( $this->translationLength, $this->referenceLength );
 
 		return number_format( $brevityPenalty * exp( $geometricAverage ), 4 );
 	}
 
-	private function computeGeometricAverage( $matchingNGrams, $referenceNGrams, $default = 0 ) {
+	private function computeGeometricAverage( $confirmedNGrams, $translationNGrams, $default = 0 ) {
 		$geometricAverage = 0;
 
 		for( $length = 1; $length <= 4; $length++ ) {
-			if( $matchingNGrams[ $length ] == 0 && $default === 0 ) {
+			if( $confirmedNGrams[ $length ] == 0 && $default === 0 ) {
 				continue;
 			}
 
-			$precision = ( $default + $matchingNGrams[ $length ] ) / ( $default + $referenceNGrams[ $length ] );
+			$precision = ( $default + $confirmedNGrams[ $length ] ) / ( $default + $translationNGrams[ $length ] );
 			$geometricAverage += 1/4 * log( $precision ); 
 		}
 

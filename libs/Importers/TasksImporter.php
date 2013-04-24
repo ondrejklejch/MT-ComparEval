@@ -5,12 +5,14 @@ class TasksImporter extends Importer {
 	private $experimentsModel;
 	private $tasksModel;
 	private $sampler;
+	private $preprocessor;
 	private $metrics;
 
-	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BootstrapSampler $sampler, $metrics ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BootstrapSampler $sampler, Preprocessor $preprocessor, $metrics ) {
 		$this->experimentsModel = $experimentsModel;
 		$this->tasksModel = $tasksModel;
 		$this->sampler = $sampler;
+		$this->preprocessor = $preprocessor;
 		$this->metrics = $metrics;
 	}
 
@@ -34,7 +36,13 @@ class TasksImporter extends Importer {
 	}
 
 	protected function processSentences( $config, $metadata, $sentences ) {
-		$sentences = new \ZipperIterator( $sentences, TRUE );
+		$preprocessor = $this->preprocessor;
+		$sentences = new MapIterator( 
+			new \ZipperIterator( $sentences, TRUE ),
+			function( $sentence ) use ( $preprocessor ) {
+				return $preprocessor->preprocess( $sentence );
+			}
+		);
 
 		$metrics = array();
 		foreach( $this->metrics as $name => $metric ) {
@@ -44,7 +52,7 @@ class TasksImporter extends Importer {
 
 		foreach( $sentences as $sentence ) {
 			foreach( $this->metrics as $name => $metric ) {
-				$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'] );
+				$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
 			}
 		}
 

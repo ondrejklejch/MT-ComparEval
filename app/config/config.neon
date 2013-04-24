@@ -32,10 +32,9 @@ common:
 		router: @routerFactory::createRouter
 		logger: EchoLogger
 		normalizer: Normalizer
-		caseSensitiveTokenizer: Tokenizer( true )
-		caseInsensitiveTokenizer: Tokenizer( false )
-		caseSensitiveBleuMetric: BleuMetric( NGramizer( @caseSensitiveTokenizer ) )
-		caseInsensitiveBleuMetric: BleuMetric( NGramizer( @caseInsensitiveTokenizer ) )
+		tokenizer: Tokenizer( true )
+		ngramizer: NGramizer
+		caseSensitiveBleuMetric: BleuMetric
 		randomMetric: RandomMetric
 		bootstrapSampler: BootstrapSampler( 100, 1000 )
 
@@ -43,14 +42,32 @@ common:
 			class: ExperimentsImporter
 			setup:
 				- setLogger( @logger )
+				- setNormalizer( @normalizer )
+
+		initialPreprocessor: InitialPreprocessor
+		ngramsPreprocessor: NGramsPreprocessor
+		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
+		ngramsCounterPreprocessor: NGramsCounterPreprocessor
+
 		tasksImporter:
-			class: TasksImporter( @experiments, @tasks, @bootstrapSampler, [
-				bleu: @caseSensitiveBleuMetric,
-				bleu-cis: @caseInsensitiveBleuMetric
-				random: @randomMetric
-			] )
+			class: TasksImporter(
+				@experiments,
+				@tasks,
+				@bootstrapSampler,
+				PreprocessorList( [
+					@initialPreprocessor
+					@ngramsPreprocessor
+					@confirmedNGramsPreprocessor
+					@ngramsCounterPreprocessor
+				] ),
+				[
+					bleu: @caseSensitiveBleuMetric,
+					random: @randomMetric
+				]
+			)
 			setup:
 				- setLogger( @logger )
+				- setNormalizer( @normalizer )
 
 
 	factories:
