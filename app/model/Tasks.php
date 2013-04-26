@@ -35,6 +35,31 @@ class Tasks {
 
 			$translationId = $this->db->table( 'translations' )->insert( $data );
 			
+			foreach( $sentence[ 'meta' ][ 'confirmed_ngrams' ] as $length => $confirmedNgrams ) {
+				foreach( $confirmedNgrams as $confirmedNgram ) {
+					$data = array(
+						'translations_id' => $translationId,
+						'length' => $length,
+						'text' => $confirmedNgram
+					);
+					
+					$this->db->table( 'confirmed_ngrams' )->insert( $data );
+				}
+			}
+
+			foreach( $sentence[ 'meta' ][ 'unconfirmed_ngrams' ] as $length => $unconfirmedNgrams ) {
+				foreach( $unconfirmedNgrams as $unconfirmedNgram ) {
+					$data = array(
+						'translations_id' => $translationId,
+						'length' => $length,
+						'text' => $unconfirmedNgram
+					);
+					
+					$this->db->table( 'unconfirmed_ngrams' )->insert( $data );
+				}
+			}
+
+
 			foreach( $metrics as $metric => $values ) {
 				$data = array(
 					'translations_id' => $translationId,
