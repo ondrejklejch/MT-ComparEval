@@ -120,8 +120,11 @@ function Sentences( $scope, $http ) {
 		payload.params = {
 				"task1": $scope.task0,
 				"task2": $scope.task1,
-				"metric": ( $scope.currentMetric == '' ) ? 'bleu-cis' : $scope.currentMetric
+				"metric": ( !$scope.currentMetric ) ? 'bleu-cis' : $scope.currentMetric
 		};
+
+		console.log( $scope.currentMetric );
+		console.log( payload.params );
 
 		$http.get( '{!$baseUri}/api/metrics/results', payload ).success( function( data ) {
 			$scope.diffs = {
@@ -129,11 +132,11 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Sentence level " + $scope.currentMetric + " differences",
+					"text": "Sentence level " + ( $scope.currentMetric || 'bleu-cis' ) + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + $scope.currentMetric + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -185,11 +188,11 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Paired Bootstrap Resampling " + $scope.currentMetric + " differences",
+					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'bleu-cis' ) + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + $scope.currentMetric + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -274,7 +277,7 @@ function Sentences( $scope, $http ) {
 					"taskIds[0]": $scope.task0,
 					"offset": $scope.offset,
 					"limit": 10,
-					"orderBy": ( $scope.currentMetric == '' ) ? 'id' : $scope.currentMetric,
+					"orderBy": ( !$scope.currentMetric ) ? 'id' : $scope.currentMetric,
 					"order": ( $scope.asc ) ? 'asc' : 'desc'
 			};
 
@@ -292,7 +295,7 @@ function Sentences( $scope, $http ) {
 		$scope.hasNext = data.has_next;
 
 		data.sentences.forEach( function( sentence ) {
-			if( sentence.translations.length == 2 && $scope.currentMetric != '' ) {
+			if( sentence.translations.length == 2 && $scope.currentMetric ) {
 				metricA = sentence.translations[0].metrics[$scope.currentMetric];
 				metricB = sentence.translations[1].metrics[$scope.currentMetric];
 
@@ -411,7 +414,7 @@ function Sentences( $scope, $http ) {
 	}
 
 	$scope.predicate = function( sentence ) {
-		if( $scope.currentMetric == '' ) {
+		if( !$scope.currentMetric ) {
 			return parseInt( sentence.sentence_id );
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
@@ -655,7 +658,7 @@ span {
 					</ul>
 				</div>
 
-				<div ng-class="{ 'hidden': currentMetric == '' || sentence.diff == null }">
+				<div ng-class="{ 'hidden': !currentMetric || sentence.diff == null }">
 					<dt>Diff {{ currentMetric }}</dt>
 					<dd>{{ sentence.diff }}</dd>
 				</div>
