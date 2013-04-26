@@ -1,18 +1,18 @@
 {
-    "hash": "8bbb0a98ba5087158716eb17a500dd23",
+    "hash": "823147b7ee1b988afd59c6878eb22143",
     "packages": [
         {
             "name": "nette/nette",
-            "version": "dev-v2.0.8-fixed-sqlite",
+            "version": "dev-v2.0.10-fixed-sqlite",
             "source": {
                 "type": "git",
-                "url": "https://github.com/choko/nette",
-                "reference": "a434e262b4290d93f153d130d690944bb7164b89"
+                "url": "https://github.com/choko/nette.git",
+                "reference": "9b57a3f632a6aeec09e43c6b4ad2783dea71a796"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/choko/nette/archive/a434e262b4290d93f153d130d690944bb7164b89.zip",
-                "reference": "a434e262b4290d93f153d130d690944bb7164b89",
+                "url": "https://api.github.com/repos/choko/nette/zipball/9b57a3f632a6aeec09e43c6b4ad2783dea71a796",
+                "reference": "9b57a3f632a6aeec09e43c6b4ad2783dea71a796",
                 "shasum": ""
             },
             "require": {
@@ -30,7 +30,7 @@
                 "ext-memcache": "*",
                 "ext-pdo": "*"
             },
-            "time": "2013-02-03 19:29:05",
+            "time": "2013-04-26 10:47:21",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -74,7 +74,7 @@
                 "templating"
             ],
             "support": {
-                "source": "https://github.com/choko/nette/tree/v2.0.8-fixed-sqlite"
+                "source": "https://github.com/choko/nette/tree/master"
             }
         }
     ],

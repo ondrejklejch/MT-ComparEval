@@ -55,7 +55,7 @@ angular.module( 'scroll', [] )
 
 function Sentences( $scope, $http ) {
 	{foreach $taskIds as $i => $id}
-	$scope.task{$i} = {$id};
+	$scope.task{$i} = {!$id};
 	{/foreach}
 	$scope.tasks = [];
 	$scope.taskNames = {};
@@ -250,7 +250,7 @@ function Sentences( $scope, $http ) {
 	function loadTasks() {
 		$http.get( '{!$baseUri}/api/tasks', {
 			params: {
-				"experimentId": {$experimentId},
+				"experimentId": {!$experimentId},
 			}
 		} ).success( addTasks );
 	}

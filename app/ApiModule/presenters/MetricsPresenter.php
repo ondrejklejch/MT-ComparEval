@@ -4,12 +4,17 @@ namespace ApiModule;
 
 class MetricsPresenter extends \Nette\Application\UI\Presenter {
 
+	private $metricsModel;
+
+	public function __construct( \Metrics $metricsModel ) {
+		$this->metricsModel = $metricsModel;
+	}
+
+
 	public function renderDefault() {
-		$metricsModel = $this->getService( 'metrics' );
-		
 		$response = array();
 		$response[ 'metrics' ] = array();
-		foreach( $metricsModel->getMetrics() as $metric ) {
+		foreach( $this->metricsModel->getMetrics() as $metric ) {
 			$response[ 'metrics' ][] = $metric->name;
 		}
 
@@ -18,26 +23,24 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 
 
 	public function renderResults( $metric, $task1, $task2 ) {
-		$metricsModel = $this->getService( 'metrics' );
-		$metricId = $metricsModel->getMetricsId( $metric );
+		$metricId = $this->metricsModel->getMetricsId( $metric );
 
 		$response = array();
 		$response[ 'diffs' ] = array();
 		$response[ 'diffs' ][ 'name' ] = $metric;
-		$response[ 'diffs' ][ 'data' ] = $metricsModel->getMetricDiffs( $metricId, $task1, $task2 );
+		$response[ 'diffs' ][ 'data' ] = $this->metricsModel->getMetricDiffs( $metricId, $task1, $task2 );
 
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
 
 	public function renderSamples( $metric, $task1, $task2 ) {
-		$metricsModel = $this->getService( 'metrics' );
-		$metricId = $metricsModel->getMetricsId( $metric );
+		$metricId = $this->metricsModel->getMetricsId( $metric );
 
 		$response = array();
 		$response[ 'samples' ] = array();
 		$response[ 'samples' ][ 'name' ] = $metric;
-		$response[ 'samples' ][ 'data' ] = $metricsModel->getMetricSamples( $metricId, $task1, $task2 );
+		$response[ 'samples' ][ 'data' ] = $this->metricsModel->getMetricSamples( $metricId, $task1, $task2 );
 
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}

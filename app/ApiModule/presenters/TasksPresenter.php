@@ -4,12 +4,16 @@ namespace ApiModule;
 
 class TasksPresenter extends \Nette\Application\UI\Presenter {
 
-	public function renderDefault( $experimentId ) {
-		$tasksModel = $this->getService( 'tasks' );
+	private $tasksModel;
 
+	public function __construct( \Tasks $tasksModel ) {
+		$this->tasksModel = $tasksModel;
+	}
+
+	public function renderDefault( $experimentId ) {
 		$response = array();
 		$response[ 'tasks' ] = array();
-		foreach( $tasksModel->getTasks( $experimentId ) as $task ) {
+		foreach( $this->tasksModel->getTasks( $experimentId ) as $task ) {
 			$taskResponse[ 'name' ] = $task->name;
 			$taskResponse[ 'id' ] = $task->id;
 

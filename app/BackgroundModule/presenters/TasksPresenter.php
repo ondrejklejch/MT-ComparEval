@@ -6,10 +6,8 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 
 	private $importer;
 
-	public function startup() {
-		parent::startup();
-
-		$this->importer = $this->getService( 'tasksImporter' );
+	public function __construct( \TasksImporter $importer ) {
+		$this->importer = $importer;
 	}
 
 	public function renderWatch( $folder, $sleep = 500000 ) {

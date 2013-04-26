@@ -44,7 +44,7 @@ class Sentences {
 				$rowTranslation[ 'metrics' ] = array();
 
 				foreach( $translation->related( 'translations_metrics.translations_id' ) as $metric ) {
-					$name = $this->db->table( 'metrics' )->find( $metric['metrics_id'] )->fetch()->name;
+					$name = $this->db->table( 'metrics' )->wherePrimary( $metric['metrics_id'] )->fetch()->name;
 					$rowTranslation[ 'metrics' ][ $name ] = $metric[ 'score' ];
 				}
 

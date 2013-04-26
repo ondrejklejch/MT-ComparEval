@@ -9,7 +9,7 @@ class Tasks {
 	}
 
 	public function getTask( $taskId ) {
-		return $this->db->table( 'tasks' )->find( $taskId )->fetch();
+		return $this->db->table( 'tasks' )->wherePrimary( $taskId )->fetch();
 	}
 
 	public function getTasks( $experimentId ) {

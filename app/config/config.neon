@@ -19,6 +19,7 @@ common:
 			dsn: 'sqlite:%appDir%/database'
 			debugger: false
 			explain: false
+			reflection: conventional
 
 		session:
 			expiration: 14 days

@@ -3,17 +3,19 @@
 
 class ExperimentsPresenter extends BasePresenter {
 
-	public function renderList() {
-		$experimentsModel = $this->getService( 'experiments' );
+	private $experimentsModel;
 
-		$this->template->experiments = $experimentsModel->getExperiments();
+	public function __construct( Experiments $experimentsModel ) {
+		$this->experimentsModel = $experimentsModel;
+	}
+
+	public function renderList() {
+		$this->template->experiments = $this->experimentsModel->getExperiments();
 	}
 
 
 	public function renderSentences( $id ) {
-		$experimentsModel = $this->getService( 'experiments' );
-
-		$this->template->sentences = $experimentsModel->getSentences( $id );
+		$this->template->sentences = $this->experimentsModel->getSentences( $id );
 	}
 
 }
