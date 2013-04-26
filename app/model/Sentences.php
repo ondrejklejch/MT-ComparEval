@@ -124,7 +124,7 @@ class Sentences {
 	private function sortResult( $result, $order ) {
 		asort( $result, SORT_NUMERIC );
 		if( $order == 'desc' ) {
-			$result = array_reverse( $result );
+			$result = array_reverse( $result, TRUE );
 		}
 
 		return $result;

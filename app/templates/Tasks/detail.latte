@@ -63,6 +63,7 @@ function Sentences( $scope, $http ) {
 
 	$scope.sentences = [];
 	$scope.offset = 0;
+	$scope.hasNext = true;
 	$scope.currentMetric = 'bleu-cis';
 	$scope.asc = true;
 	$scope.isMatchingActive = false;
@@ -91,6 +92,7 @@ function Sentences( $scope, $http ) {
 
 		$scope.sentences = [];
 		$scope.offset = 0;
+		$scope.hasNext = true;
 
 		loadSentences();
 	}
@@ -262,7 +264,7 @@ function Sentences( $scope, $http ) {
 
 
 	function loadSentences() {
-		if ( $scope.loading == true ) {
+		if ( $scope.loading || !$scope.hasNext ) {
 			return;
 		} else {
 			$scope.loading = true;
@@ -280,11 +282,15 @@ function Sentences( $scope, $http ) {
 				payload.params[ "taskIds[1]" ] = $scope.task1;
 			}
 
-			$http.get( '{!$baseUri}/api/sentences', payload ).success( addSentences );
+			$http.get( '{!$baseUri}/api/sentences', payload )
+				.success( addSentences )
+				.error( function() { $scope.loading = false; } );
 		}
 	}
 
 	function addSentences( data ) {
+		$scope.hasNext = data.has_next;
+
 		data.sentences.forEach( function( sentence ) {
 			if( sentence.translations.length == 2 && $scope.currentMetric != '' ) {
 				metricA = sentence.translations[0].metrics[$scope.currentMetric];
@@ -658,5 +664,6 @@ span {
 	</ul>
 
 	<div ng-class="{ 'hidden': !loading }">Loading...</div>
+	<div ng-class="{ 'hidden': hasNext }">All sentences loaded</div>
 </div>
 {/block}
