@@ -299,12 +299,29 @@ var getPositions = function( set ) {
 }
 
 var initClasses = function( tokens ) {
-	return tokens.map( function( token ) {
+	var ngrams = getNGrams( tokens.join( ' ' ) );
+	var tokens = tokens.map( function( token ) {
 		return {
 			'token': token,
-			'class': []
+			'class': [],
+			'ngrams': {}
 		};
 	} );
+
+	[1,2,3,4].forEach( function( length ) {
+		ngrams[ length ].forEach( function( ngram, index ) {
+			for( var i = index; i < index + length; i++ ) {
+				tokens[ i ].ngrams[ ngram ] = {
+					'start': i == index,
+					'end': i == index + length - 1
+				};
+			}
+		} );
+	} );
+
+	console.log( tokens );
+
+	return tokens;
 }
 
 
