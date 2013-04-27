@@ -78,6 +78,8 @@ function Sentences( $scope, $http ) {
 	$scope.showTask1 = true;
 	$scope.loading = false;
 	$scope.confirmedNgrams = [];
+	$scope.unconfirmedNgrams = [];
+	$scope.sentencesToLoad = [];
 
 	loadSentences();
 	loadTasks();
@@ -86,9 +88,23 @@ function Sentences( $scope, $http ) {
 	loadUnconfirmedNgrams();
 
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
+	$scope.$watch( 'sentencesToLoad', reloadSentencesById );
 	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
 
 	function reloadSentences( oldValue, newValue ) {
+		if( oldValue == newValue ) {
+			return;
+		}
+
+		$scope.sentences = [];
+		$scope.sentencesToLoad = [];
+		$scope.offset = 0;
+		$scope.hasNext = true;
+
+		loadSentences();
+	}
+
+	function reloadSentencesById( oldValue, newValue ) {
 		if( oldValue == newValue ) {
 			return;
 		}
@@ -110,6 +126,20 @@ function Sentences( $scope, $http ) {
 
 	$scope.loadMore = function() {
 		loadSentences();
+	}
+
+	$scope.loadSentencesWithNgram = function( ngram, sentences ) {
+		$scope.ngram = ngram;
+		$scope.sentencesToLoad = sentences;
+		$scope.sentencesToLoadCount = {};
+
+		sentences.forEach( function( sentenceId ) {
+			if( typeof( $scope.sentencesToLoadCount[ sentenceId ] ) == 'undefined' ) {
+				$scope.sentencesToLoadCount[ sentenceId ] = 0;
+			}
+
+			$scope.sentencesToLoadCount[ sentenceId ]++; 
+		} );
 	}
 
 	$scope.swapTasks = function() {
@@ -296,23 +326,45 @@ function Sentences( $scope, $http ) {
 		} else {
 			$scope.loading = true;
 
-			var payload = {};
-			payload.params = {
-					"taskIds[0]": $scope.task0,
-					"offset": $scope.offset,
-					"limit": 10,
-					"orderBy": ( !$scope.currentMetric ) ? 'id' : $scope.currentMetric,
-					"order": ( $scope.asc ) ? 'asc' : 'desc'
-			};
-
-			if( $scope.task1 != "" ) {
-				payload.params[ "taskIds[1]" ] = $scope.task1;
-			}
-
-			$http.get( '{!$baseUri}/api/sentences', payload )
+			createSentenceRequest()
 				.success( addSentences )
 				.error( function() { $scope.loading = false; } );
 		}
+	}
+
+	function createSentenceRequest() {
+		return $http.get( getSentenceRequestUrl(), getSentenceRequestPayload() )
+	}
+
+
+	function getSentenceRequestUrl() {
+		if ( $scope.sentencesToLoad.length == 0 ) {
+			return '{!$baseUri}/api/sentences';
+		} else {
+ 			return '{!$baseUri}/api/sentences/by-id';
+		}
+	}
+
+	function getSentenceRequestPayload() {
+		var payload = {};
+		payload.params = {
+				"taskIds[0]": $scope.task0,
+				"offset": $scope.offset,
+				"limit": 10,
+		};
+
+		if( $scope.task1 != "" ) {
+			payload.params[ "taskIds[1]" ] = $scope.task1;
+		}
+
+		if ( $scope.sentencesToLoad.length == 0 ) {
+			payload.params.orderBy = ( !$scope.currentMetric ) ? 'id' : $scope.currentMetric;
+			payload.params.order = ( $scope.asc ) ? 'asc' : 'desc';
+		} else {
+			payload.params.sentences = $scope.sentencesToLoad.join( ',' );
+		}
+
+		return payload
 	}
 
 	function addSentences( data ) {
@@ -440,6 +492,8 @@ function Sentences( $scope, $http ) {
 	$scope.predicate = function( sentence ) {
 		if( !$scope.currentMetric ) {
 			return parseInt( sentence.sentence_id );
+		} else if( $scope.sentencesToLoad.length != 0 ) {
+			return $scope.sentencesToLoadCount[ sentence.sentence_id ];
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
 		} else {
@@ -582,7 +636,9 @@ span {
 						<caption>{{ taskNames[ task ] }} wins</caption>
 						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								{{ ngram.text }}
+								<a ng-click="loadSentencesWithNgram( ngram.text, ngram.sentences )">
+									{{ ngram.text }}
+								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
 							</td>
 						</tr>
@@ -599,7 +655,9 @@ span {
 						<caption>{{ taskNames[ task ] }} wins</caption>
 						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								{{ ngram.text }}
+								<a ng-click="loadSentencesWithNgram( ngram.text, ngram.sentences )">
+									{{ ngram.text }}
+								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
 							</td>
 						</tr>
@@ -619,7 +677,9 @@ span {
 						<caption>{{ taskNames[ task ] }} loses</caption>
 						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								{{ ngram.text }}
+								<a ng-click="loadSentencesWithNgram( ngram.text, ngram.sentences )">
+									{{ ngram.text }}
+								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
 							</td>
 						</tr>
@@ -636,7 +696,9 @@ span {
 						<caption>{{ taskNames[ task ] }} loses</caption>
 						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								{{ ngram.text }}
+								<a ng-click="loadSentencesWithNgram( ngram.text, ngram.sentences )">
+									{{ ngram.text }}
+								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
 							</td>
 						</tr>
