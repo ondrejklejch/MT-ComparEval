@@ -38,7 +38,7 @@ class TasksImporter extends Importer {
 	protected function processSentences( $config, $metadata, $rawSentences ) {
 		$metrics = array();
 
-		foreach( array( true, false ) as $isCaseSensitive ) {
+		foreach( array( FALSE, TRUE ) as $isCaseSensitive ) {
 			$preprocessor = $this->preprocessor;
 			$sentences = new MapIterator( 
 				new \ZipperIterator( $rawSentences, TRUE ),
