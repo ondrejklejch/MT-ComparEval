@@ -77,10 +77,12 @@ function Sentences( $scope, $http ) {
 	$scope.showTask0 = true;
 	$scope.showTask1 = true;
 	$scope.loading = false;
+	$scope.confirmedNgrams = [];
 
 	loadSentences();
 	loadTasks();
 	loadMetrics();
+	loadConfirmedNgrams();
 
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
 	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
@@ -115,6 +117,18 @@ function Sentences( $scope, $http ) {
 		$scope.task1 = tmp;
 	}
 
+	function loadConfirmedNgrams() {
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1
+		};
+
+		$http.get( '{!$baseUri}/api/ngrams/confirmed', payload ).success( function( data ) {
+			$scope.confirmedNgrams = data;
+		} );
+	}
+
 	function loadCharts() {
 		var payload = {};
 		payload.params = {
@@ -122,9 +136,6 @@ function Sentences( $scope, $http ) {
 				"task2": $scope.task1,
 				"metric": ( !$scope.currentMetric ) ? 'bleu-cis' : $scope.currentMetric
 		};
-
-		console.log( $scope.currentMetric );
-		console.log( payload.params );
 
 		$http.get( '{!$baseUri}/api/metrics/results', payload ).success( function( data ) {
 			$scope.diffs = {
@@ -545,6 +556,43 @@ span {
 		</div>
 		<div class="span6">
 			<chart value="{{ samples }}" type="area"></chart>
+		</div>
+	</div>
+
+	<h3>n-grams confirmed by the reference</h3>
+	<div class="row">
+		<div class="span6" ng-repeat="length in [1,2]">
+			<div class="row">
+				<h5 class="text-center">{{ length }}-gram</h5>
+				<div class="span3" ng-repeat="task in [task0, task1]">
+					<table class="table table-bordered table-condensed">
+						<caption>{{ taskNames[ task ] }} wins</caption>
+						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+							<td style="font-size: 0.9em">
+								{{ ngram.text }}
+								<em class="pull-right">{{ ngram.sentences.length }}</em>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<div class="span6" ng-repeat="length in [3,4]">
+			<div class="row">
+				<h5 class="text-center">{{ length }}-gram</h5>
+				<div class="span3" ng-repeat="task in [task0, task1]">
+					<table class="table table-bordered table-condensed">
+						<caption>{{ taskNames[ task ] }} wins</caption>
+						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+							<td style="font-size: 0.9em">
+								{{ ngram.text }}
+								<em class="pull-right">{{ ngram.sentences.length }}</em>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 
