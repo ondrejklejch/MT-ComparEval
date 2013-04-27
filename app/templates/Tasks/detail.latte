@@ -872,7 +872,17 @@ span {
 		</li>
 	</ul>
 
-	<div ng-class="{ 'hidden': !loading }">Loading...</div>
-	<div ng-class="{ 'hidden': hasNext }">All sentences loaded</div>
+	<div class="alert text-center" ng-class="{ 'hidden': !loading }">
+		Loading...
+	</div>
+
+	<div class="alert text-center" ng-class="{ 'hidden': hasNext || sentencesToLoad.length != 0}">
+		All sentences loaded
+	</div>
+
+	<div class="alert" ng-show="!hasNext && sentencesToLoad.length">
+		All sentences with {{ type }} n-gram <strong>{{ ngram }}</strong> loaded.
+		<a ng-click="loadAllSentences()">Show all senteces</a>
+	</div>
 </div>
 {/block}
