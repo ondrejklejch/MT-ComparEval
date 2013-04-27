@@ -80,8 +80,6 @@ function Sentences( $scope, $http ) {
 	$scope.confirmedNgrams = [];
 	$scope.unconfirmedNgrams = [];
 	$scope.sentencesToLoad = [];
-	$scope.highlightImprovingNgram = false;
-	$scope.highlightWorseningNgram = false;
 
 	loadSentences();
 	loadTasks();
@@ -90,25 +88,10 @@ function Sentences( $scope, $http ) {
 	loadUnconfirmedNgrams();
 
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
-	$scope.$watch( 'sentencesToLoad', reloadSentencesById );
+	$scope.$watch( 'sentencesToLoad', reloadSentences );
 	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
 
 	function reloadSentences( oldValue, newValue ) {
-		if( oldValue == newValue ) {
-			return;
-		}
-
-		$scope.sentences = [];
-		$scope.sentencesToLoad = [];
-		$scope.offset = 0;
-		$scope.hasNext = true;
-		$scope.highlightImprovingNgram = false;
-		$scope.highlightWorseningNgram = false;
-
-		loadSentences();
-	}
-
-	function reloadSentencesById( oldValue, newValue ) {
 		if( oldValue == newValue ) {
 			return;
 		}
@@ -134,15 +117,8 @@ function Sentences( $scope, $http ) {
 
 	$scope.loadSentencesWithNgram = function( ngram, type, sentences ) {
 		$scope.ngram = ngram;
+		$scope.type = type;
 		$scope.sentencesToLoad = sentences;
-
-		if ( type == 'improving' ) {
-			$scope.highlightImprovingNgram = true;
-			$scope.highlightWorseningNgram = false;
-		} else {
-			$scope.highlightImprovingNgram = false;
-			$scope.highlightWorseningNgram = true;
-		}
 
 		$scope.sentencesToLoadCount = {};
 		sentences.forEach( function( sentenceId ) {
@@ -152,6 +128,12 @@ function Sentences( $scope, $http ) {
 
 			$scope.sentencesToLoadCount[ sentenceId ]++; 
 		} );
+	}
+
+	$scope.loadAllSentences = function() {
+		$scope.ngram = null;
+		$scope.type = null;
+		$scope.sentencesToLoad = [];
 	}
 
 	$scope.swapTasks = function() {
@@ -625,8 +607,8 @@ span {
 		'matching-active': isMatchingActive,
 		'improving-active': isImprovingActive,
 		'worsening-active': isWorseningActive,
-		'highlight-improving-ngram': highlightImprovingNgram,
-		'highlight-worsening-ngram': highlightWorseningNgram,
+		'highlight-improving-ngram': type == 'improving',
+		'highlight-worsening-ngram': type == 'worsening',
 		'diff-active-0': showDiffWithReference && showDiffFor == 0,
 		'diff-active-1': showDiffWithReference && showDiffFor == 1,
 		'diff-active-both': showDiffWithEachOther
@@ -682,7 +664,7 @@ span {
 						<caption>{{ taskNames[ task ] }} wins</caption>
 						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
 									{{ ngram.text }}
 								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -701,7 +683,7 @@ span {
 						<caption>{{ taskNames[ task ] }} wins</caption>
 						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
 									{{ ngram.text }}
 								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -723,7 +705,7 @@ span {
 						<caption>{{ taskNames[ task ] }} loses</caption>
 						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
 									{{ ngram.text }}
 								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -742,7 +724,7 @@ span {
 						<caption>{{ taskNames[ task ] }} loses</caption>
 						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 							<td style="font-size: 0.9em">
-								<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
 									{{ ngram.text }}
 								</a>
 								<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -823,6 +805,13 @@ span {
 			</label>
 		</div>
 	</form>
+
+	<h3 id="sentences">Sentences</h3>
+	<div class="alert" ng-show="sentencesToLoad.length">
+		You are displaying sentences with {{ type }} n-gram <strong>{{ ngram }}</strong>.
+		<a ng-click="loadAllSentences()">Show all senteces</a>
+	</div>
+
 
 	<ul class="unstyled">
 		<li

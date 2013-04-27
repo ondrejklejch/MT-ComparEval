@@ -319,8 +319,6 @@ var initClasses = function( tokens ) {
 		} );
 	} );
 
-	console.log( tokens );
-
 	return tokens;
 }
 
