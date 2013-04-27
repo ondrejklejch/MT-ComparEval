@@ -645,92 +645,106 @@ span {
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="span6">
-			<chart value="{{ diffs }}" type="area"></chart>
-		</div>
-		<div class="span6">
-			<chart value="{{ samples }}" type="area"></chart>
-		</div>
-	</div>
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#stats" data-toggle="tab">Statistics</a></li>
+		<li><a href="#confirmed" data-toggle="tab">Confirmed n-grams</a></li>
+		<li><a href="#unconfirmed" data-toggle="tab">Unconfirmed n-grams</a></li>
+	</ul>
 
-	<h3>n-grams confirmed by the reference</h3>
-	<div class="row">
-		<div class="span6" ng-repeat="length in [1,2]">
+	<div class="tab-content">
+		<div class="tab-pane active" id="stats">
 			<div class="row">
-				<h5 class="text-center">{{ length }}-gram</h5>
-				<div class="span3" ng-repeat="task in [task0, task1]">
-					<table class="table table-bordered table-condensed">
-						<caption>{{ taskNames[ task ] }} wins</caption>
-						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
-							<td style="font-size: 0.9em">
-								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
-									{{ ngram.text }}
-								</a>
-								<em class="pull-right">{{ ngram.sentences.length }}</em>
-							</td>
-						</tr>
-					</table>
+				<div class="span6">
+					<chart value="{{ diffs }}" type="area"></chart>
+				</div>
+				<div class="span6">
+					<chart value="{{ samples }}" type="area"></chart>
 				</div>
 			</div>
 		</div>
 
-		<div class="span6" ng-repeat="length in [3,4]">
+		<div class="tab-pane" id="confirmed">
+			<h3>n-grams confirmed by the reference</h3>
 			<div class="row">
-				<h5 class="text-center">{{ length }}-gram</h5>
-				<div class="span3" ng-repeat="task in [task0, task1]">
-					<table class="table table-bordered table-condensed">
-						<caption>{{ taskNames[ task ] }} wins</caption>
-						<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
-							<td style="font-size: 0.9em">
-								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
-									{{ ngram.text }}
-								</a>
-								<em class="pull-right">{{ ngram.sentences.length }}</em>
-							</td>
-						</tr>
-					</table>
+				<div class="span6" ng-repeat="length in [1,2]">
+					<div class="row">
+						<h5 class="text-center">{{ length }}-gram</h5>
+						<div class="span3" ng-repeat="task in [task0, task1]">
+							<table class="table table-bordered table-condensed">
+								<caption>{{ taskNames[ task ] }} wins</caption>
+								<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+									<td style="font-size: 0.9em">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+											{{ ngram.text }}
+										</a>
+										<em class="pull-right">{{ ngram.sentences.length }}</em>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="span6" ng-repeat="length in [3,4]">
+					<div class="row">
+						<h5 class="text-center">{{ length }}-gram</h5>
+						<div class="span3" ng-repeat="task in [task0, task1]">
+							<table class="table table-bordered table-condensed">
+								<caption>{{ taskNames[ task ] }} wins</caption>
+								<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+									<td style="font-size: 0.9em">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+											{{ ngram.text }}
+										</a>
+										<em class="pull-right">{{ ngram.sentences.length }}</em>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<h3>n-grams unconfirmed by the reference</h3>
-	<div class="row">
-		<div class="span6" ng-repeat="length in [1,2]">
+		<div class="tab-pane" id="unconfirmed">
+			<h3>n-grams unconfirmed by the reference</h3>
 			<div class="row">
-				<h5 class="text-center">{{ length }}-gram</h5>
-				<div class="span3" ng-repeat="task in [task0, task1]">
-					<table class="table table-bordered table-condensed">
-						<caption>{{ taskNames[ task ] }} loses</caption>
-						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
-							<td style="font-size: 0.9em">
-								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
-									{{ ngram.text }}
-								</a>
-								<em class="pull-right">{{ ngram.sentences.length }}</em>
-							</td>
-						</tr>
-					</table>
+				<div class="span6" ng-repeat="length in [1,2]">
+					<div class="row">
+						<h5 class="text-center">{{ length }}-gram</h5>
+						<div class="span3" ng-repeat="task in [task0, task1]">
+							<table class="table table-bordered table-condensed">
+								<caption>{{ taskNames[ task ] }} loses</caption>
+								<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
+									<td style="font-size: 0.9em">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+											{{ ngram.text }}
+										</a>
+										<em class="pull-right">{{ ngram.sentences.length }}</em>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
 				</div>
-			</div>
-		</div>
 
-		<div class="span6" ng-repeat="length in [3,4]">
-			<div class="row">
-				<h5 class="text-center">{{ length }}-gram</h5>
-				<div class="span3" ng-repeat="task in [task0, task1]">
-					<table class="table table-bordered table-condensed">
-						<caption>{{ taskNames[ task ] }} loses</caption>
-						<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
-							<td style="font-size: 0.9em">
-								<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
-									{{ ngram.text }}
-								</a>
-								<em class="pull-right">{{ ngram.sentences.length }}</em>
-							</td>
-						</tr>
-					</table>
+				<div class="span6" ng-repeat="length in [3,4]">
+					<div class="row">
+						<h5 class="text-center">{{ length }}-gram</h5>
+						<div class="span3" ng-repeat="task in [task0, task1]">
+							<table class="table table-bordered table-condensed">
+								<caption>{{ taskNames[ task ] }} loses</caption>
+								<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
+									<td style="font-size: 0.9em">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+											{{ ngram.text }}
+										</a>
+										<em class="pull-right">{{ ngram.sentences.length }}</em>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
