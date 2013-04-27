@@ -21,4 +21,16 @@ class SentencesPresenter extends \Nette\Application\UI\Presenter {
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
+	public function renderById( array $taskIds, $sentences, $offset = 0, $limit = 20 ) {
+		$taskIds = array_values( $taskIds );
+		$sentencesIds = explode( ',', $sentences );
+
+		$response = array();
+		$response['offset'] = $offset;
+		$response['has_next'] = count( array_unique( $sentencesIds ) ) > $offset + $limit;
+		$response['sentences'] = $this->sentencesModel->getSentencesByIds( $sentencesIds, $taskIds, $offset, $limit );
+
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+	}
+
 }

@@ -29,6 +29,7 @@ class RouterFactory
 		} else {
 			$router[] = new Route('index.php', 'Experiments:list', Route::ONE_WAY);
 			$router[] = new Route('api/sentences', 'Api:Sentences:default');
+			$router[] = new Route('api/sentences/by-id', 'Api:Sentences:byId');
 			$router[] = new Route('api/tasks', 'Api:Tasks:default');
 			$router[] = new Route('api/metrics', 'Api:Metrics:default');
 			$router[] = new Route('api/metrics/results', 'Api:Metrics:results');

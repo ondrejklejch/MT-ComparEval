@@ -28,7 +28,25 @@ class Sentences {
 		return $this->getSentencesWithIds( $sentenceIds, $taskIds );
 	}
 
-	public function getSentencesWithIds( $sentenceIds, $taskIds ) {
+
+	public function getSentencesByIds( $sentenceIds, $taskIds, $offset, $limit ) {
+		$sentenceIds = $this->sortSentencesIds( $sentenceIds );
+		$sentenceIds = $this->sliceResult( $sentenceIds, $offset, $limit );
+
+		return $this->getSentencesWithIds( $sentenceIds, $taskIds );
+	}
+
+	private function sortSentencesIds( $sentenceIds ) {
+		$keys = array_unique( $sentenceIds );
+		$occurences = array_combine( $keys, array_fill( 0, count( $keys ), 0 ) );
+		foreach( $sentenceIds as $id ) {
+			$occurences[ $id ]++;
+		}
+
+		return $this->sortResult( $occurences, 'desc' );
+	}
+
+	private function getSentencesWithIds( $sentenceIds, $taskIds ) {
 		$rows = array();
 		foreach( $this->db->table( 'sentences' )->where( 'id', $sentenceIds ) as $sentence ) {
 			$row = array();
