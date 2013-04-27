@@ -76,14 +76,16 @@ CREATE TABLE "tasks_metrics_samples" (
 CREATE TABLE "confirmed_ngrams" (
   "translations_id" integer NOT NULL,
   "text" text NOT NULL,
-  "length" real NOT NULL,
+  "length" integer NOT NULL,
+  "position" integer NOT NULL,
   FOREIGN KEY ("translations_id") REFERENCES "translations" ("id") ON DELETE CASCADE
 );
 
 CREATE TABLE "unconfirmed_ngrams" (
   "translations_id" integer NOT NULL,
   "text" text NOT NULL,
-  "length" real NOT NULL,
+  "length" integer NOT NULL,
+  "position" integer NOT NULL,
   FOREIGN KEY ("translations_id") REFERENCES "translations" ("id") ON DELETE CASCADE
 );
 -- 

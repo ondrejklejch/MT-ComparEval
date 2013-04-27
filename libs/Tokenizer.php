@@ -13,7 +13,7 @@ class Tokenizer {
 			$sentence = mb_strtolower( $sentence ); 
 		}
 
-		return preg_split( '/\s+/', $sentence );
+		return mb_split( '\s+', $sentence );
 	}
 
 }

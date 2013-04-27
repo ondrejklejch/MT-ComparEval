@@ -35,10 +35,16 @@ class Tasks {
 
 			$translationId = $this->db->table( 'translations' )->insert( $data );
 			
+			$position = array();
 			foreach( $sentence[ 'meta' ][ 'confirmed_ngrams' ] as $length => $confirmedNgrams ) {
 				foreach( $confirmedNgrams as $confirmedNgram ) {
+					if( !isset( $position[ $confirmedNgram ] ) ) {
+						$position[ $confirmedNgram ] = 0;
+					}
+
 					$data = array(
 						'translations_id' => $translationId,
+						'position' => $position[ $confirmedNgram ]++,
 						'length' => $length,
 						'text' => $confirmedNgram
 					);
@@ -47,10 +53,16 @@ class Tasks {
 				}
 			}
 
+			$position = array();
 			foreach( $sentence[ 'meta' ][ 'unconfirmed_ngrams' ] as $length => $unconfirmedNgrams ) {
 				foreach( $unconfirmedNgrams as $unconfirmedNgram ) {
+					if( !isset( $position[ $unconfirmedNgram ] ) ) {
+						$position[ $unconfirmedNgram ] = 0;
+					}
+
 					$data = array(
 						'translations_id' => $translationId,
+						'position' => $position[ $unconfirmedNgram ]++,
 						'length' => $length,
 						'text' => $unconfirmedNgram
 					);

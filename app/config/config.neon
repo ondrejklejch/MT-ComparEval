@@ -16,10 +16,9 @@ common:
 			errorPresenter: Error
 
 		database:
-			dsn: 'sqlite:%appDir%/database'
+			dsn: 'sqlite:%appDir%/database;charset=utf8'
 			debugger: false
 			explain: false
-			reflection: conventional
 
 		session:
 			expiration: 14 days
@@ -30,6 +29,7 @@ common:
 		tasks: Tasks
 		sentences: Sentences
 		metrics: Metrics
+		ngrams: NGrams
 		authenticator: Authenticator
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
@@ -71,6 +71,8 @@ common:
 			setup:
 				- setLogger( @logger )
 				- setNormalizer( @normalizer )
+
+		cache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %tempDir%/cache ) )
 
 
 	factories:
