@@ -3,13 +3,15 @@
 class TasksImporter extends Importer {
 
 	private $experimentsModel;
+	private $ngramsModel;
 	private $tasksModel;
 	private $sampler;
 	private $preprocessor;
 	private $metrics;
 
-	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, BootstrapSampler $sampler, Preprocessor $preprocessor, $metrics ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel, NGrams $ngramsModel, BootstrapSampler $sampler, Preprocessor $preprocessor, $metrics ) {
 		$this->experimentsModel = $experimentsModel;
+		$this->ngramsModel = $ngramsModel;
 		$this->tasksModel = $tasksModel;
 		$this->sampler = $sampler;
 		$this->preprocessor = $preprocessor;
@@ -72,6 +74,7 @@ class TasksImporter extends Importer {
 		}
 
 		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
+		$this->ngramsModel->precomputeNgrams( $config['experiment']['id'], $metadata['task_id'] ); 
 	}
 
 	private function getMetricName( $name, $isCaseSensitive ) {
