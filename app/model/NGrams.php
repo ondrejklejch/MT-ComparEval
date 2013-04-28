@@ -121,6 +121,16 @@ class NGrams {
 		}
 
 		while( $ngrams1->valid() ) {
+			$ngram1 = $ngrams1->current();
+			if ( !isset( $merged1[ $ngram1['text'] ] ) ) {
+				$merged1[ $ngram1['text'] ] = array(
+					'text' => $ngram1['text'],
+					'sentences' => array(),
+					'length' => $ngram1['length'],
+					'all_occurences' => 0
+				);
+			}
+
 			$merged1[ $ngram1['text'] ][ 'sentences' ][] = $ngram1['sentences_id'];
 			$merged1[ $ngram1['text'] ][ 'all_occurences' ]++;
 
@@ -128,6 +138,16 @@ class NGrams {
 		}
 
 		while( $ngrams2->valid() ) {
+			$ngram2 = $ngrams2->current();
+			if ( !isset( $merged2[ $ngram2['text'] ] ) ) {
+				$merged2[ $ngram2['text'] ] = array(
+					'text' => $ngram2['text'],
+					'sentences' => array(),
+					'length' => $ngram2['length'],
+					'all_occurences' => 0
+				);
+			}
+
 			$merged2[ $ngram2['text'] ][ 'sentences' ][] = $ngram2['sentences_id'];
 			$merged2[ $ngram2['text'] ][ 'all_occurences' ]++;
 
