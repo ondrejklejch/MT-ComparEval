@@ -29,7 +29,7 @@ common:
 		tasks: Tasks
 		sentences: Sentences
 		metrics: Metrics
-		ngrams: NGrams
+		ngrams: CachedNGrams
 		authenticator: Authenticator
 		routerFactory: RouterFactory( %consoleMode% )
 		router: @routerFactory::createRouter
