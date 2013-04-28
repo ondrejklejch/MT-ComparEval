@@ -115,10 +115,11 @@ function Sentences( $scope, $http ) {
 		loadSentences();
 	}
 
-	$scope.loadSentencesWithNgram = function( ngram, type, sentences ) {
+	$scope.loadSentencesWithNgram = function( ngram, type, task, sentences ) {
 		$scope.ngram = ngram;
 		$scope.type = type;
 		$scope.sentencesToLoad = sentences;
+		$scope.highlightTask = task;
 
 		$scope.sentencesToLoadCount = {};
 		sentences.forEach( function( sentenceId ) {
@@ -462,6 +463,34 @@ function Sentences( $scope, $http ) {
 
 			if( sentence.translations.length > 1 ) {
 				sentence.translations.forEach( function( translation, translationNumber ) {
+					[1,2,3,4].forEach( function( length ) {
+						translationNGrams[ translationNumber ][ length ].forEach( function( ngram, index ) {
+							var isTokenInImproving = false;
+							var isTokenInWorsening = false;
+
+							for( var i = index; i < index + length; i++ ) {
+								isTokenInImproving = isTokenInImproving || improving[ translationNumber ][ i ];
+								isTokenInWorsening = isTokenInWorsening || worsening[ translationNumber ][ i ];
+							}
+
+							for( var i = index; i < index + length; i++ ) {
+								if( isTokenInImproving ) {
+									translation.tokens[ i ].improving_ngrams[ ngram ] = {
+										'start': i == index,
+										'end': i == index + length - 1
+									};
+								}
+
+								if( isTokenInWorsening ) {
+									translation.tokens[ i ].worsening_ngrams[ ngram ] = {
+										'start': i == index,
+										'end': i == index + length - 1
+									};
+								}
+							}
+						} );
+					} );
+
 					improving[ translationNumber ].forEach( function( isImproving, token ) {
 						if( isImproving ) {
 							translation.tokens[ token ].class.push( 'improving' );
@@ -566,31 +595,20 @@ span {
 	color: #468847;
 }
 
-.highlight-improving-ngram .highlight {
+.highlight-improving-ngram .highlight-current-task.highlight-improving, 
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening {
 	border-bottom: 3px solid black;
 	border-top: 3px solid black;
 	font-weight: bolder;
 }
 
-.highlight-improving-ngram .highlight-start {
+.highlight-improving-ngram .highlight-current-task.highlight-improving-start, 
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening-start {
 	border-left: 3px solid black;
 }
 
-.highlight-improving-ngram .highlight-end {
-	border-right: 3px solid black;
-}
-
-.highlight-worsening-ngram .highlight {
-	border-bottom: 3px solid black;
-	border-top: 3px solid black;
-	font-weight: bolder;
-}
-
-.highlight-worsening-ngram .highlight-start {
-	border-left: 3px solid black;
-}
-
-.highlight-worsening-ngram .highlight-end {
+.highlight-improving-ngram .highlight-current-task.highlight-improving-end,
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening-end {
 	border-right: 3px solid black;
 }
 
@@ -674,7 +692,7 @@ span {
 								<caption>{{ taskNames[ task ] }} wins</caption>
 								<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 									<td style="font-size: 0.9em">
-										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
 											{{ ngram.text }}
 										</a>
 										<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -693,7 +711,7 @@ span {
 								<caption>{{ taskNames[ task ] }} wins</caption>
 								<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 									<td style="font-size: 0.9em">
-										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', ngram.sentences )">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
 											{{ ngram.text }}
 										</a>
 										<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -717,7 +735,7 @@ span {
 								<caption>{{ taskNames[ task ] }} loses</caption>
 								<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 									<td style="font-size: 0.9em">
-										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
 											{{ ngram.text }}
 										</a>
 										<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -736,7 +754,7 @@ span {
 								<caption>{{ taskNames[ task ] }} loses</caption>
 								<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
 									<td style="font-size: 0.9em">
-										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', ngram.sentences )">
+										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
 											{{ ngram.text }}
 										</a>
 										<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -857,11 +875,14 @@ span {
 						<span
 							ng-repeat="token in translation.tokens"
 							ng-class="{
-								'highlight': token.ngrams[ ngram ],
-								'highlight-start': token.ngrams[ ngram ].start,
-								'highlight-end': token.ngrams[ ngram ].end
+								'highlight-current-task': translation.task_id == highlightTask,
+								'highlight-improving': token.improving_ngrams[ ngram ],
+								'highlight-improving-start': token.improving_ngrams[ ngram ].start,
+								'highlight-improving-end': token.improving_ngrams[ ngram ].end,
+								'highlight-worsening': token.worsening_ngrams[ ngram ],
+								'highlight-worsening-start': token.worsening_ngrams[ ngram ].start,
+								'highlight-worsening-end': token.worsening_ngrams[ ngram ].end
 							}"
-							data-ngrams="{{ token.ngrams.join( ',' ) }}"
 							class="{{ token.class.join( ' ' ) }}"
 						>
 							{{ token.token }}
@@ -885,6 +906,8 @@ span {
 			</dl>
 		</li>
 	</ul>
+
+
 
 	<div class="alert text-center" ng-class="{ 'hidden': !loading }">
 		Loading...
