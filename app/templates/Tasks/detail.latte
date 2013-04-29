@@ -120,6 +120,7 @@ function Sentences( $scope, $http ) {
 		$scope.type = type;
 		$scope.sentencesToLoad = sentences;
 		$scope.highlightTask = task;
+		$scope.asc = false;
 
 		$scope.sentencesToLoadCount = {};
 		sentences.forEach( function( sentenceId ) {
