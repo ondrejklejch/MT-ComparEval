@@ -16,7 +16,7 @@ common:
 			errorPresenter: Error
 
 		database:
-			dsn: 'sqlite:%appDir%/database;charset=utf8'
+			dsn: 'sqlite:%appDir%/database'
 			debugger: false
 			explain: false
 
