@@ -7,6 +7,13 @@ class NGrams {
 
 	public function __construct( Nette\Database\Connection $db ) {
 		$this->db = $db;
+
+		Nette\Database\Table\Selection::extensionMethod( 'getCursor', function( $selection ) use ( $db ) {
+			return $db->queryArgs(
+				$selection->getSql(),
+				$selection->getSqlBuilder()->getParameters()
+			);
+		} );
 	}
 
 	public function getImproving( $task1, $task2 ) {
@@ -38,7 +45,8 @@ class NGrams {
 			->select( 'translations.sentences_id' )
 			->select( 'confirmed_ngrams.text, confirmed_ngrams.length, confirmed_ngrams.position' )
 			->where( 'translations.tasks_id', $taskId )
-			->order( 'translations.sentences_id, confirmed_ngrams.text' );
+			->order( 'translations.sentences_id, confirmed_ngrams.text' )
+			->getCursor();
 	}
 
 	public function getWorsening( $task1, $task2 ) {
@@ -70,7 +78,8 @@ class NGrams {
 			->select( 'translations.sentences_id' )
 			->select( 'unconfirmed_ngrams.text, unconfirmed_ngrams.length, unconfirmed_ngrams.position' )
 			->where( 'translations.tasks_id', $taskId )
-			->order( 'translations.sentences_id, unconfirmed_ngrams.text' );
+			->order( 'translations.sentences_id, unconfirmed_ngrams.text' )
+			->getCursor();
 	}
 
 	private function mergeNgrams( $ngrams1, $ngrams2 ) {
@@ -153,6 +162,9 @@ class NGrams {
 
 			$ngrams2->next();
 		}
+
+		$ngrams1->getPdoStatement()->closeCursor();
+		$ngrams2->getPdoStatement()->closeCursor();
 
 		return array( $merged1, $merged2 );
 	}
