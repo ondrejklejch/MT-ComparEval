@@ -1,0 +1,65 @@
+<?php
+
+namespace BackgroundModule;
+
+class WatcherPresenter extends \Nette\Application\UI\Presenter {
+
+	public function renderWatch( $folder, $sleep = 500000 ) {
+		echo "Watcher is watching folder: $folder\n";
+		
+		while( TRUE ) {
+			usleep( $sleep );
+
+			foreach( $this->getUnimportedExperiments( $folder ) as $experiment ) {
+				$this->runImportForExperiment( $experiment );
+			}
+
+			foreach( $this->getUnimportedTasks( $folder ) as $task ) {
+				$this->runImportForTask( $task );
+			}
+		}
+
+		$this->terminate();
+	}
+
+	private function getUnimportedExperiments( $folder ) {
+		return \Nette\Utils\Finder::findDirectories( '*' )
+			->in( $folder )
+			->imported( FALSE );	
+	}
+
+	private function getUnimportedTasks( $folder ) {
+		$importedExperiments = \Nette\Utils\Finder::findDirectories( '*' )
+			->in( $folder )
+			->imported( TRUE )
+			->toArray();
+
+		if( count( $importedExperiments ) == 0 ) {
+			return array();
+		}
+
+		return \Nette\Utils\Finder::findDirectories( '*' )
+			->in( $importedExperiments )
+			->imported( FALSE );
+	}
+
+	private function runImportForExperiment( $experiment ) {
+		$action = "Background:Experiments:Import";		
+
+		$this->runCommand( $action, $experiment );
+	}
+
+	private function runImportForTask( $task ) {
+		$action = "Background:Tasks:Import";
+
+		$this->runCommand( $action, $task );
+	}
+
+	private function runCommand( $action, $folder ) {
+		$scriptPath = __DIR__ . '/../../../www/index.php';
+		$command = "php -f $scriptPath $action --folder=$folder";
+
+		passthru( $command );
+	}
+
+}
