@@ -4,6 +4,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 cd $DIR/..
 
+sudo -u www-data -s <<DEPLOY
+
 # DOWNLOAD LATEST CHANGES
 git pull
 
@@ -21,10 +23,8 @@ rm -rf temp/cache/*
 chmod -R 777 log/ temp/
 
 # RUN BACKGROUND WORKERS
-php -f www/index.php Background:Experiments:Watch --folder=data >log/experiments.log 2>&1 &
-php -f www/index.php Background:Tasks:Watch --folder=data >log/tasks.log 2>&1 &
-
-# RUN SERVER
-./bin/server.sh >log/server.log 2>&1 &
+php -f www/index.php Background:Watcher:Watch --folder=data >log/experiments.log 2>&1 &
 
 echo DEPLOY DONE
+
+DEPLOY
