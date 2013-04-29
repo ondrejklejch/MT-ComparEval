@@ -29,24 +29,18 @@ class CachedNGrams extends NGrams {
 
 	public function getImproving( $task1, $task2 ) {
 		$key = $this->getCacheKey( 'improving', $task1, $task2 );
-		$improving = $this->cache->load( $key );
-		if ( $improving === NULL ) {
-			$improving = parent::getImproving( $task1, $task2 );
-			$this->cache->save( $key, $improving );
-		}
 
-		return $improving;
+		return $this->cache->load( $key, function() use ( $task1, $task2 ) {
+			return parent::getImproving( $task1, $task2 );
+		} );
 	}
 
 	public function getWorsening( $task1, $task2 ) {
 		$key = $this->getCacheKey( 'worsening', $task1, $task2 );
-		$worsening = $this->cache->load( $key );
-		if ( $worsening === NULL ) {
-			$worsening = parent::getWorsening( $task1, $task2 );
-			$this->cache->save( $key, $worsening );
-		}
 
-		return $worsening;
+		return $this->cache->load( $key, function() use ( $task1, $task2 ) {
+			return $worsening = parent::getWorsening( $task1, $task2 );
+		} );
 	}
 
 	private function getCacheKey( $type, $task1, $task2 ) {

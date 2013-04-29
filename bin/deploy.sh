@@ -1,10 +1,12 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-cd $DIR/..
-
+ssh mtcompareval.ccl 'bash -s' < <<SSH
 sudo -u www-data -s <<DEPLOY
+DIR="/var/www/MT-ComparEval"
+cd $DIR
+
+# KILL RUNNING PROCESSES
+pkill -fl "^php -f .*www/index.php"
 
 # DOWNLOAD LATEST CHANGES
 git pull
@@ -25,3 +27,4 @@ php -f www/index.php Background:Watcher:Watch --folder=data >log/experiments.log
 echo DEPLOY DONE
 
 DEPLOY
+SSH
