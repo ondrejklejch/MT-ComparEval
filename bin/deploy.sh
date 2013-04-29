@@ -1,12 +1,11 @@
 #!/bin/bash
 
-ssh mtcompareval.ccl 'bash -s' < <<SSH
 sudo -u www-data -s <<DEPLOY
 DIR="/var/www/MT-ComparEval"
 cd $DIR
 
 # KILL RUNNING PROCESSES
-pkill -fl "^php -f .*www/index.php"
+pkill -f "^php -f .*www/index.php"
 
 # DOWNLOAD LATEST CHANGES
 git pull
@@ -25,6 +24,4 @@ rm -rf temp/*
 php -f www/index.php Background:Watcher:Watch --folder=data >log/experiments.log 2>&1 &
 
 echo DEPLOY DONE
-
 DEPLOY
-SSH
