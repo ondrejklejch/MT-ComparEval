@@ -90,6 +90,7 @@ function Sentences( $scope, $http ) {
 	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
 	$scope.$watch( 'sentencesToLoad', reloadSentences );
 	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
+	$scope.$watch( 'task0+task1', reloadNgrams );
 
 	function reloadSentences( oldValue, newValue ) {
 		if( oldValue == newValue ) {
@@ -142,6 +143,14 @@ function Sentences( $scope, $http ) {
 		var tmp = $scope.task0;
 		$scope.task0 = $scope.task1;
 		$scope.task1 = tmp;
+	}
+
+	function reloadNgrams() {
+		$scope.confirmedNgrams = [];
+		$scope.unconfirmedNgrams = [];
+
+		loadConfirmedNgrams();
+		loadUnconfirmedNgrams();
 	}
 
 	function loadConfirmedNgrams() {
