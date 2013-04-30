@@ -110,12 +110,12 @@ class NGrams {
 				);
 			}
 
-			if ( $this->cmp( $ngram1, $ngram2 ) == -1 ) {
+			if ( $this->cmp( $ngram1, $ngram2 ) < 0 ) {
 				$merged1[ $ngram1['text'] ][ 'sentences' ][] = $ngram1['sentences_id'];
 				$merged1[ $ngram1['text'] ][ 'all_occurences' ]++;
 
 				$ngrams1->next();
-			} else if ( $this->cmp( $ngram1, $ngram2 ) == 1 ) {
+			} else if ( $this->cmp( $ngram1, $ngram2 ) > 0 ) {
 				$merged2[ $ngram2['text'] ][ 'sentences' ][] = $ngram2['sentences_id'];
 				$merged2[ $ngram2['text'] ][ 'all_occurences' ]++;
 
@@ -173,7 +173,7 @@ class NGrams {
 		if ( $ngram1[ 'sentences_id' ] == $ngram2[ 'sentences_id' ] ) {
 			return strcmp( $ngram1[ 'text' ], $ngram2[ 'text' ] );
 		} else {
-			return $ngram1[ 'sentences_id' ] > $ngram2[ 'sentences_id' ] ? 1 : -1;
+			return $ngram1[ 'sentences_id' ] - $ngram2[ 'sentences_id' ];
 		}
 	}
 
