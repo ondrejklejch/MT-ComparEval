@@ -420,6 +420,7 @@ function Sentences( $scope, $http ) {
 						case 'D':
 							j--;
 							translation.tokens[j].class.push( 'diff-del-' + translationNumber );
+							translation.tokens[j].in_reference = false;
 							break;
 						case 'I':
 							i--;
@@ -450,10 +451,12 @@ function Sentences( $scope, $http ) {
 						case 'D':
 							j--;
 							sentence.translations[1].tokens[j].class.push( 'diff-del-both' );
+							sentence.translations[1].tokens[j].in_other = false;
 							break;
 						case 'I':
 							i--;
 							sentence.translations[0].tokens[i].class.push( 'diff-ins-both' );
+							sentence.translations[0].tokens[i].in_other = false;
 							break;
 					}
 				}
@@ -480,7 +483,9 @@ function Sentences( $scope, $http ) {
 
 							for( var i = index; i < index + length; i++ ) {
 								isTokenInImproving = isTokenInImproving || improving[ translationNumber ][ i ];
-								isTokenInWorsening = isTokenInWorsening || worsening[ translationNumber ][ i ];
+								var isCurrentWorsening = !translation.tokens[ i ].in_reference &&
+									!translation.tokens[ i ].in_other;  
+								isTokenInWorsening = isTokenInWorsening || isCurrentWorsening || worsening[ translationNumber ][ i ];
 							}
 
 							for( var i = index; i < index + length; i++ ) {

@@ -239,6 +239,9 @@ var getWorsening = function( reference, translations ) {
 }
 
 
+
+
+
 var intersection = function( setA, setB ) {
 	return iterateElements( setA, setB, function( aCount, bCount ) {
 		return Math.min( aCount, bCount );
@@ -303,6 +306,8 @@ var initClasses = function( tokens ) {
 		return {
 			'token': token,
 			'class': [],
+			'in_reference': true,
+			'in_other': true,
 			'improving_ngrams': {},
 			'worsening_ngrams': {}
 		};
