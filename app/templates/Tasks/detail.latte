@@ -131,6 +131,8 @@ function Sentences( $scope, $http ) {
 
 			$scope.sentencesToLoadCount[ sentenceId ]++; 
 		} );
+
+		$('a[href="#sentences"]').tab('show');
 	}
 
 	$scope.loadAllSentences = function() {
@@ -635,7 +637,6 @@ span {
 <div
 	ng-app="scroll"
 	ng-controller="Sentences"
-	when-scrolled="loadMore()"
 	ng-class="{
 		'matching-active': isMatchingActive,
 		'improving-active': isImprovingActive,
@@ -679,13 +680,14 @@ span {
 	</div>
 
 	<ul class="nav nav-tabs">
-		<li class="active"><a href="#stats" data-toggle="tab">Statistics</a></li>
+		<li class="active"><a href="#sentences" data-toggle="tab">Sentences</a></li>
+		<li><a href="#stats" data-toggle="tab">Statistics</a></li>
 		<li><a href="#confirmed" data-toggle="tab">Confirmed n-grams</a></li>
 		<li><a href="#unconfirmed" data-toggle="tab">Unconfirmed n-grams</a></li>
 	</ul>
 
 	<div class="tab-content">
-		<div class="tab-pane active" id="stats">
+		<div class="tab-pane" id="stats">
 			<div class="row">
 				<div class="span6">
 					<chart value="{{ diffs }}" type="area"></chart>
@@ -707,7 +709,7 @@ span {
 								<caption>{{ taskNames[ task ] }} wins</caption>
 								<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
 									<td style="font-size: 0.9em">
-										<a href="#sentences" ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
+										<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
 											{{ ngram.text }}
 										</a>
 										<em class="pull-right">{{ ngram.sentences.length }}</em>
@@ -781,160 +783,166 @@ span {
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<h3>Matching ngrams options</h3>
-	<form class="form-horizontal">
-		<div class="control-group">
-			<label class="checkbox">
-				<input type="checkbox" ng-model="isMatchingActive" />
-				Highlight matching ngrams
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="isImprovingActive" />
-				Highlight improving ngrams
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="isWorseningActive" />
-				Highlight worsening ngrams
-			</label>
-		</div>
-	</form>
-
-	<h3>Diff options</h3>
-	<form class="form-horizontal">
-		<div class="control-group">
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showDiffWithReference" />
-				Show diff with reference
-			</label>
-
-			<label class="radio">
-				<input ng-model="showDiffFor" value="0" type="radio" name="show-diff-for" />
-				Show diff for {{ taskNames[ task0 ] }}
-			</label>
-			<label class="radio">
-				<input ng-model="showDiffFor" value="1" type="radio" name="show-diff-for" />
-				Show diff for {{ taskNames[ task1 ] }}
-			</label>
-
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showDiffWithEachOther" />
-				Show diff with each other
-			</label>
-		</div>
-	</form>
-
-	<form class="form-horizontal">
-		<div class="control-group">
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showSource" />
-				Show source
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showReference" />
-				Show reference
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showTask0" />
-				Show {{ taskNames[ task0 ] }}
-			</label>
-
-			<label class="checkbox">
-				<input type="checkbox" ng-model="showTask1" />
-				Show {{ taskNames[ task1 ] }}
-			</label>
-		</div>
-	</form>
-
-	<h3 id="sentences">Sentences</h3>
-	<div class="alert" ng-show="sentencesToLoad.length">
-		You are displaying sentences with {{ type }} n-gram <strong>{{ ngram }}</strong>.
-		<a ng-click="loadAllSentences()">Show all senteces</a>
-	</div>
-
-
-	<ul class="unstyled">
-		<li
-			ng-repeat="sentence in sentences | orderBy:predicate:!asc"
-			class="sentence"
-			data-id="{{ sentence.sentence_id }}"
+		<div
+			class="tab-pane active"
+			id="sentences"
+			when-scrolled="loadMore()"
 		>
+			<h3>Matching ngrams options</h3>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" ng-model="isMatchingActive" />
+						Highlight matching ngrams
+					</label>
 
-			<dl class="dl-horizontal">
-				<div ng-class="{ 'hidden': !showSource }">
-					<dt>Source</dt>
-					<dd class="source text">{{ sentence.source }}</dd>
+					<label class="checkbox">
+						<input type="checkbox" ng-model="isImprovingActive" />
+						Highlight improving ngrams
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" ng-model="isWorseningActive" />
+						Highlight worsening ngrams
+					</label>
 				</div>
+			</form>
 
-				<div ng-class="{ 'hidden': !showReference }">
-					<dt>Reference</dt>
-					<dd class="reference text">
-						<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
-					</dd>
+			<h3>Diff options</h3>
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showDiffWithReference" />
+						Show diff with reference
+					</label>
+
+					<label class="radio">
+						<input ng-model="showDiffFor" value="0" type="radio" name="show-diff-for" />
+						Show diff for {{ taskNames[ task0 ] }}
+					</label>
+					<label class="radio">
+						<input ng-model="showDiffFor" value="1" type="radio" name="show-diff-for" />
+						Show diff for {{ taskNames[ task1 ] }}
+					</label>
+
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showDiffWithEachOther" />
+						Show diff with each other
+					</label>
 				</div>
+			</form>
 
-				<div
-					ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)"
-					class="translation"
-					ng-class="{'hidden': ( translation.task_id == task0 && !showTask0 ) || ( translation.task_id == task1 && !showTask1 ) }"
+			<form class="form-horizontal">
+				<div class="control-group">
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showSource" />
+						Show source
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showReference" />
+						Show reference
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showTask0" />
+						Show {{ taskNames[ task0 ] }}
+					</label>
+
+					<label class="checkbox">
+						<input type="checkbox" ng-model="showTask1" />
+						Show {{ taskNames[ task1 ] }}
+					</label>
+				</div>
+			</form>
+
+			<h3>Sentences</h3>
+			<div class="alert" ng-show="sentencesToLoad.length">
+				You are displaying sentences with {{ type }} n-gram <strong>{{ ngram }}</strong>.
+				<a ng-click="loadAllSentences()">Show all senteces</a>
+			</div>
+
+
+			<ul class="unstyled">
+				<li
+					ng-repeat="sentence in sentences | orderBy:predicate:!asc"
+					class="sentence"
+					data-id="{{ sentence.sentence_id }}"
 				>
-					<dt>{{ taskNames[ translation.task_id ] }}</dt>
-					<dd class="text">
-						<span
-							ng-repeat="token in translation.tokens"
-							ng-class="{
-								'highlight-current-task': translation.task_id == highlightTask,
-								'highlight-improving': token.improving_ngrams[ ngram ],
-								'highlight-improving-start': token.improving_ngrams[ ngram ].start,
-								'highlight-improving-end': token.improving_ngrams[ ngram ].end,
-								'highlight-worsening': token.worsening_ngrams[ ngram ],
-								'highlight-worsening-start': token.worsening_ngrams[ ngram ].start,
-								'highlight-worsening-end': token.worsening_ngrams[ ngram ].end
-							}"
-							class="{{ token.class.join( ' ' ) }}"
+
+					<dl class="dl-horizontal">
+						<div ng-class="{ 'hidden': !showSource }">
+							<dt>Source</dt>
+							<dd class="source text">{{ sentence.source }}</dd>
+						</div>
+
+						<div ng-class="{ 'hidden': !showReference }">
+							<dt>Reference</dt>
+							<dd class="reference text">
+								<span ng-repeat="token in sentence.reference_tokens" class="{{ token.class.join( ' ' ) }}"> {{ token.token }} </span>
+							</dd>
+						</div>
+
+						<div
+							ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)"
+							class="translation"
+							ng-class="{'hidden': ( translation.task_id == task0 && !showTask0 ) || ( translation.task_id == task1 && !showTask1 ) }"
 						>
-							{{ token.token }}
-						</span>
-					</dd>
-					<ul>
-						<li
-							ng-repeat="(metric, score) in translation.metrics"
-							ng-class="{'active-metric': metric == currentMetric}"
-						>
-							<dt>{{ metric }}</dd>
-							<dd class="metric">{{ score }}</dd>
-						</li>
-					</ul>
-				</div>
+							<dt>{{ taskNames[ translation.task_id ] }}</dt>
+							<dd class="text">
+								<span
+									ng-repeat="token in translation.tokens"
+									ng-class="{
+										'highlight-current-task': translation.task_id == highlightTask,
+										'highlight-improving': token.improving_ngrams[ ngram ],
+										'highlight-improving-start': token.improving_ngrams[ ngram ].start,
+										'highlight-improving-end': token.improving_ngrams[ ngram ].end,
+										'highlight-worsening': token.worsening_ngrams[ ngram ],
+										'highlight-worsening-start': token.worsening_ngrams[ ngram ].start,
+										'highlight-worsening-end': token.worsening_ngrams[ ngram ].end
+									}"
+									class="{{ token.class.join( ' ' ) }}"
+								>
+									{{ token.token }}
+								</span>
+							</dd>
+							<ul>
+								<li
+									ng-repeat="(metric, score) in translation.metrics"
+									ng-class="{'active-metric': metric == currentMetric}"
+								>
+									<dt>{{ metric }}</dd>
+									<dd class="metric">{{ score }}</dd>
+								</li>
+							</ul>
+						</div>
 
-				<div ng-class="{ 'hidden': !currentMetric || sentence.diff == null }">
-					<dt>Diff {{ currentMetric }}</dt>
-					<dd>{{ sentence.diff }}</dd>
-				</div>
-			</dl>
-		</li>
-	</ul>
+						<div ng-class="{ 'hidden': !currentMetric || sentence.diff == null }">
+							<dt>Diff {{ currentMetric }}</dt>
+							<dd>{{ sentence.diff }}</dd>
+						</div>
+					</dl>
+				</li>
+			</ul>
 
 
 
-	<div class="alert text-center" ng-class="{ 'hidden': !loading }">
-		Loading...
-	</div>
+			<div class="alert text-center" ng-class="{ 'hidden': !loading }">
+				Loading...
+			</div>
 
-	<div class="alert text-center" ng-class="{ 'hidden': hasNext || sentencesToLoad.length != 0}">
-		All sentences loaded
-	</div>
+			<div class="alert text-center" ng-class="{ 'hidden': hasNext || sentencesToLoad.length != 0}">
+				All sentences loaded
+			</div>
 
-	<div class="alert" ng-show="!hasNext && sentencesToLoad.length">
-		All sentences with {{ type }} n-gram <strong>{{ ngram }}</strong> loaded.
-		<a ng-click="loadAllSentences()">Show all senteces</a>
+			<div class="alert" ng-show="!hasNext && sentencesToLoad.length">
+				All sentences with {{ type }} n-gram <strong>{{ ngram }}</strong> loaded.
+				<a ng-click="loadAllSentences()">Show all senteces</a>
+			</div>
+		</div>
 	</div>
 </div>
 {/block}
