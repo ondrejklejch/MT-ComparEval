@@ -3,7 +3,8 @@
 class EchoLogger implements Logger {
 
 	public function log( $message ) {
-		echo "$message\n";
+		$date = date( 'd-M-Y H:i:s' ); 
+		echo "[$date]\t$message\n";
 	}
 
 }
