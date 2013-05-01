@@ -1,57 +1,15 @@
+{block styles}
+{include #parent}
+<link rel="stylesheet" href="{$basePath}/css/compare.css" />
+{/block}
+
 {block scripts}
 {include #parent}
+<script type="text/javascript" src="{$baseUri}/js/directives.js"></script>
 <script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
 <script type="text/javascript" src="{$baseUri}/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{$baseUri}/js/highcharts.src.js"></script>
 <script type="text/javascript">
-
-angular.module( 'scroll', [] )
-	.directive( 'whenScrolled', function() {
-		return function(scope, elm, attr) {
-			var raw = elm[0];
-
-			$(window).bind('scroll', function() {
-				var elementBottom = $(raw).offset().top + $(raw).height();
-				var windowBottom = $(window).scrollTop() + $(window).height();	
-
-				if( elementBottom <= windowBottom ) {
-					scope.$apply( attr.whenScrolled );
-				}
-			});
-		};
-	})
-	.directive( 'chart', function() {
-		return {
-			restrict: 'E',
-			template: '<div></div>',
-			transclude:true,
-			replace: true,
-	
-			link: function (scope, element, attrs) {
-				var chartsDefaults = {
-					chart: {
-						renderTo: element[0],
-						type: attrs.type || null,
-						height: attrs.height || null,
-						width: attrs.width || null,
-					}
-				};
-	
-				//Update when charts data changes
-				scope.$watch(function() { return attrs.value; }, function(value) {
-					if(!attrs.value) return;
-						// We need deep copy in order to NOT override original chart object.
-						// This allows us to override chart data member and still the keep
-						// our original renderTo will be the same
-						var deepCopy = true;
-						var newSettings = {};
-						$.extend(deepCopy, newSettings, chartsDefaults, JSON.parse(attrs.value));
-						var chart = new Highcharts.Chart(newSettings);
-				});
-			}
-		}
-	});
-
 
 function Sentences( $scope, $http ) {
 	{foreach $taskIds as $i => $id}
@@ -549,93 +507,8 @@ function Sentences( $scope, $http ) {
 {/block}
 
 {block #content}
-<style>
-.hidden {
-	display: none;
-}
-
-span {
-	padding: 0em 0.1em;
-}
-
-.matching-active .matching-0 {
-	background-color: #fcf8e3;
-	color: #c09853;
-}
-
-.matching-active .matching-1 {
-	background-color: #d9edf7;
-	color: #3a87ad;
-}
-
-.matching-active .matching-0.matching-1 {
-	color: #468847;
-	background-color: #dff0d8;
-}
-
-.improving-active .matching-0.improving {
-	background-color: #c09853;
-	color: #fcf8e3;
-}
-
-.improving-active .matching-1.improving {
-	background-color: #3a87ad;
-	color: #d9edf7;
-}
-
-.worsening-active .worsening {
-	background-color: #f2dede;
-	color: #b94a48;
-}
-
-.diff-active-1 .diff-ins-1, .diff-active-0 .diff-ins-0 {
-	border-bottom: 3px solid #c09853; 
-}
-
-.diff-active-1 .diff-matching-1, .diff-active-0 .diff-matching-0 {
-	border-bottom: 3px solid #468847;
-}
-
-.diff-active-1 .diff-del-1, .diff-active-0 .diff-del-0 {
-	border-bottom: 3px solid #b94a48;
-}
-
-.diff-active-both .worsening.diff-ins-both, .diff-active-both .worsening.diff-del-both {
-	border-bottom: 3px solid #b94a48;
-}
-
-.diff-active-both .improving.diff-ins-both, .diff-active-both .improving.diff-del-both {
-	border-bottom: 3px solid #468847;
-}
-
-.active-metric {
-	color: #468847;
-}
-
-.highlight-improving-ngram .highlight-current-task.highlight-improving, 
-.highlight-worsening-ngram .highlight-current-task.highlight-worsening {
-	border-bottom: 3px solid black;
-	border-top: 3px solid black;
-	font-weight: bolder;
-}
-
-.highlight-improving-ngram .highlight-current-task.highlight-improving-start, 
-.highlight-worsening-ngram .highlight-current-task.highlight-worsening-start {
-	border-left: 3px solid black;
-}
-
-.highlight-improving-ngram .highlight-current-task.highlight-improving-end,
-.highlight-worsening-ngram .highlight-current-task.highlight-worsening-end {
-	border-right: 3px solid black;
-}
-
-.text {
-	line-height: 1.8em; 
-}
-
-</style>
 <div
-	ng-app="scroll"
+	ng-app="MT-ComparEval"
 	ng-controller="Sentences"
 	ng-class="{
 		'matching-active': isMatchingActive,

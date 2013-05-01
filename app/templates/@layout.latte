@@ -13,8 +13,8 @@
 			$(".alert-message").alert();
 		</script>
 		{/block}
-		{block head}{/block}
-		<link rel="stylesheet" href="/css/bootstrap.min.css" />
+		{block styles}
+		<link rel="stylesheet" href="{$basePath}/css/bootstrap.min.css" />
 		<style type="text/css">
 			body, html {
 				background-color: #eee;
@@ -37,6 +37,8 @@
 			}
 
 		</style>
+		{/block}
+		{block head}{/block}
 	</head>
 	<body>
 		<div id="header">
