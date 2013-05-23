@@ -8,6 +8,14 @@
 	} );
 } );
 
+\Nette\Utils\Finder::extensionMethod( 'aborted', function( $finder, $shouldBeAborted ) {
+	return $finder->filter( function( $file ) use ( $shouldBeAborted ) {
+		$lockFile = $file->getPathname() . '/.notimported';
+
+		return file_exists( $lockFile ) === $shouldBeAborted;
+	} );
+} );
+
 \Nette\Utils\Finder::extensionMethod( 'toArray', function( $finder ) {
 	$files = array();
 	foreach( $finder as $file ) {

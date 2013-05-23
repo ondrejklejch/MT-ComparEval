@@ -24,8 +24,8 @@ class Folder {
 		return $this->path->getPathname() . '/' . $filename;
 	}
 
-	public function lock() {
-		$lockPath = $this->path->getPathname() . '/.imported';
+	public function lock( $name = 'imported' ) {
+		$lockPath = $this->path->getPathname() . '/.' . $name;
 		touch( $lockPath );
 	}
 }

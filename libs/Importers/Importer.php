@@ -26,11 +26,13 @@ abstract class Importer {
 			$this->processSentences( $config, $metadata, $sentences );
 
 			$this->logImportSuccess( $config );
-			$folder->lock();
+			$folder->lock( 'imported' );
 		} catch( \IteratorsLengthsMismatchException $exception ) {
 			$this->handleNotMatchingNumberOfSentences( $config['url_key'] );
+			$folder->lock( 'notimported' );
 		} catch( \ImporterException $exception ) {
 			$this->logImportAbortion( $config, $exception );
+			$folder->lock( 'notimported' );
 		}
 	}
 
@@ -71,10 +73,9 @@ abstract class Importer {
 
 	private function parseResource( $folder, $resource, $config ) {
 		try {
-			$this->logger->log( "{$config[$resource]} will be used as a $resource sentences source in {$folder->getName()}" );		
+			$this->logger->log( "{$config[$resource]} used as a $resource source." );		
 
 			$sentences =  $this->getSentences( $folder, $config[$resource] );
-			$this->logger->log( "Starting parsing of $resource sentences located in {$config[$resource]} for {$folder->getName()}" );
 			$count = $sentences->count();
 
 			$this->logger->log( "{$folder->getName()} has $count $resource sentences" );

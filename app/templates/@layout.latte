@@ -51,6 +51,7 @@
 			</div>
 		</div>
 
+		{block #container}
 		<div class="container">
 			<div class="content">
 				<div n:foreach="$flashes as $flash" class="alert-message {$flash->type}" data-alert="alert">
@@ -61,5 +62,6 @@
 				{block #content}{/block}
 			</div>
 		</div>
+		{/block}
 	</body>
 </html>

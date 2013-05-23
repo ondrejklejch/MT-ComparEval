@@ -25,6 +25,7 @@ angular.module( 'MT-ComparEval', [] )
 						var deepCopy = true;
 						var newSettings = {};
 						$.extend(deepCopy, newSettings, chartsDefaults, JSON.parse(attrs.value));
+
 						var chart = new Highcharts.Chart(newSettings);
 				});
 			}

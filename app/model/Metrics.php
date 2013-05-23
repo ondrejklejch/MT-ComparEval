@@ -50,7 +50,20 @@ class Metrics {
 	}
 
 
-	public function getMetricSamples( $metricId, $task1, $task2 ) {
+	public function getMetricSamples( $metricId, $task ) {
+		$samples = $this->getSamplesForTask( $metricId, $task );
+		$samples = iterator_to_array( $samples );
+		$samples = array_map( function( $sample ) {
+			return $sample[ 'score' ];
+		}, $samples );
+
+		sort( $samples );
+
+		return $samples;
+	}
+
+
+	public function getMetricSamplesDiff( $metricId, $task1, $task2 ) {
 		$samples = new ZipperIterator( array(
 			$this->getSamplesForTask( $metricId, $task1 ),
 			$this->getSamplesForTask( $metricId, $task2 )

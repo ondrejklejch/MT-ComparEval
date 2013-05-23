@@ -19,7 +19,7 @@ class TasksImporter extends Importer {
 	}
 
 	protected function logImportStart( $config ) {
-		$this->logger->log( "New task called {$config['url_key']} was found in experiment {$config['experiment']['url_key']}" );
+		$this->logger->log( "Importing task: {$config['experiment']['url_key']}:{$config['url_key']}" );
 	}
 
 	protected function logImportSuccess( $config ) {
@@ -66,15 +66,27 @@ class TasksImporter extends Importer {
 
 			foreach( $this->metrics as $name => $metric ) {
 				$name = $this->getMetricName( $name, $isCaseSensitive );
-				$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
 
 				$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
+			}
+
+			foreach( $this->metrics as $name => $metric ) {
+				$name = $this->getMetricName( $name, $isCaseSensitive );
+
+				$this->logger->log( "Generating $name samples for {$config['url_key']}." ); 
+				$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
 				$this->tasksModel->addSamples( $metadata['task_id'], $name, $samples );
+				$this->logger->log( "Samples generated." );
 			}
 		}
 
 		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
-		$this->ngramsModel->precomputeNgrams( $config['experiment']['id'], $metadata['task_id'] ); 
+
+		if( $config[ 'precompute_ngrams' ] ) {
+			$this->logger->log( "Precomputing n-grams for {$config['url_key']}." );
+			$this->ngramsModel->precomputeNgrams( $config['experiment']['id'], $metadata['task_id'] ); 
+			$this->logger->log( "N-grams precomputation done." );
+		}
 	}
 
 	private function getMetricName( $name, $isCaseSensitive ) {
@@ -102,7 +114,8 @@ class TasksImporter extends Importer {
 			'url_key' => $folder->getName(),
 			'experiment' => $this->experimentsModel->getExperimentByName( $folder->getParent()->getName() ),
 			'description' => '',
-			'translation' => 'translation.txt'
+			'translation' => 'translation.txt',
+			'precompute_ngrams' => true
 		);
 	}
 

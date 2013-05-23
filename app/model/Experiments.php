@@ -45,8 +45,14 @@ class Experiments {
 		$this->db->commit();
 	}
 
+	public function deleteExperiment( $experimentId ) {
+		return $this->db->table( 'experiments' )
+			->wherePrimary( $experimentId )
+			->delete();
+	}
+
 	public function deleteExperimentByName( $name ) {
-		$this->db->table( 'experiments' )
+		return $this->db->table( 'experiments' )
 			->where( 'url_key', $name )
 			->delete();
 	}

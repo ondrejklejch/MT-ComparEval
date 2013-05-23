@@ -12,6 +12,15 @@ class Tasks {
 		return $this->db->table( 'tasks' )->wherePrimary( $taskId )->fetch();
 	}
 
+	public function getTaskMetrics( $taskId ) {
+		$metrics = array();
+		foreach( $this->getTask( $taskId )->related( 'tasks_metrics' ) as $metric ) {
+			$metrics[ $metric->ref( 'metrics' )->name ] = $metric->score;
+		}
+
+		return $metrics;
+	}
+
 	public function getTasks( $experimentId ) {
 		return $this->db->table( 'tasks' )
 			->where( 'experiments_id', $experimentId );
@@ -111,6 +120,12 @@ class Tasks {
 		}
 
 		$this->db->commit();
+	}
+
+	public function deleteTask( $taskId ) {
+		$this->db->table( 'tasks' )
+			->wherePrimary( $taskId )
+			->delete();
 	}
 
 	public function deleteTaskByName( $experimentId, $name ) {

@@ -5,7 +5,6 @@ CREATE TABLE "experiments" (
   "description" text NOT NULL
 );
 
-
 CREATE TABLE "sentences" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "experiments_id" integer NOT NULL,
@@ -13,7 +12,6 @@ CREATE TABLE "sentences" (
   "reference" text NOT NULL,
   FOREIGN KEY ("experiments_id") REFERENCES "experiments" ("id") ON DELETE CASCADE
 );
-
 
 CREATE TABLE "tasks" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -25,7 +23,6 @@ CREATE TABLE "tasks" (
   UNIQUE("experiments_id","url_key")
 );
 
-
 CREATE TABLE "translations" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "tasks_id" integer NOT NULL,
@@ -35,16 +32,19 @@ CREATE TABLE "translations" (
   FOREIGN KEY ("sentences_id") REFERENCES "sentences" ("id") ON DELETE CASCADE
 );
 
-
 CREATE TABLE "metrics" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL
 );
 
-INSERT INTO "metrics" ("name") VALUES ("bleu");
-INSERT INTO "metrics" ("name") VALUES ("bleu-cis");
-INSERT INTO "metrics" ("name") VALUES ("random");
-INSERT INTO "metrics" ("name") VALUES ("random-cis");
+INSERT INTO "metrics" ("name") VALUES ("BLEU");
+INSERT INTO "metrics" ("name") VALUES ("BLEU-cis");
+INSERT INTO "metrics" ("name") VALUES ("PRECISION");
+INSERT INTO "metrics" ("name") VALUES ("PRECISION-cis");
+INSERT INTO "metrics" ("name") VALUES ("RECALL");
+INSERT INTO "metrics" ("name") VALUES ("RECALL-cis");
+INSERT INTO "metrics" ("name") VALUES ("F-MEASURE");
+INSERT INTO "metrics" ("name") VALUES ("F-MEASURE-cis");
 
 
 CREATE TABLE "translations_metrics" (
@@ -88,4 +88,45 @@ CREATE TABLE "unconfirmed_ngrams" (
   "position" integer NOT NULL,
   FOREIGN KEY ("translations_id") REFERENCES "translations" ("id") ON DELETE CASCADE
 );
+
+CREATE TRIGGER delete_tasks_in_experiment AFTER DELETE ON experiments
+  FOR EACH ROW BEGIN
+    DELETE FROM tasks WHERE tasks.experiments_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_sentences_in_experiment BEFORE DELETE ON experiments
+  FOR EACH ROW BEGIN
+    DELETE FROM sentences WHERE sentences.experiments_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_translations_in_task BEFORE DELETE ON tasks
+  FOR EACH ROW BEGIN
+    DELETE FROM translations WHERE translations.tasks_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_metrics_for_task BEFORE DELETE ON tasks
+  FOR EACH ROW BEGIN
+    DELETE FROM tasks_metrics WHERE tasks_metrics.tasks_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_metrics_samples_for_task BEFORE DELETE ON tasks
+  FOR EACH ROW BEGIN
+    DELETE FROM tasks_metrics_samples WHERE tasks_metrics_samples.tasks_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_metrics_for_translation BEFORE DELETE ON translations
+  FOR EACH ROW BEGIN
+    DELETE FROM translations_metrics WHERE translations_metrics.translations_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_confirmed_ngrams_for_translation BEFORE DELETE ON translations
+  FOR EACH ROW BEGIN
+    DELETE FROM confirmed_ngrams WHERE confirmed_ngrams.translations_id = OLD.id;
+  END;
+
+CREATE TRIGGER delete_unconfirmed_ngrams_for_translation BEFORE DELETE ON translations
+  FOR EACH ROW BEGIN
+    DELETE FROM unconfirmed_ngrams WHERE unconfirmed_ngrams.translations_id = OLD.id;
+  END;
+
 -- 
