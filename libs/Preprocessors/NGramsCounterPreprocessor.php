@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * NGramsCounterPreprocessor adds n-grams count to meta informations
+ */
 class NGramsCounterPreprocessor implements Preprocessor {
 
 	public function preprocess( $sentence ) {

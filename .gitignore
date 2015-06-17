@@ -2,6 +2,7 @@ log/*
 temp/*
 vendor/*
 data/*
+storage/*
 *.swp
 
 .DS_Store

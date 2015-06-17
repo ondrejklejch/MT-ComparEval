@@ -16,7 +16,7 @@ common:
 			errorPresenter: Error
 
 		database:
-			dsn: 'sqlite:%appDir%/database'
+			dsn: 'sqlite:%appDir%/../storage/database'
 			debugger: false
 			explain: false
 
@@ -25,32 +25,28 @@ common:
 
 
 	services:
+		routerFactory: RouterFactory( %consoleMode% )
+		router: @routerFactory::createRouter
+		authenticator: Authenticator
+		ngramsCache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/precomputed_ngrams ) )
+
+		# Models
 		experiments: Experiments
 		tasks: Tasks
 		sentences: Sentences
 		metrics: Metrics
 		ngrams: CachedNGrams
-		authenticator: Authenticator
-		routerFactory: RouterFactory( %consoleMode% )
-		router: @routerFactory::createRouter
-		logger: EchoLogger
-		normalizer: Normalizer
-		tokenizer: Tokenizer( true )
-		ngramizer: NGramizer
-		bleuMetric: BleuMetric
-		randomMetric: RandomMetric
-		bootstrapSampler: BootstrapSampler( 100, 500 )
+
+		# Metrics
+		bleuMetric: Bleu( @precisionMetric )
+		fmeasureMetric: FMeasure( @precisionMetric, @recallMetric )
+		bootstrapSampler: BootstrapSampler( 1000 )
 
 		experimentsImporter:
 			class: ExperimentsImporter
 			setup:
 				- setLogger( @logger )
 				- setNormalizer( @normalizer )
-
-		initialPreprocessor: InitialPreprocessor
-		ngramsPreprocessor: NGramsPreprocessor
-		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
-		ngramsCounterPreprocessor: NGramsCounterPreprocessor
 
 		tasksImporter:
 			class: TasksImporter(
@@ -65,23 +61,36 @@ common:
 					@ngramsCounterPreprocessor
 				] ),
 				[
-					bleu: @bleuMetric,
-					random: @randomMetric
+					BLEU: @bleuMetric,
+					PRECISION: @precisionMetric,
+					RECALL: @recallMetric,
+					F-MEASURE: @fmeasureMetric,
 				]
 			)
 			setup:
 				- setLogger( @logger )
 				- setNormalizer( @normalizer )
 
-		cache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %tempDir%/cache ) )
+		# Importers dependencies
+		logger: EchoLogger
+		normalizer: Normalizer
+		tokenizer: Tokenizer( true )
+		ngramizer: NGramizer
+
+		# Sentences preprocessors
+		initialPreprocessor: InitialPreprocessor
+		ngramsPreprocessor: NGramsPreprocessor
+		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
+		ngramsCounterPreprocessor: NGramsCounterPreprocessor
+
+
 
 
 	factories:
+		precisionMetric: Precision
+		recallMetric: Recall
 
 
 production < common:
 
 development < common:
-	nette:
-		database:
-			dsn: 'sqlite:%appDir%/database.test'

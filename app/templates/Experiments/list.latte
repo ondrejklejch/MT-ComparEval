@@ -1,13 +1,18 @@
 {block #content}
 <h1>Experiments</h1>
 
+{if count($experiments)}
 <table class="table">
 {foreach $experiments as $experiment}
 	<tr class="experiment" data-id="{$experiment['url_key']}">	
-		<td class="name">{$experiment['name']}</td>
+		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
-		<td class="tasks"><a href="{plink Tasks:list $experiment['id']}">tasks</a></td>
-		<td class="sentences"><a href="{plink Experiments:sentences $experiment['id']}">sentences</a></td>
+		<td class="span1"><a href="{plink Experiments:delete $experiment['id']}">delete</a></td>
 	</tr>
 {/foreach}
 </table>
+{else}
+	<div class="alert">
+		There are no experiments.
+	</div>
+{/if}

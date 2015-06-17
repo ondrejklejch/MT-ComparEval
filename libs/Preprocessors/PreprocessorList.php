@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * PreprocessorList is used for combinig preprocessors into one preprocessor
+ */
 class PreprocessorList implements Preprocessor {
 
 	private $preprocessors;

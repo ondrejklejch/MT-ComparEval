@@ -1,7 +1,10 @@
-{block #content}
-<h1>Tasks</h1>
-
-<script>
+{block scripts}
+{include #parent}
+<script type="text/javascript" src="{$baseUri}/js/directives.js"></script>
+<script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
+<script type="text/javascript" src="{$baseUri}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$baseUri}/js/highcharts.src.js"></script>
+<script type="text/javascript">
 $(document).ready( function() {
 	$('#compare').click( function( event ) {
 		event.preventDefault();
@@ -19,23 +22,122 @@ $(document).ready( function() {
 } );
 </script>
 
+<script type="text/javascript">
+	function Tasks( $scope, $http ) {
+		loadScores();
+
+		function loadScores() {
+			var payload = {};
+			payload.params = {
+					"experiment": {!$experimentId}
+			};
+
+			$http.get( '{!$baseUri}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
+				$scope.scores = {
+					"chart": {
+						"zoomType": "x"
+					},
+					"colors": [
+						"#468847",
+						"#b94a48",
+						"#c09853",
+						"#3a87ad"
+					],
+					"title": {
+						"text": "Tasks metric scores progress",
+					},
+					"yAxis": {
+						"title": {
+							"text": "score",
+						}
+					},
+					"xAxis": {
+						"showFirstLabel": true,
+						"showLastLabel": true,
+						"categories": data.tasks,
+						"title": {
+							"text": "tasks"
+						}
+					},
+					"legend": {
+						"enabled": true,
+						"borderWidth": 0,
+					},
+					"tooltip": {
+						"enabled": true,
+						"shared": true,
+						"crosshairs": true
+					},
+					"credits": {
+						"enabled": false
+					},
+					"plotOptions": {
+						"series": {
+							"marker": {
+								"enabled": false,
+							},
+							"enableMouseTracking": true,
+						},
+					},
+					"series": data.metrics
+				};
+
+			} );
+		}
+	}
+</script>
+{/block}
+
+{block #content}
+<h1>Tasks</h1>
+
+{if count($tasks)}
+
+{if count($tasks) > 1}
+	<div ng-app="MT-ComparEval" ng-controller="Tasks">
+		<chart value="{{ scores }}" type="line"></chart>
+	</div>
+{/if}
+
+
 <form>
-<table class="table">
-{foreach $tasks as $task}
-	<tr class="task" data-id="{$task['url_key']}">	
-		<td class="name"><input type="checkbox" data-task-id="{$task['id']}"/><a href="{plink Tasks:detail $task['id']}">{$task['name']}</a></td>
-		<td class="description">{$task['description']}</td>
-		<td class="metrics">
-			<dl>
-				{foreach $task->related('tasks_metrics') as $metric}
-				<dt>{$metric->ref('metrics')->name}</dt>
-				<dd data-metric="{$metric->ref('metrics')->name}">{$metric['score']}</dd>
-				{/foreach}
-			</dl>
-		</td>
-	</tr>
-{/foreach}
-</table>
-<input type="submit" value="compare" class="button" id="compare"/>
+	<table class="table table-bordered">
+		<tr>
+			<th class="span2">name</th>
+			<th class="span4">description</th>
+			{=$tasks->rewind()}
+			{foreach $tasks->current()->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
+				<th class="span2" style="text-align:center">{$metric->ref('metrics')->name}</th>
+			{/foreach}
+			<th class="span1"></th>
+		</tr>
+
+		{foreach $tasks as $task}
+		<tr class="task" data-id="{$task['url_key']}">	
+			<th class="name span2"><input type="checkbox" data-task-id="{$task['id']}"/>{$task['name']}</th>
+			<td class="description">{$task['description']}</td>
+			{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
+				<td style="text-align:center">{$metric['score']}</td>
+			{/foreach}
+			<td><a href="{plink Tasks:delete $task['id']}">delete</a></td>
+		</tr>
+		{/foreach}
+	</table>
+
+	{if count($tasks) > 1}
+		<input type="submit" value="compare" class="button" id="compare"/>
+	{else}
+		<div class="alert">
+			You need to import at least 2 tasks to be able to compare them.
+		</div>
+	{/if}
 </form>
+{else}
+	<div class="alert">
+		There are no tasks in this experiment.
+	</div>
+
+{/if}
+
+
 

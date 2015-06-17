@@ -2,6 +2,9 @@
 
 namespace ApiModule;
 
+/**
+ * NGramsPresenter is used for serving top improving/worsening n-grams from REST API
+ */
 class NGramsPresenter extends \Nette\Application\UI\Presenter {
 
 	private $ngramsModel;

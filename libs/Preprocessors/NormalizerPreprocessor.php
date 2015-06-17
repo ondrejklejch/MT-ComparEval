@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * NormalizerPreprocessor normalizes reference/translation sentences
+ */
 class NormalizerPreprocessor {
 
 	private $normalizer;

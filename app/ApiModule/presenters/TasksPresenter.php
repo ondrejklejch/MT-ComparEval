@@ -2,6 +2,9 @@
 
 namespace ApiModule;
 
+/**
+ * TasksPresenter is used for serving list of task in experiment from REST API
+ */
 class TasksPresenter extends \Nette\Application\UI\Presenter {
 
 	private $tasksModel;

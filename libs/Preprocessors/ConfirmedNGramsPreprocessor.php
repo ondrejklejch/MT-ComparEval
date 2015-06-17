@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * ConfirmedNGramsPreprocessor adds all confirmed/unconfirmed n-grams to meta informations
+ */
 class ConfirmedNGramsPreprocessor implements Preprocessor {
 
 	private $confirmedNGramsFinder;

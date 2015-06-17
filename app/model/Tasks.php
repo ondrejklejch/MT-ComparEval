@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Tasks handles operations on tasks table.
+ */
 class Tasks {
 
 	private $db;
@@ -12,15 +15,31 @@ class Tasks {
 		return $this->db->table( 'tasks' )->wherePrimary( $taskId )->fetch();
 	}
 
+	public function getTaskMetrics( $taskId ) {
+		$metrics = array();
+		foreach( $this->getTask( $taskId )->related( 'tasks_metrics' ) as $metric ) {
+			$metrics[ $metric->ref( 'metrics' )->name ] = $metric->score;
+		}
+
+		return $metrics;
+	}
+
 	public function getTasks( $experimentId ) {
 		return $this->db->table( 'tasks' )
-			->where( 'experiments_id', $experimentId );
+			->where( 'experiments_id', $experimentId )
+			->where( 'visible', 1 );
 	}
 
 	public function saveTask( $data ) {
 		$row = $this->db->table( 'tasks' )->insert( $data );
 
 		return $row->getPrimary( TRUE );
+	}
+
+	public function setVisible( $taskId ) {
+		$this->db->table( 'tasks' )
+			->get( $taskId )
+			->update( array( 'visible' => 1 ) );
 	}
 
 	public function addSentences( $taskId, $sentences, $metrics ) {
@@ -111,6 +130,12 @@ class Tasks {
 		}
 
 		$this->db->commit();
+	}
+
+	public function deleteTask( $taskId ) {
+		$this->db->table( 'tasks' )
+			->wherePrimary( $taskId )
+			->delete();
 	}
 
 	public function deleteTaskByName( $experimentId, $name ) {

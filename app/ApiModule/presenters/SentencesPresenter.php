@@ -2,6 +2,9 @@
 
 namespace ApiModule;
 
+/**
+ * SentencesPresenter is used for browsing sentences in REST API
+ */
 class SentencesPresenter extends \Nette\Application\UI\Presenter {
 
 	private $sentencesModel;

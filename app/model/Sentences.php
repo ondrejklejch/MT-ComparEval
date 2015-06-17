@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * Sentences is used for manipulating sentences triples - (source, reference, [translation])
+ */
 class Sentences {
 
 	private $db;

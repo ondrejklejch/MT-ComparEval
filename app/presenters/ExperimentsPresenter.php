@@ -13,9 +13,10 @@ class ExperimentsPresenter extends BasePresenter {
 		$this->template->experiments = $this->experimentsModel->getExperiments();
 	}
 
+	public function actionDelete( $id ) {
+		$this->experimentsModel->deleteExperiment( $id );
 
-	public function renderSentences( $id ) {
-		$this->template->sentences = $this->experimentsModel->getSentences( $id );
+		$this->redirect( 'list' );
 	}
 
 }

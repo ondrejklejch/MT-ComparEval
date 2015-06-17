@@ -2,6 +2,11 @@
 
 namespace BackgroundModule;
 
+/**
+ * Process implementation for watching given folder and running appropriate imports
+ *
+ * Can be run by php -f www/index.php Backgroung:Watcher:Watch --folder=./data
+ */
 class WatcherPresenter extends \Nette\Application\UI\Presenter {
 
 	public function renderWatch( $folder, $sleep = 500000 ) {
@@ -25,7 +30,8 @@ class WatcherPresenter extends \Nette\Application\UI\Presenter {
 	private function getUnimportedExperiments( $folder ) {
 		return \Nette\Utils\Finder::findDirectories( '*' )
 			->in( $folder )
-			->imported( FALSE );	
+			->imported( FALSE )
+			->aborted( FALSE );	
 	}
 
 	private function getUnimportedTasks( $folder ) {
@@ -40,7 +46,8 @@ class WatcherPresenter extends \Nette\Application\UI\Presenter {
 
 		return \Nette\Utils\Finder::findDirectories( '*' )
 			->in( $importedExperiments )
-			->imported( FALSE );
+			->imported( FALSE )
+			->aborted( FALSE );
 	}
 
 	private function runImportForExperiment( $experiment ) {
@@ -57,9 +64,15 @@ class WatcherPresenter extends \Nette\Application\UI\Presenter {
 
 	private function runCommand( $action, $folder ) {
 		$scriptPath = __DIR__ . '/../../../www/index.php';
-		$command = "php -f $scriptPath $action --folder=$folder";
+		$command = "php -f $scriptPath $action --folder=$folder | tee $folder/import.log";
 
-		passthru( $command );
+		$return = 0;
+		passthru( $command, $return );
+
+		if ( $return != 0 ) {
+			$folder = new \Folder( $folder );
+			$folder->lock( 'unimported' );
+		}
 	}
 
 }

@@ -1,6 +1,10 @@
 <?php
 
-
+/**
+ * CachedNGrams decorates NGrams and adds support for caching n-grams
+ *
+ * N-grams are cached because theit computation is rather expensive
+ */
 class CachedNGrams extends NGrams {
 
 	private $cache;
@@ -22,21 +26,29 @@ class CachedNGrams extends NGrams {
 				continue;
 			}
 
-			$this->getImproving( $taskId, $task->id );
-			$this->getWorsening( $taskId, $task->id );
+			$this->getImproving( $taskId, $task->id, true );
+			$this->getWorsening( $taskId, $task->id, true );
 		}
 	}
 
-	public function getImproving( $task1, $task2 ) {
+	public function getImproving( $task1, $task2, $regenerateCache = false ) {
 		$key = $this->getCacheKey( 'improving', $task1, $task2 );
+
+		if( $this->cache->load( $key ) === NULL && !$regenerateCache ) {
+			return array();
+		}
 
 		return $this->cache->load( $key, function() use ( $task1, $task2 ) {
 			return parent::getImproving( $task1, $task2 );
 		} );
 	}
 
-	public function getWorsening( $task1, $task2 ) {
+	public function getWorsening( $task1, $task2, $regenerateCache = false ) {
 		$key = $this->getCacheKey( 'worsening', $task1, $task2 );
+
+		if( $this->cache->load( $key ) === NULL && !$regenerateCache ) {
+			return array();
+		}
 
 		return $this->cache->load( $key, function() use ( $task1, $task2 ) {
 			return $worsening = parent::getWorsening( $task1, $task2 );

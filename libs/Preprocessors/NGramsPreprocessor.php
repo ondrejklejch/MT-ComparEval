@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * NGramsPreprocessor adds all reference/translation n-grams to meta informations
+ */
 class NGramsPreprocessor implements Preprocessor {
 
 	private $ngramizer;

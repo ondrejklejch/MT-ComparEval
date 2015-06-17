@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Importer implementation for importing experiments into MT-ComparEval
+ *
+ * ExperimentsImporter extracts source sentences and reference sentences from the given
+ * folder and imports them into the database. It uses defaults values for names of files
+ * containing source and reference.
+ * ExperimentsImporter choose default default name for experiment same as name of the folder
+ * that the experiment is located in. The name can be overriden in configuration.
+ *
+ * Configuration of experiment is read from configuration.neon file.
+ */
 class ExperimentsImporter extends Importer {
 
 	private $experimentsModel;
@@ -46,4 +57,11 @@ class ExperimentsImporter extends Importer {
 		);
 	}
 
+	protected function deleteUnimported( $metadata ) {
+		$this->experimentsModel->deleteExperiment( $metadata[ 'experiment_id' ] );
+	}
+
+	protected function showImported( $metadata ) {
+		$this->experimentsModel->setVisible( $metadata[ 'experiment_id' ] );
+	}
 }

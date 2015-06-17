@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * InitialPreprocessor init preprocessing by creating initial meta informations
+ */
 class InitialPreprocessor implements Preprocessor {
 
 	public function preprocess( $sentence ) {

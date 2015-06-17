@@ -1,6 +1,9 @@
 <?php
 
 
+/**
+ * NGrams is used for computing top improving/worsening n-grams of two tasks
+ */
 class NGrams {
 
 	private $db;
