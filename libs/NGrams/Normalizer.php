@@ -9,13 +9,13 @@ class Normalizer {
 
 	public function normalize( $sentence ) {
 		$normalized = " $sentence ";
-		$normalized = preg_replace( '/([\{-\~\[-\` -\&\(-\+\:-\@\/])/', ' $1 ', $normalized );	# tokenize punctuation
-		$normalized = preg_replace( '/([^0-9])([\.,])/', '$1 $2 ', $normalized ); # tokenize period and comma unless preceded by a digit
-		$normalized = preg_replace( '/([\.,])([^0-9])/', ' $1 $2', $normalized ); # tokenize period and comma unless followed by a digit
-		$normalized = preg_replace( '/([0-9])(-)/', '$1 $2 ', $normalized ); # tokenize dash when preceded by a digit
-		$normalized = preg_replace( '/\s+/', ' ', $normalized ); # one space only between words
-		$normalized = preg_replace( '/^\s+/',  '', $normalized );  # no leading space
-		$normalized = preg_replace( '/\s+$/' , '', $normalized );  # no trailing space
+		$normalized = preg_replace( '/(\P{N})(\p{P})/u', '$1 $2 ', $normalized ); # tokenize punctuation unless preceded by a digit
+		$normalized = preg_replace( '/(\p{P})(\P{N})/u', ' $1 $2', $normalized ); # tokenize punctuation unless followed by a digit
+
+		$normalized = preg_replace( '/(\p{S})/u', ' $1 ', $normalized ); # tokenize symbols
+		$normalized = preg_replace( '/\p{Z}+/u', ' ', $normalized ); # one space only between words
+		$normalized = preg_replace( '/^\p{Z}+/u',  '', $normalized );  # no leading space
+		$normalized = preg_replace( '/\p{Z}+$/u' , '', $normalized );  # no trailing space
 
 		return $normalized;
 	}
