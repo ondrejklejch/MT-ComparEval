@@ -20,8 +20,7 @@ class Recall implements IMetric {
 
 		return $this->computeRecall(
 			$meta[ 'confirmed_ngrams_counts' ],
-			$meta[ 'reference_ngrams_counts' ],
-			1 
+			$meta[ 'reference_ngrams_counts' ]
 		);
 	}
 
@@ -41,24 +40,24 @@ class Recall implements IMetric {
 		return $this->computeRecall( $this->confirmedNGrams, $this->referenceNGrams );
 	}
 
-	private function computeRecall( $confirmedNGrams, $referenceNGrams, $default = 0 ) {
+	private function computeRecall( $confirmedNGrams, $referenceNGrams ) {
 		if( $confirmedNGrams[ 1 ] == 0 ) {
 			return 0;
 		}
 
 		$geometricAverage = 0;
+		$smooth = 1;
 		for( $length = 1; $length <= 4; $length++ ) {
-			if( $confirmedNGrams[ $length ] == 0 && $default == 0 ) {
-				continue;
-			}
-
-			if( $length > 1 ) {
-				$precision = ( $default + $confirmedNGrams[ $length ] ) / ( $default + $referenceNGrams[ $length ] );
+			if( $referenceNGrams[ $length ] == 0 ) {
+				$recall = 0;
+			} elseif( $confirmedNGrams[ $length ] == 0 ) {
+				$smooth *= 2;
+				$recall = 1 / ( $smooth * $referenceNGrams[ $length ] );
 			} else {
-				$precision = $confirmedNGrams[ $length ] / $referenceNGrams[ $length ];
+				$recall = $confirmedNGrams[ $length ] / $referenceNGrams[ $length ];
 			}
 
-			$geometricAverage += 1/4 * log( $precision ); 
+			$geometricAverage += 1/4 * log( $recall );
 		}
 
 		return number_format( exp( $geometricAverage ), 4 );

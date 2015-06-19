@@ -20,8 +20,7 @@ class Precision implements IMetric {
 
 		return $this->computePrecision(
 			$meta[ 'confirmed_ngrams_counts' ],
-			$meta[ 'translation_ngrams_counts' ],
-			1 
+			$meta[ 'translation_ngrams_counts' ]
 		);
 	}
 
@@ -41,24 +40,24 @@ class Precision implements IMetric {
 		return $this->computePrecision( $this->confirmedNGrams, $this->translationNGrams );
 	}
 
-	private function computePrecision( $confirmedNGrams, $translationNGrams, $default = 0 ) {
+	private function computePrecision( $confirmedNGrams, $translationNGrams ) {
 		if( $confirmedNGrams[ 1 ] == 0 ) {
 			return 0;
 		}
 
 		$geometricAverage = 0;
+		$smooth = 1;
 		for( $length = 1; $length <= 4; $length++ ) {
-			if( $confirmedNGrams[ $length ] == 0 && $default == 0 ) {
-				continue;
-			}
-
-			if( $length > 1 ) {
-				$precision = ( $default + $confirmedNGrams[ $length ] ) / ( $default + $translationNGrams[ $length ] );
+			if( $translationNGrams[ $length ] == 0 ) {
+				$precision = 0;
+			} elseif( $confirmedNGrams[ $length ] == 0 ) {
+				$smooth *= 2;
+				$precision = 1 / ( $smooth * $translationNGrams[ $length ] );
 			} else {
 				$precision = $confirmedNGrams[ $length ] / $translationNGrams[ $length ];
 			}
 
-			$geometricAverage += 1/4 * log( $precision ); 
+			$geometricAverage += 1/4 * log( $precision );
 		}
 
 		return number_format( exp( $geometricAverage ), 4 );
