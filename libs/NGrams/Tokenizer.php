@@ -12,11 +12,12 @@ class Tokenizer {
 	}
 
 	public function tokenize( $sentence ) {
+		mb_internal_encoding("UTF-8");
 		if( !$this->isCaseSensitive ) {
-			$sentence = mb_strtolower( $sentence ); 
+			$sentence = mb_strtolower( $sentence );
 		}
 
-		return mb_split( '\s+', $sentence );
+		return preg_split( '/\s+/u', $sentence );
 	}
 
 }
