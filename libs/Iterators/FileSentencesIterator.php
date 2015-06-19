@@ -3,61 +3,23 @@
 /**
  * FileSentencesIterator is used for lazy iterating over lines in given file
  */
-class FileSentencesIterator implements ISentencesIterator {
+class FileSentencesIterator extends IteratorIterator implements ISentencesIterator {
 
-	const INVALID = "";
-
-	private $handle;
-	private $line = "";
-	private $position = 0;
-	private $count = NULL;	
+	private $count = NULL;
 
 	public function __construct( $path ) {
 		if( !file_exists( $path ) || !is_readable( $path ) ) {
 			throw new InvalidSentencesResourceException();
 		}
 
-		$this->handle = fopen( $path, 'r' );
-	}
+		$sentences = preg_split( '/\n/u', trim( file_get_contents( $path ) ) );
+		$this->count = count( $sentences );
 
-	public function __destruct() {
-		fclose( $this->handle );
-	}
-
-	public function current() {
-		return $this->line;
-	}
-
-	public function key() {
-		return $this->position;
-	}
-
-	public function next() {
-		if( !feof( $this->handle ) ) {
-			$this->line = trim( fgets( $this->handle ) );
-			$this->position++;
-		} else {
-			$this->line = self::INVALID;
-		}
-	}
-
-	public function rewind() {
-		rewind( $this->handle );
-		$this->position = 0;
-		
-		$this->next();
-	}
-
-	public function valid() {
-		return $this->line !== self::INVALID;
+		return parent::__construct( new ArrayIterator( $sentences ) );
 	}
 
 	public function count() {
-		if( $this->count === NULL ) {
-			$this->count = iterator_count( $this );
-		}
-
-		return $this->count; 
+		return $this->count;
 	}
 
 }
