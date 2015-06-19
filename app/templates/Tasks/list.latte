@@ -17,7 +17,7 @@ $(document).ready( function() {
 			return alert( "You can compare only 2 tasks." );
 		}
 
-		window.location = "/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
+		window.location = "{!$baseUri}/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
 	} );
 } );
 </script>
