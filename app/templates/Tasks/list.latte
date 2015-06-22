@@ -1,9 +1,9 @@
 {block scripts}
 {include #parent}
-<script type="text/javascript" src="{$baseUri}/js/directives.js"></script>
-<script type="text/javascript" src="{$baseUri}/js/ngrams.js"></script>
-<script type="text/javascript" src="{$baseUri}/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{$baseUri}/js/highcharts.src.js"></script>
+<script type="text/javascript" src="{$basePath}/js/directives.js"></script>
+<script type="text/javascript" src="{$basePath}/js/ngrams.js"></script>
+<script type="text/javascript" src="{$basePath}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$basePath}/js/highcharts.src.js"></script>
 <script type="text/javascript">
 $(document).ready( function() {
 	$('.compare').click( function( event ) {
@@ -17,7 +17,7 @@ $(document).ready( function() {
 			return alert( "You can compare only 2 tasks." );
 		}
 
-		window.location = "{!$baseUri}/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
+		window.location = "{!$basePath}/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
 	} );
 } );
 </script>
@@ -58,12 +58,12 @@ $(document).ready( function() {
 				"experimentId": {!$experimentId}
 			};
 
-			$http.get( '{!$baseUri}/api/tasks', payload ).success( function( data ) {
+			$http.get( '{!$basePath}/api/tasks', payload ).success( function( data ) {
 				$scope.tasks = data.tasks;
 				$scope.showAdministration = data.show_administration;
 			} );
 
-			$http.get( '{!$baseUri}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
+			$http.get( '{!$basePath}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
 				$scope.$watch( function() { return $scope.hiddenTasks; }, function( value ) {
 					loadScores();
 				} );
