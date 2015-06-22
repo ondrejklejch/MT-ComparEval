@@ -89,7 +89,9 @@ $(document).ready( function() {
 {/block}
 
 {block #content}
-<h1>Tasks</h1>
+<h1>{$experiment["name"]}</h1>
+
+<p>{$experiment["description"]}</p>
 
 {if count($tasks)}
 
@@ -113,7 +115,7 @@ $(document).ready( function() {
 		</tr>
 
 		{foreach $tasks as $task}
-		<tr class="task" data-id="{$task['url_key']}">	
+		<tr class="task" data-id="{$task['url_key']}">
 			<th class="name span2"><input type="checkbox" data-task-id="{$task['id']}"/>{$task['name']}</th>
 			<td class="description">{$task['description']}</td>
 			{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}

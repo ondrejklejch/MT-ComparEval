@@ -5,12 +5,16 @@ class TasksPresenter extends BasePresenter {
 
 	private $tasksModel;
 
-	public function __construct( Tasks $tasksModel ) {
+	private $experimentsModel;
+
+	public function __construct( Tasks $tasksModel, Experiments $experimentsModel ) {
 		$this->tasksModel = $tasksModel;
+		$this->experimentsModel = $experimentsModel;
 	}
 
 	public function renderList( $experimentId ) {
 		$this->template->experimentId = $experimentId;
+		$this->template->experiment = $this->experimentsModel->getExperimentById( $experimentId );
 		$this->template->tasks = $this->tasksModel->getTasks( $experimentId );
 	}
 

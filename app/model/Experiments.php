@@ -17,6 +17,12 @@ class Experiments {
 			->where( 'visible', 1 );
 	}
 
+	public function getExperimentById( $experimentId ) {
+		return $this->db->table( 'experiments' )
+			->wherePrimary( $experimentId )
+			->fetch();
+	}
+
 	public function getExperimentByName( $name ) {
 		return $this->db->table( 'experiments' )
 			->where( 'url_key', $name )
@@ -39,7 +45,7 @@ class Experiments {
 		return $this->db->table( 'sentences' )
 			->where( 'experiments_id', $experimentId )
 			->order( 'id' );
-	} 
+	}
 
 	public function addSentences( $experimentId, $sentences ) {
 		$this->db->beginTransaction();
