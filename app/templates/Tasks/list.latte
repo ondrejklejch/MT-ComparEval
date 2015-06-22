@@ -123,7 +123,7 @@ $(document).ready( function() {
 				{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
 					<td style="text-align:center">{$metric['score']}</td>
 				{/foreach}
-				<td><a href="{plink Tasks:delete $task['id']}">delete</a></td>
+				<td><a href="{plink Tasks:delete $task['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a></td>
 			</tr>
 			{/foreach}
 		</table>

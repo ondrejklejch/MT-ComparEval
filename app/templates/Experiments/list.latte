@@ -7,7 +7,7 @@
 	<tr class="experiment" data-id="{$experiment['url_key']}">	
 		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
-		<td class="span1"><a href="{plink Experiments:delete $experiment['id']}">delete</a></td>
+		<td class="span1"><a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a></td>
 	</tr>
 {/foreach}
 </table>
