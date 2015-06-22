@@ -94,46 +94,49 @@ $(document).ready( function() {
 <p>{$experiment["description"]}</p>
 
 {if count($tasks)}
-
-{if count($tasks) > 1}
-	<div ng-app="MT-ComparEval" ng-controller="Tasks">
-		<chart value="{{ scores }}" type="line"></chart>
-	</div>
-{/if}
-
-
-<form>
-	<table class="table table-bordered">
-		<tr>
-			<th class="span2">name</th>
-			<th class="span4">description</th>
-			{=$tasks->rewind()}
-			{foreach $tasks->current()->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
-				<th class="span2" style="text-align:center">{$metric->ref('metrics')->name}</th>
-			{/foreach}
-			<th class="span1"></th>
-		</tr>
-
-		{foreach $tasks as $task}
-		<tr class="task" data-id="{$task['url_key']}">
-			<th class="name span2"><input type="checkbox" data-task-id="{$task['id']}"/>{$task['name']}</th>
-			<td class="description">{$task['description']}</td>
-			{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
-				<td style="text-align:center">{$metric['score']}</td>
-			{/foreach}
-			<td><a href="{plink Tasks:delete $task['id']}">delete</a></td>
-		</tr>
-		{/foreach}
-	</table>
+<div ng-app="MT-ComparEval" ng-controller="Tasks">
 
 	{if count($tasks) > 1}
-		<input type="submit" value="compare" class="button" id="compare"/>
-	{else}
-		<div class="alert">
-			You need to import at least 2 tasks to be able to compare them.
-		</div>
+		<chart value="{{ scores }}" type="line"></chart>
 	{/if}
-</form>
+
+	<form>
+		<table class="table table-bordered">
+			<tr>
+				<th class="span2">name</th>
+				<th class="span4">description</th>
+				{=$tasks->rewind()}
+				{foreach $tasks->current()->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
+					<th class="span2" style="text-align:center">{$metric->ref('metrics')->name}</th>
+				{/foreach}
+				<th class="span1"></th>
+			</tr>
+
+			{foreach $tasks as $task}
+			<tr class="task" data-id="{$task['url_key']}">
+				<th class="name span2"><input type="checkbox" data-task-id="{$task['id']}"/>{$task['name']}</th>
+				<td class="description">
+					<span collapse-long collapse-long-text="{$task['description']}" max-length=20>
+						{$task['description']}
+					</span>
+				</td>
+				{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
+					<td style="text-align:center">{$metric['score']}</td>
+				{/foreach}
+				<td><a href="{plink Tasks:delete $task['id']}">delete</a></td>
+			</tr>
+			{/foreach}
+		</table>
+
+		{if count($tasks) > 1}
+			<input type="submit" value="compare" class="button" id="compare"/>
+		{else}
+			<div class="alert">
+				You need to import at least 2 tasks to be able to compare them.
+			</div>
+		{/if}
+	</form>
+</div>
 {else}
 	<div class="alert">
 		There are no tasks in this experiment.

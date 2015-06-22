@@ -37,11 +37,53 @@ angular.module( 'MT-ComparEval', [] )
 
 			$(window).bind('scroll', function() {
 				var elementBottom = $(raw).offset().top + $(raw).height();
-				var windowBottom = $(window).scrollTop() + $(window).height();	
+				var windowBottom = $(window).scrollTop() + $(window).height();
 
 				if( elementBottom <= windowBottom ) {
 					scope.$apply( attr.whenScrolled );
 				}
 			});
 		};
+	})
+	.directive( 'collapseLong', function($compile) {
+		return {
+			restrict: 'A',
+			scope: true,
+			link: function(scope, element, attrs) {
+				scope.collapsed = true;
+				scope.toggleClass = "icon-plus";
+
+				scope.toggle = function() {
+					scope.collapsed = !scope.collapsed;
+					scope.toggleClass = scope.collapsed ? "icon-plus" : "icon-minus";
+				};
+
+				attrs.$observe('collapseLongText', function(text) {
+					var maxLength = scope.$eval(attrs.maxLength);
+
+					if (text.length > maxLength) {
+						var firstPart = String(text).substring(0, maxLength);
+						var secondPart = String(text).substring(maxLength, text.length);
+
+						console.log( firstPart, secondPart );
+
+						var firstSpan = $compile('<span>' + firstPart + '</span>')(scope);
+						var secondSpan = $compile('<span ng-show="!collapsed">' + secondPart + '</span>')(scope);
+						var moreIndicatorSpan = $compile('<span ng-show="collapsed">... </span>')(scope);
+						var toggleButton = $compile('<span class="collapse-text-toggle btn btn-mini" ng-click="toggle()"><i ng-class="toggleClass"></i></span>')(scope);
+
+						element.empty();
+						element.append(firstSpan);
+						element.append(secondSpan);
+						element.append(moreIndicatorSpan);
+						element.append(toggleButton);
+					}
+					else {
+						element.empty();
+						element.append(text);
+					}
+				});
+			}
+		};
 	});
+
