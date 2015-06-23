@@ -54,11 +54,10 @@
 		{block #container}
 		<div class="container">
 			<div class="content">
-				<div n:foreach="$flashes as $flash" class="alert-message {$flash->type}" data-alert="alert">
-					<a class="close" href="#">×</a>
-					<p>{$flash->message}</p>
+				<div n:foreach="$flashes as $flash" class="alert {$flash->type}" data-alert="alert">
+					{$flash->message}
 				</div>
-				
+
 				{block #content}{/block}
 			</div>
 		</div>

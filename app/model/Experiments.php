@@ -35,6 +35,13 @@ class Experiments {
 		return $row->getPrimary( TRUE );
 	}
 
+	public function updateExperiment( $experimentId, $name, $description ) {
+		$this->db->table( 'experiments' )
+			->get( $experimentId )
+			->update( array( 'name' => $name, 'description' => $description ) );
+
+	}
+
 	public function setVisible( $experimentId ) {
 		$this->db->table( 'experiments' )
 			->get( $experimentId )

@@ -2,12 +2,17 @@
 <h1>Experiments</h1>
 
 {if count($experiments)}
-<table class="table">
+<table class="table table-bordered">
 {foreach $experiments as $experiment}
-	<tr class="experiment" data-id="{$experiment['url_key']}">	
+	<tr class="experiment" data-id="{$experiment['url_key']}">
 		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
-		<td class="span1"><a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a></td>
+		<td class="span2">
+			<div class="text-right">
+				<a href="{plink Experiments:edit $experiment['id']}">edit</a>
+				<a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
+			</div>
+		</td>
 	</tr>
 {/foreach}
 </table>
