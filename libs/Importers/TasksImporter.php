@@ -52,7 +52,7 @@ class TasksImporter extends Importer {
 
 		foreach( array( FALSE, TRUE ) as $isCaseSensitive ) {
 			$preprocessor = $this->preprocessor;
-			$sentences = new MapIterator( 
+			$sentences = new MapperIterator( 
 				new \ZipperIterator( $rawSentences, TRUE ),
 				function( $sentence ) use ( $preprocessor, $isCaseSensitive ) {
 					$sentence[ 'is_case_sensitive' ] = $isCaseSensitive;

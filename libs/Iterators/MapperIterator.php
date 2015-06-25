@@ -1,9 +1,9 @@
 <?php
 
 /**
- * MapIterator is same as haskell map :: (a->b)->[a]->[b]
+ * MapperIterator is same as haskell map :: (a->b)->[a]->[b]
  */
-class MapIterator extends IteratorIterator {
+class MapperIterator extends IteratorIterator {
 
 	private $callback;
 

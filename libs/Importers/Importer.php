@@ -73,7 +73,7 @@ abstract class Importer {
 		$filepath = $folder->getChildrenPath( $filename );
 		$normalizer = $this->normalizer;
 
-		return new \MapIterator( new \FileSentencesIterator( $filepath ), function( $sentence ) use ( $normalizer ) {
+		return new \MapperIterator( new \FileSentencesIterator( $filepath ), function( $sentence ) use ( $normalizer ) {
 			return $normalizer->normalize( $sentence );
 		} );
 	}
