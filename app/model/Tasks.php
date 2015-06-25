@@ -30,10 +30,23 @@ class Tasks {
 			->where( 'visible', 1 );
 	}
 
+	public function getTaskById( $taskId ) {
+		return $this->db->table( 'tasks' )
+			->wherePrimary( $taskId )
+			->fetch();
+	}
+
 	public function saveTask( $data ) {
 		$row = $this->db->table( 'tasks' )->insert( $data );
 
 		return $row->getPrimary( TRUE );
+	}
+
+	public function updateTask( $taskId, $name, $description ) {
+		$this->db->table( 'tasks' )
+			->get( $taskId )
+			->update( array( 'name' => $name, 'description' => $description ) );
+
 	}
 
 	public function setVisible( $taskId ) {
@@ -53,7 +66,7 @@ class Tasks {
 			);
 
 			$translationId = $this->db->table( 'translations' )->insert( $data );
-			
+
 			$position = array();
 			foreach( $sentence[ 'meta' ][ 'confirmed_ngrams' ] as $length => $confirmedNgrams ) {
 				foreach( $confirmedNgrams as $confirmedNgram ) {
@@ -67,7 +80,7 @@ class Tasks {
 						'length' => $length,
 						'text' => $confirmedNgram
 					);
-					
+
 					$this->db->table( 'confirmed_ngrams' )->insert( $data );
 				}
 			}
@@ -85,7 +98,7 @@ class Tasks {
 						'length' => $length,
 						'text' => $unconfirmedNgram
 					);
-					
+
 					$this->db->table( 'unconfirmed_ngrams' )->insert( $data );
 				}
 			}
@@ -97,7 +110,7 @@ class Tasks {
 					'metrics_id' => $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id,
 					'score' => $values[ $key ]
 				);
-				$this->db->table( 'translations_metrics' )->insert( $data );			
+				$this->db->table( 'translations_metrics' )->insert( $data );
 			}
 		}
 
