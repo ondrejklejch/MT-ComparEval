@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Normalizer is used for adding spaces between words
+ * MTEvalNormalizer is used for adding spaces between words
  *
  * @see ftp://jaguar.ncsl.nist.gov/mt/resources/mteval-v13a.pl
  */
-class Normalizer {
+class MTEvalNormalizer implements INormalizer {
 
 	public function normalize( $sentence ) {
 		$normalized = "$sentence";

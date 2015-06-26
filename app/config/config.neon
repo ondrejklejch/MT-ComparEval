@@ -73,7 +73,7 @@ common:
 
 		# Importers dependencies
 		logger: EchoLogger
-		normalizer: Normalizer
+		normalizer: MTEvalNormalizer
 		tokenizer: Tokenizer( true )
 		ngramizer: NGramizer
 

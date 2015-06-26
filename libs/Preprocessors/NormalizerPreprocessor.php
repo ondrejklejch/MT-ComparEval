@@ -7,7 +7,7 @@ class NormalizerPreprocessor {
 
 	private $normalizer;
 
-	public function __construct( Normalizer $normalizer ) {
+	public function __construct( INormalizer $normalizer ) {
 		$this->normalizer = $normalizer;
 	}
 
