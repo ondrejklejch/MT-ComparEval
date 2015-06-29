@@ -6,6 +6,7 @@
 #
 common:
 	parameters:
+		show_administration: false
 
 	php:
 		date.timezone: Europe/Prague

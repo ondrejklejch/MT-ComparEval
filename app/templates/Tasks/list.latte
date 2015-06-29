@@ -109,7 +109,7 @@ $(document).ready( function() {
 				{foreach $tasks->current()->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
 					<th class="span2" style="text-align:center">{$metric->ref('metrics')->name}</th>
 				{/foreach}
-				<th class="span2"></th>
+				{if $showAdministration}<th class="span2"></th>{/if}
 			</tr>
 
 			{foreach $tasks as $task}
@@ -123,12 +123,14 @@ $(document).ready( function() {
 				{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
 					<td style="text-align:center">{$metric['score']}</td>
 				{/foreach}
+				{if $showAdministration}
 				<td>
 					<div class="text-right">
 						<a href="{plink Tasks:edit $task['id']}">edit</a>
 						<a href="{plink Tasks:delete $task['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
 					</div>
 				</td>
+				{/if}
 			</tr>
 			{/foreach}
 		</table>
