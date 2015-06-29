@@ -6,6 +6,7 @@
 #
 common:
 	parameters:
+		title: MT-ComparEval
 		show_administration: false
 
 	php:
