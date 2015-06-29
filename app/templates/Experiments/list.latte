@@ -3,7 +3,7 @@
 
 {if count($experiments)}
 <table class="table table-bordered">
-{foreach $experiments as $experiment}
+{foreach $experiments->order( 'name' ) as $experiment}
 	<tr class="experiment" data-id="{$experiment['url_key']}">
 		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
