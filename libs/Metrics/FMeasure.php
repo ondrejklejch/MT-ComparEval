@@ -31,13 +31,13 @@ class FMeasure implements IMetric {
 		$recall = $this->recall->getScore();
 
 		return $this->computeFMeasure( $precision, $recall );
-	}	
+	}
 
 	private function computeFMeasure( $precision, $recall ) {
 		if( $precision == 0 && $recall == 0 ) {
 			return 0;
 		}
-	
+
 		return number_format( 2 * exp( ( log( $precision ) + log( $recall ) - log( $precision + $recall ) ) ), 4 );
 	}
 

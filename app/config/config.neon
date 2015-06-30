@@ -42,6 +42,7 @@ common:
 		# Metrics
 		bleuMetric: Bleu( @geometricPrecisionMetric )
 		fmeasureMetric: FMeasure( @geometricPrecisionMetric, @geometricRecallMetric )
+		wordFMetric: WordF
 		bootstrapSampler: BootstrapSampler( 1000 )
 
 		experimentsImporter:
@@ -66,7 +67,7 @@ common:
 					BLEU: @bleuMetric,
 					PRECISION: @arithmeticPrecisionMetric,
 					RECALL: @arithmeticRecallMetric,
-					F-MEASURE: @fmeasureMetric,
+					F-MEASURE: @wordFMetric,
 				]
 			)
 			setup:
