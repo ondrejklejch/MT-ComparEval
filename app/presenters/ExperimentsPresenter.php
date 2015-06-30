@@ -30,7 +30,7 @@ class ExperimentsPresenter extends BasePresenter {
 		$this->experimentsModel->updateExperiment( $id, $name, $description );
 
 		$this->flashMessage( 'Experiment was successfully updated.', 'alert-success' );
-		$this->redirect( 'edit', $id );
+		$this->redirect( 'list' );
 	}
 
 	public function actionDelete( $id ) {

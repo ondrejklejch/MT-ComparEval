@@ -38,9 +38,10 @@ class TasksPresenter extends BasePresenter {
 		$description = $data[ 'description' ];
 
 		$this->tasksModel->updateTask( $id, $name, $description );
+		$experimentId = $this->tasksModel->getTask( $id )->experiments_id;
 
 		$this->flashMessage( 'Task was successfully updated.', 'alert-success' );
-		$this->redirect( 'edit', $id );
+		$this->redirect( 'list', $experimentId );
 	}
 
 	public function actionDelete( $taskId ) {
