@@ -50,11 +50,11 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 			);
 		}
 
-		foreach( $this->tasksModel->getTasks( $experiment ) as $task ) {
-			$tasks[] = $task->name;
-			
+		foreach( $this->tasksModel->getTasks( $experimentId ) as $task ) {
+			$tasks[ $task->id ] = $task->name;
+
 			foreach( $this->tasksModel->getTaskMetrics( $task ) as $name => $score ) {
-				$metrics[ $name ][ 'data' ][] = $score;
+				$metrics[ $name ][ 'data' ][ $task->id ] = $score;
 			}
 		}
 

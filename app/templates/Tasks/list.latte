@@ -24,65 +24,98 @@ $(document).ready( function() {
 
 <script type="text/javascript">
 	function Tasks( $scope, $http ) {
-		loadScores();
+		loadTasks();
 
-		function loadScores() {
+		function loadTasks() {
 			var payload = {};
 			payload.params = {
-					"experiment": {!$experimentId}
+					"experimentId": {!$experimentId}
 			};
 
-			$http.get( '{!$baseUri}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
-				$scope.scores = {
-					"chart": {
-						"zoomType": "x"
-					},
-					"colors": [
-						"#468847",
-						"#b94a48",
-						"#c09853",
-						"#3a87ad"
-					],
-					"title": {
-						"text": "Tasks metric scores progress",
-					},
-					"yAxis": {
-						"title": {
-							"text": "score",
-						}
-					},
-					"xAxis": {
-						"showFirstLabel": true,
-						"showLastLabel": true,
-						"categories": data.tasks,
-						"title": {
-							"text": "tasks"
-						}
-					},
-					"legend": {
-						"enabled": true,
-						"borderWidth": 0,
-					},
-					"tooltip": {
-						"enabled": true,
-						"shared": true,
-						"crosshairs": true
-					},
-					"credits": {
-						"enabled": false
-					},
-					"plotOptions": {
-						"series": {
-							"marker": {
-								"enabled": false,
-							},
-							"enableMouseTracking": true,
-						},
-					},
-					"series": data.metrics
-				};
-
+			$http.get( '{!$baseUri}/api/tasks', payload ).success( function( data ) {
+				$scope.tasks = data.tasks;
+				$scope.showAdministration = data.show_administration;
 			} );
+
+			$http.get( '{!$baseUri}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
+				$scope.metrics = data.metrics;
+
+				$scope.chart_categories = array_values( angular.copy( $scope.tasks ) ).map( function( task ) { return task[ 'name' ] } );
+				$scope.chart_data = angular.copy($scope.metrics).map( function( metric ) {
+					metric[ 'data' ] = array_values( metric[ 'data' ] );
+					return metric;
+				} );
+
+				$scope.metrics.forEach( function( metric ) {
+					for( taskId in metric[ 'data' ] ) {
+						$scope.tasks[ taskId ][ metric[ 'name' ] ] = metric[ 'data' ][ taskId ];
+					}
+				} );
+
+				$scope.tasks = array_values( $scope.tasks );
+
+				loadScores();
+			} );
+		}
+
+		function loadScores() {
+			$scope.scores = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"colors": [
+					"#468847",
+					"#b94a48",
+					"#c09853",
+					"#3a87ad"
+				],
+				"title": {
+					"text": "Tasks metric scores progress",
+				},
+				"yAxis": {
+					"title": {
+						"text": "score",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"categories": $scope.chart_categories,
+					"title": {
+						"text": "tasks"
+					}
+				},
+				"legend": {
+					"enabled": true,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": true,
+					"shared": true,
+					"crosshairs": true
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": true,
+					},
+				},
+				"series": $scope.chart_data
+			};
+		}
+
+		function array_values( object ) {
+			array = [];
+			for( key in object ) {
+				array.push( object[ key ] );
+			}
+
+			return array;
 		}
 	}
 </script>
@@ -93,63 +126,45 @@ $(document).ready( function() {
 
 <p>{$experiment["description"]}</p>
 
-{if count($tasks)}
 <div ng-app="MT-ComparEval" ng-controller="Tasks">
+	<div ng-if="tasks.length > 0">
+		<chart value="{{ scores }}" type="line" ng-if="tasks.length > 1"></chart>
 
-	{if count($tasks) > 1}
-		<chart value="{{ scores }}" type="line"></chart>
-	{/if}
+		<form>
+			<table class="table table-bordered">
+				<tr>
+					<th class="span2">name</th>
+					<th class="span3">description</th>
+					<th ng-repeat="metric in metrics" class="span2" style="text-align:center">{{ metric[ 'name' ] }}</th>
+					<th class="span2" ng-if="showAdministration"></th>
+				</tr>
+				<tr ng-repeat="task in tasks">
+					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'id' ] }}"/>{{ task[ 'name' ] }}</th>
+					<td class="description">
+						<span collapse-long collapse-long-text="{{ task[ 'description' ] }}" max-length=20>
+							{{ task[ 'description' ] }}
+						</span>
+					</td>
+					<td ng-repeat="metric in metrics" class="span2" style="text-align:center">{{ task[ metric[ 'name' ] ] }}</td>
+					<td ng-if="showAdministration">
+						<div class="text-right">
+							<a href="{{ task[ 'edit_link' ] }}">edit</a>
+							<a href="{{ task[ 'delete_link' ] }}" onclick="return confirm('do you really want to delete this? there is no way to undo this action')">delete</a>
+						</div>
+					</td>
+				</tr>
+			</table>
 
-	<form>
-		<table class="table table-bordered">
-			<tr>
-				<th class="span2">name</th>
-				<th class="span3">description</th>
-				{=$tasks->rewind()}
-				{foreach $tasks->current()->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
-					<th class="span2" style="text-align:center">{$metric->ref('metrics')->name}</th>
-				{/foreach}
-				{if $showAdministration}<th class="span2"></th>{/if}
-			</tr>
+			<input type="submit" value="compare" class="button" id="compare" ng-if="tasks.length > 1" />
 
-			{foreach $tasks as $task}
-			<tr class="task" data-id="{$task['url_key']}">
-				<th class="name span2"><input type="checkbox" data-task-id="{$task['id']}"/>{$task['name']}</th>
-				<td class="description">
-					<span collapse-long collapse-long-text="{$task['description']}" max-length=20>
-						{$task['description']}
-					</span>
-				</td>
-				{foreach $task->related('tasks_metrics')->where('metrics.name NOT LIKE "%-cis"') as $metric}
-					<td style="text-align:center">{$metric['score']}</td>
-				{/foreach}
-				{if $showAdministration}
-				<td>
-					<div class="text-right">
-						<a href="{plink Tasks:edit $task['id']}">edit</a>
-						<a href="{plink Tasks:delete $task['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
-					</div>
-				</td>
-				{/if}
-			</tr>
-			{/foreach}
-		</table>
-
-		{if count($tasks) > 1}
-			<input type="submit" value="compare" class="button" id="compare"/>
-		{else}
-			<div class="alert">
+			<div class="alert" ng-show="tasks.length <= 1">
 				You need to import at least 2 tasks to be able to compare them.
 			</div>
-		{/if}
-	</form>
-</div>
-{else}
-	<div class="alert">
-		There are no tasks in this experiment.
+		</form>
 	</div>
 
-{/if}
-
-
+	<div class="alert" ng-show="tasks.length == 0">
+		There are no tasks in this experiment.
+	</div>
+</div>
 
