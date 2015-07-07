@@ -25,6 +25,7 @@ $(document).ready( function() {
 <script type="text/javascript">
 	function Tasks( $scope, $http ) {
 
+		$scope.chartType = 'line';
 		$scope.order = 'id';
 		$scope.ascending = false;
 
@@ -146,7 +147,11 @@ $(document).ready( function() {
 
 <div ng-app="MT-ComparEval" ng-controller="Tasks">
 	<div ng-if="tasks.length > 0">
-		<chart value="{{ scores }}" type="line" ng-if="tasks.length > 1"></chart>
+		<div class="btn-group pull-right">
+			<a ng-click="chartType = 'line'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'line' }">Line</a>
+			<a ng-click="chartType = 'column'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'column' }">Column</a>
+		</div>
+		<chart value="{{ scores }}" type="{{ chartType }}" ng-if="tasks.length > 1"></chart>
 
 		<form>
 			<table class="table table-bordered">
