@@ -24,6 +24,24 @@ $(document).ready( function() {
 
 <script type="text/javascript">
 	function Tasks( $scope, $http ) {
+
+		$scope.order = 'id';
+		$scope.ascending = false;
+
+		$scope.changeOrder = function( order ) {
+			if( $scope.order == order ) {
+				$scope.ascending = !$scope.ascending;
+			} else {
+				$scope.order = order;
+				$scope.ascending = false;
+			}
+		}
+
+		$scope.getOrderByValue = function( task ) {
+			return task[ $scope.order ];
+		}
+
+
 		loadTasks();
 
 		function loadTasks() {
@@ -133,12 +151,18 @@ $(document).ready( function() {
 		<form>
 			<table class="table table-bordered">
 				<tr>
-					<th class="span2">name</th>
+					<th class="span2">
+						<a ng-click="changeOrder( 'name' )">name</a>
+						<span class="icon" ng-class="{ 'icon-arrow-up': !ascending, 'icon-arrow-down': ascending}" ng-show="order == 'name'"></span>
+					</th>
 					<th class="span3">description</th>
-					<th ng-repeat="metric in metrics" class="span2" style="text-align:center">{{ metric[ 'name' ] }}</th>
+					<th ng-repeat="metric in metrics" class="span2" style="text-align:center">
+						<a ng-click="changeOrder( metric[ 'name' ] )">{{ metric[ 'name' ] }}</a>
+						<span class="icon" ng-class="{ 'icon-arrow-up': !ascending, 'icon-arrow-down': ascending}" ng-show="order == metric[ 'name' ]"></span>
+					</th>
 					<th class="span2" ng-if="showAdministration"></th>
 				</tr>
-				<tr ng-repeat="task in tasks">
+				<tr ng-repeat="task in tasks | orderBy:getOrderByValue:ascending">
 					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'id' ] }}"/>{{ task[ 'name' ] }}</th>
 					<td class="description">
 						<span collapse-long collapse-long-text="{{ task[ 'description' ] }}" max-length=20>
