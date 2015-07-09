@@ -33,13 +33,13 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 	public function renderScores( $task1, $task2 ) {
 		$response = array();
 		$response[ $task1 ] = $this->tasksModel->getTaskMetrics( $task1 );
-		$response[ $task2 ] = $this->tasksModel->getTaskMetrics( $task2 ); 
+		$response[ $task2 ] = $this->tasksModel->getTaskMetrics( $task2 );
 
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
 
-	public function renderScoresInExperiment( $experiment ) {
+	public function renderScoresInExperiment( $experimentId ) {
 		$tasks = array();
 		$metrics = array();
 
