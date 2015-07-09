@@ -28,7 +28,7 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 				$taskResponse[ 'delete_link' ] = $this->link( ':tasks:delete', $task->id );
 			}
 
-			$response[ 'tasks' ][] = $taskResponse;
+			$response[ 'tasks' ][ $task->id ] = $taskResponse;
 		}
 
 		$response[ 'show_administration' ] = $show_administration;
