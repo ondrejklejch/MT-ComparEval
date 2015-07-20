@@ -23,7 +23,7 @@ $(document).ready( function() {
 </script>
 
 <script type="text/javascript">
-	function Tasks( $scope, $http ) {
+	function Tasks( $scope, $filter, $http ) {
 
 		$scope.hiddenTasks = 0;
 		$scope.chartType = 'line';
@@ -37,6 +37,8 @@ $(document).ready( function() {
 				$scope.order = order;
 				$scope.ascending = false;
 			}
+
+			loadScores();
 		}
 
 		$scope.getOrderByValue = function( task ) {
@@ -63,27 +65,7 @@ $(document).ready( function() {
 
 			$http.get( '{!$baseUri}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
 				$scope.$watch( function() { return $scope.hiddenTasks; }, function( value ) {
-					console.log( "WATCH FIRED" );
-
-					data = [];
-					for( key in $scope.metrics ) {
-						data[ key ] = { 'name': $scope.metrics[ key ][ 'name' ], 'data': [] };
-					}
-
-					categories = [];
-					for( key in $scope.tasks ) {
-						if( !$scope.tasks[ key ][ 'show' ] ) {
-							continue;
-						}
-
-						categories.push( $scope.tasks[ key ][ 'name' ] );
-
-						for( metricKey in $scope.metrics ) {
-							data[ metricKey ][ 'data' ].push( $scope.tasks[ key ][ $scope.metrics[ metricKey ][ 'name' ] ] );
-						}
-					}
-
-					loadScores( categories, data );
+					loadScores();
 				} );
 
 				$scope.metrics = data.metrics;
@@ -100,7 +82,30 @@ $(document).ready( function() {
 			} );
 		}
 
-		function loadScores( categories, data ) {
+		function loadScores() {
+			var sortedTasks = $filter( 'orderBy' )( $scope.tasks, $scope.getOrderByValue, $scope.ascending )
+			var categories = [];
+			for( key in sortedTasks ) {
+				if( !sortedTasks[ key ][ 'show' ] ) {
+					continue;
+				}
+
+				categories.push( sortedTasks[ key ][ 'name' ] );
+			}
+
+			var data = [];
+			$scope.metrics.forEach( function( metric, metricKey ) {
+				data[ metricKey ] = { 'name': metric.name, 'data': [] };
+
+				for( key in sortedTasks ) {
+					if( !sortedTasks[ key ][ 'show' ] ) {
+						continue;
+					}
+
+					data[ metricKey ][ 'data' ].push( sortedTasks[ key ][ metric.name ] );
+				}
+			} );
+
 			$scope.scores = {
 				"chart": {
 					"zoomType": "x",
