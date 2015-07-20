@@ -6,7 +6,7 @@
 <script type="text/javascript" src="{$baseUri}/js/highcharts.src.js"></script>
 <script type="text/javascript">
 $(document).ready( function() {
-	$('#compare').click( function( event ) {
+	$('.compare').click( function( event ) {
 		event.preventDefault();
 		var tasksIds = $(this).closest('form')
 			.find( "input:checkbox:checked" )
@@ -188,6 +188,9 @@ $(document).ready( function() {
 
 
 		<form>
+			<input type="submit" value="compare" class="button compare" ng-if="tasks.length > 1" />
+			<br><br>
+
 			<table class="table table-bordered">
 				<tr>
 					<th class="span2">
@@ -219,7 +222,7 @@ $(document).ready( function() {
 				</tr>
 			</table>
 
-			<input type="submit" value="compare" class="button" id="compare" ng-if="tasks.length > 1" />
+			<input type="submit" value="compare" class="button compare" ng-if="tasks.length > 1" />
 
 			<div class="alert" ng-show="tasks.length <= 1">
 				You need to import at least 2 tasks to be able to compare them.
