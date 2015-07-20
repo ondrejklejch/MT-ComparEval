@@ -175,8 +175,12 @@ $(document).ready( function() {
 				<a ng-click="chartType = 'line'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'line' }">Line</a>
 				<a ng-click="chartType = 'column'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'column' }">Column</a>
 			</div>
-			<chart value="{{ scores }}" type="{{ chartType }}"> 1"></chart>
-		</div>
+
+			<div style="clear: both">
+				<chart value="{{ scores }}" type="{{ chartType }}"> 1"></chart>
+			</div>
+		<div>
+
 
 		<form>
 			<table class="table table-bordered">
