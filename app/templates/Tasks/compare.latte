@@ -552,10 +552,10 @@ function Sentences( $scope, $http ) {
 	}
 
 	function addTasks( data ) {
-		data.tasks.forEach( function( task ) {
-			$scope.taskNames[ task.id ] = task.name;
-			$scope.tasks.push( task );
-		} );
+		for ( taskId in data.tasks ) {
+			$scope.taskNames[ taskId ] = data.tasks[ taskId ].name;
+			$scope.tasks.push( data.tasks[ taskId ] );
+		}
 	}
 
 
