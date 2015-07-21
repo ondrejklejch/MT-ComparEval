@@ -5,7 +5,7 @@
  *
  * For sentence level metrics smoothing defined in article about BLEU_s is used
  */
-class Precision implements IMetric {
+class GeometricPrecision implements IMetric {
 
 	private $translationNGrams;
 	private $confirmedNGrams;

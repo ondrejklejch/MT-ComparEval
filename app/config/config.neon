@@ -40,8 +40,8 @@ common:
 		ngrams: CachedNGrams
 
 		# Metrics
-		bleuMetric: Bleu( @precisionMetric )
-		fmeasureMetric: FMeasure( @precisionMetric, @recallMetric )
+		bleuMetric: Bleu( @geometricPrecisionMetric )
+		fmeasureMetric: FMeasure( @geometricPrecisionMetric, @geometricRecallMetric )
 		bootstrapSampler: BootstrapSampler( 1000 )
 
 		experimentsImporter:
@@ -64,8 +64,8 @@ common:
 				] ),
 				[
 					BLEU: @bleuMetric,
-					PRECISION: @precisionMetric,
-					RECALL: @recallMetric,
+					PRECISION: @arithmeticPrecisionMetric,
+					RECALL: @arithmeticRecallMetric,
 					F-MEASURE: @fmeasureMetric,
 				]
 			)
@@ -89,8 +89,10 @@ common:
 
 
 	factories:
-		precisionMetric: Precision
-		recallMetric: Recall
+		geometricPrecisionMetric: GeometricPrecision
+		arithmeticPrecisionMetric: ArithmeticPrecision
+		geometricRecallMetric: GeometricRecall
+		arithmeticRecallMetric: ArithmeticRecall
 
 
 production < common:

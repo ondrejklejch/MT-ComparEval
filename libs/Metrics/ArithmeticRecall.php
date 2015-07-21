@@ -2,10 +2,8 @@
 
 /**
  * Modified Recall metric implementation
- *
- * For sentence level metrics smoothing defined in article about BLEU_s is used
  */
-class Recall implements IMetric {
+class ArithmeticRecall implements IMetric {
 
 	private $referenceNGrams;
 	private $confirmedNGrams;
@@ -45,22 +43,19 @@ class Recall implements IMetric {
 			return 0;
 		}
 
-		$geometricAverage = 0;
+		$arithmeticAverage = 0;
 		$smooth = 1;
 		for( $length = 1; $length <= 4; $length++ ) {
 			if( $referenceNGrams[ $length ] == 0 ) {
 				$recall = 1;
-			} elseif( $confirmedNGrams[ $length ] == 0 ) {
-				$smooth *= 2;
-				$recall = 1 / ( $smooth * $referenceNGrams[ $length ] );
 			} else {
 				$recall = $confirmedNGrams[ $length ] / $referenceNGrams[ $length ];
 			}
 
-			$geometricAverage += 1/4 * log( $recall );
+			$arithmeticAverage += 1/4 * $recall;
 		}
 
-		return number_format( exp( $geometricAverage ), 4 );
+		return number_format( $arithmeticAverage, 4 );
 	}
 
 }

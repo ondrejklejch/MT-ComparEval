@@ -9,7 +9,7 @@ class Bleu implements IMetric {
 	private $referenceLength;
 	private $translationLength;
 
-	public function __construct( Precision $precision ) {
+	public function __construct( GeometricPrecision $precision ) {
 		$this->precision = $precision;
 	}
 
