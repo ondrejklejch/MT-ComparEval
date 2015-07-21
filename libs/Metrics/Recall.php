@@ -49,7 +49,7 @@ class Recall implements IMetric {
 		$smooth = 1;
 		for( $length = 1; $length <= 4; $length++ ) {
 			if( $referenceNGrams[ $length ] == 0 ) {
-				$recall = 0;
+				$recall = 1;
 			} elseif( $confirmedNGrams[ $length ] == 0 ) {
 				$smooth *= 2;
 				$recall = 1 / ( $smooth * $referenceNGrams[ $length ] );

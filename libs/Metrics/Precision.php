@@ -49,7 +49,7 @@ class Precision implements IMetric {
 		$smooth = 1;
 		for( $length = 1; $length <= 4; $length++ ) {
 			if( $translationNGrams[ $length ] == 0 ) {
-				$precision = 0;
+				$precision = 1;
 			} elseif( $confirmedNGrams[ $length ] == 0 ) {
 				$smooth *= 2;
 				$precision = 1 / ( $smooth * $translationNGrams[ $length ] );
