@@ -374,7 +374,7 @@ function Sentences( $scope, $http ) {
 					{
 						"name": $scope.taskNames[ $scope.task0 ] + " wins",
 						"data": data.samples.data,
-						"color": "#468847"
+						"color": "#c09853",
 					}
 				]
 			};
@@ -453,7 +453,7 @@ function Sentences( $scope, $http ) {
 					{
 						"name": $scope.taskNames[ $scope.task1 ] + " wins",
 						"data": data.samples.data,
-						"color": "#468847"
+						"color": "#3a87ad",
 					}
 				]
 			};
@@ -866,13 +866,13 @@ function Sentences( $scope, $http ) {
 			</div>
 
 			<div class="row">
-				<chart value="{{ samples1 }}" type="area" class="span6"></chart>
-				<chart value="{{ samples2 }}" type="area" class="span6"></chart>
+				<chart value="{{ diffs }}" type="area" class="span6"></chart>
+				<chart value="{{ samples_diff }}" type="area" class="span6"></chart>
 			</div>
 
 			<div class="row">
-				<chart value="{{ diffs }}" type="area" class="span6"></chart>
-				<chart value="{{ samples_diff }}" type="area" class="span6"></chart>
+				<chart value="{{ samples1 }}" type="area" class="span6"></chart>
+				<chart value="{{ samples2 }}" type="area" class="span6"></chart>
 			</div>
 		</div>
 
