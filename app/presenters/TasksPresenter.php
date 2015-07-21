@@ -21,7 +21,9 @@ class TasksPresenter extends BasePresenter {
 	}
 
 	public function renderCompare( $id1, $id2 ) {
-		$this->template->experimentId = $this->tasksModel->getTask( $id1 )->experiments_id;
+		$experimentId = $this->tasksModel->getTask( $id1 )->experiments_id;
+		$this->template->experimentId = $experimentId;
+		$this->template->experiment = $this->experimentsModel->getExperimentById( $experimentId );
 		$this->template->taskIds = array( $id1, $id2 );
 	}
 
