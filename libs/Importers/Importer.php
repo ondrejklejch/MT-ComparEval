@@ -23,10 +23,10 @@ abstract class Importer {
 	}
 
 	public function importFromFolder( Folder $folder ) {
-		$config = $this->getConfig( $folder );
-
-		$this->logImportStart( $config );
 		try {
+			$config = $this->getConfig( $folder );
+
+			$this->logImportStart( $config );
 			$sentences = $this->parseResources( $folder, $config );
 			$metadata = $this->processMetadata( $config );
 			$this->processSentences( $config, $metadata, $sentences );
@@ -39,6 +39,9 @@ abstract class Importer {
 			$this->handleImportError( $folder, $metadata );
 		} catch( \ImporterException $exception ) {
 			$this->logImportAbortion( $config, $exception );
+			$this->handleImportError( $folder, $metadata );
+		} catch( Exception $exception ) {
+			$this->logger->log( $exception->getMessage() );
 			$this->handleImportError( $folder, $metadata );
 		}
 	}
