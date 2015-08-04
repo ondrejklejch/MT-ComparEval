@@ -117,8 +117,12 @@ abstract class Importer {
 	protected function getConfig( Folder $folder ) {
 		$configPath = $folder->getChildrenPath( 'config.neon' );
 		$defaults = $this->getDefaults( $folder );
-	
-		return new \ResourcesConfiguration( $configPath, $defaults );
+
+		try {
+			return new \ResourcesConfiguration( $configPath, $defaults );
+		} catch ( Exception $exception ) {
+			throw new ImporterException( "Error occured during parsing of the configuration file $configPath: {$exception->getMessage()}" );
+		}
 	}
 
 }
