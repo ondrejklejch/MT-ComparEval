@@ -92,7 +92,11 @@ abstract class Importer {
 
 	private function parseResource( $folder, $resource, $config ) {
 		try {
-			$this->logger->log( "{$config[$resource]} used as a $resource source." );		
+			if ( !file_exists( $config[ $resource ] ) ) {
+				throw new ImporterException( "{$config[$resource]} used as a $resource source doesn't exist" );
+			}
+
+			$this->logger->log( "{$config[$resource]} used as a $resource source." );
 
 			$sentences =  $this->getSentences( $folder, $config[$resource] );
 			$count = $sentences->count();
