@@ -19,12 +19,12 @@ CREATE TABLE users (
  */
 class Authenticator extends Nette\Object implements Security\IAuthenticator
 {
-	/** @var Nette\Database\Connection */
+	/** @var Nette\Database\Context */
 	private $database;
 
 
 
-	public function __construct(Nette\Database\Connection $database)
+	public function __construct(Nette\Database\Context $database)
 	{
 		$this->database = $database;
 	}

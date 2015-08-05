@@ -10,7 +10,7 @@ class Sentences {
 
 	private $metrics;
 
-	public function __construct( Nette\Database\Connection $db, Metrics $metrics ) {
+	public function __construct( Nette\Database\Context $db, Metrics $metrics ) {
 		$this->db = $db;
 		$this->metrics = $metrics;
 	}

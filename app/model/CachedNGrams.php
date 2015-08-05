@@ -11,7 +11,7 @@ class CachedNGrams extends NGrams {
 
 	private $tasksModel;
 
-	public function __construct( Nette\Database\Connection $db, Nette\Caching\Cache $cache, Tasks $tasksModel ) {
+	public function __construct( Nette\Database\Context $db, Nette\Caching\Cache $cache, Tasks $tasksModel ) {
 		parent::__construct( $db );
 
 		$this->cache = $cache;

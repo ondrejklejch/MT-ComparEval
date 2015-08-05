@@ -7,7 +7,7 @@ class Metrics {
 
 	private $db;
 
-	public function __construct( Nette\Database\Connection $db ) {
+	public function __construct( Nette\Database\Context $db ) {
 		$this->db = $db;
 	}
 
