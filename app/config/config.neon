@@ -44,6 +44,14 @@ common:
 		fmeasureMetric: FMeasure( @geometricPrecisionMetric, @geometricRecallMetric )
 		wordFMetric: WordF
 		bootstrapSampler: BootstrapSampler( 1000 )
+		geometricPrecisionMetric:
+			factory: GeometricPrecision
+		arithmeticPrecisionMetric:
+			factory: ArithmeticPrecision
+		geometricRecallMetric:
+			factory: GeometricRecall
+		arithmeticRecallMetric:
+			factory: ArithmeticRecall
 
 		experimentsImporter:
 			class: ExperimentsImporter
@@ -89,11 +97,6 @@ common:
 
 
 
-	factories:
-		geometricPrecisionMetric: GeometricPrecision
-		arithmeticPrecisionMetric: ArithmeticPrecision
-		geometricRecallMetric: GeometricRecall
-		arithmeticRecallMetric: ArithmeticRecall
 
 
 production < common:
