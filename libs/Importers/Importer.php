@@ -24,11 +24,14 @@ abstract class Importer {
 
 	public function importFromFolder( Folder $folder ) {
 		try {
+			$config = array( 'url_key' => $folder->getName() );
+			$metadata = array( 'experiment_id' => -1, 'task_id' => -1 );
+
 			$config = $this->getConfig( $folder );
 
 			$this->logImportStart( $config );
-			$sentences = $this->parseResources( $folder, $config );
 			$metadata = $this->processMetadata( $config );
+			$sentences = $this->parseResources( $folder, $config );
 			$this->processSentences( $config, $metadata, $sentences );
 
 			$this->logImportSuccess( $config );
@@ -92,7 +95,7 @@ abstract class Importer {
 
 	private function parseResource( $folder, $resource, $config ) {
 		try {
-			if ( !file_exists( $config[ $resource ] ) ) {
+			if ( !$folder->fileExists( $config[ $resource ] ) ) {
 				throw new ImporterException( "{$config[$resource]} used as a $resource source doesn't exist" );
 			}
 
