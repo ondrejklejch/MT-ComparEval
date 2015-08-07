@@ -4,6 +4,7 @@
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../libs/extensions.php';
 
+umask(0);
 mb_internal_encoding( 'UTF-8' );
 
 $configurator = new Nette\Config\Configurator;
