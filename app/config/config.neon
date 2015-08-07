@@ -25,9 +25,6 @@ common:
 		session:
 			expiration: 14 days
 
-	http:
-		proxy: 127.0.0.1
-
 
 	services:
 		routerFactory: RouterFactory( %consoleMode% )
