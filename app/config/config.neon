@@ -42,7 +42,6 @@ common:
 		# Metrics
 		bleuMetric: Bleu( @geometricPrecisionMetric )
 		fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
-		wordFMetric: WordF
 		bootstrapSampler: BootstrapSampler( 1000 )
 		geometricPrecisionMetric:
 			factory: GeometricPrecision
