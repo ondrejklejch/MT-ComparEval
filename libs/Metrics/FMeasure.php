@@ -38,7 +38,7 @@ class FMeasure implements IMetric {
 			return 0;
 		}
 
-		return number_format( 2 * exp( ( log( $precision ) + log( $recall ) - log( $precision + $recall ) ) ), 4 );
+		return number_format( ( 2 * $precision * $recall ) / ( $precision + $recall ), 4 );
 	}
 
 }
