@@ -8,8 +8,7 @@ class FMeasure implements IMetric {
 	private $precision;
 	private $recall;
 
-	
-	public function __construct( Precision $precision, Recall $recall ) {
+	public function __construct( ArithmeticPrecision $precision, ArithmeticRecall $recall ) {
 		$this->precision = $precision;
 		$this->recall = $recall;
 	}
