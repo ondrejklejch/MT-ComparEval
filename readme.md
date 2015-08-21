@@ -23,26 +23,47 @@ bash bin/install.sh
 ```
 
 # Running MT-ComparEval
-To start MT-ComparEval two processes have to be run.
-`bin/server.sh` which starts the application server on the address [localhost:8080](http://localhost:8080)
-  and `bin/watcher.sh` which monitors folder `data` for new experiments and tasks.
+To start MT-ComparEval two processes have to be run:
+ - `bin/server.sh` which starts the application server on the address [localhost:8080](http://localhost:8080)
+  and
+ - `bin/watcher.sh` which monitors folder `data` for new experiments and tasks (the `data` folder must exist before you run `bin/watcher.sh`).
 
-## Structure of Folder `data`
-Folder `data` contains folders with experiments.
+## Structure of the `data` folder
+Folder `data` contains folders with *experiments* (e.g. `EN-CS-WMT15`), which contains subfolders with *tasks* for each experiment (e.g. `MOSES`). For example:
+```
+data/
+├─ EN-CS-WMT15/
+│  ├─ source.txt
+│  ├─ reference.txt
+│  ├─ CHIMERA/
+│  │  └─ translation.txt
+│  └─ NEURAL-MT/
+│     └─ translation.txt
+└─ EN-DE-WMT15/
+   ├─ source.txt
+   ├─ reference.txt
+   ├─ MOSES/
+   │  └─ translation.txt
+   └─ NEURAL-MT/
+      └─ translation.txt
+```
+
 Each folder corresponds to one experiment and it should contain the following files:
- - `source.txt` - a plain text file with sentences in source language.
- - `reference.txt` - a plain text file with sentences in target language.
- - `config.neon` - a configuration file with the following structure:
+ - `source.txt` - a plain text file with sentences in source language (one sentence per line).
+ - `reference.txt` - a plain text file with reference translations (in target language).
+ - `config.neon` - (optionally) a configuration file with the following structure:
 ```
 name: Name of the experiment
-description: Description of the experiment
+description: "Description of the experiment\n can be multiline"
 source: source.txt
 reference: reference.txt
 ```
+See http://ne-on.org/ for the syntax of neon files.
+The `source` and `reference` needs to be defined only if you you choose non-default file names (not `source.txt` and `reference.txt`).
 
-Individual machine translations called Tasks are then stored in subfolders with the following files:
+Individual machine translations called *tasks* are then stored in subfolders with the following files:
 - `translation.txt` - a plain text file with translated sentences
-- `config.neon` - a configuration file with the following structure:
+- `config.neon` - (optionally) a configuration file with the following structure:
 ```
 name: Name of the task
 description: Description of the task
