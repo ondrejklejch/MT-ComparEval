@@ -25,8 +25,8 @@ bash bin/install.sh
 # Running MT-ComparEval
 To start MT-ComparEval two processes have to be run:
  - `bin/server.sh` which starts the application server on the address [localhost:8080](http://localhost:8080)
-  and
- - `bin/watcher.sh` which monitors folder `data` for new experiments and tasks (the `data` folder must exist before you run `bin/watcher.sh`).
+  (you can can check/adapt `app/config/config.neon` first to set the main title, set of metrics etc. See the [default config](app/config/config.neon).)
+ - `bin/watcher.sh` which monitors folder `data` for new experiments and tasks (the `data` folder must exist before you run `bin/watcher.sh`.)
 
 ## Structure of the `data` folder
 Folder `data` contains folders with *experiments* (e.g. `EN-CS-WMT15`), which contains subfolders with *tasks* for each experiment (e.g. `MOSES`). For example:
