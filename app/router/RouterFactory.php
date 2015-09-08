@@ -25,12 +25,14 @@ class RouterFactory
 	{
 		$router = new RouteList();
 		if( $this->consoleMode ) {
-			$router[] = new CliRouter(); 
+			$router[] = new CliRouter();
 		} else {
 			$router[] = new Route('index.php', 'Experiments:list', Route::ONE_WAY);
 			$router[] = new Route('api/sentences', 'Api:Sentences:default');
 			$router[] = new Route('api/sentences/by-id', 'Api:Sentences:byId');
 			$router[] = new Route('api/tasks', 'Api:Tasks:default');
+			$router[] = new Route('api/tasks/upload', 'Api:Tasks:upload');
+			$router[] = new Route('api/experiments/upload', 'Api:Experiments:upload');
 			$router[] = new Route('api/metrics', 'Api:Metrics:default');
 			$router[] = new Route('api/metrics/scores', 'Api:Metrics:scores');
 			$router[] = new Route('api/metrics/scores-in-experiment', 'Api:Metrics:scoresInExperiment');
@@ -42,7 +44,7 @@ class RouterFactory
 			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
 			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
 			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
-		}		
+		}
 
 		return $router;
 	}

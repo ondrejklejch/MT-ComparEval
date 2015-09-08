@@ -30,7 +30,9 @@ class Experiments {
 	}
 
 	public function saveExperiment( $data ) {
-		$row = $this->db->table( 'experiments' )->insert( $data );
+		if ( !$row = $this->getExperimentByName( $data[ 'url_key' ] ) ) {
+			$row = $this->db->table( 'experiments' )->insert( $data );
+		}
 
 		return $row->getPrimary( TRUE );
 	}

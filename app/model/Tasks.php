@@ -36,8 +36,16 @@ class Tasks {
 			->fetch();
 	}
 
+	public function getTaskByName( $taskName ) {
+		return $this->db->table( 'tasks' )
+			->where( 'url_key', $taskName )
+			->fetch();
+	}
+
 	public function saveTask( $data ) {
-		$row = $this->db->table( 'tasks' )->insert( $data );
+		if ( !$row = $this->getTaskByName( $data[ 'url_key' ] ) ) {
+			$row = $this->db->table( 'tasks' )->insert( $data );
+		}
 
 		return $row->getPrimary( TRUE );
 	}

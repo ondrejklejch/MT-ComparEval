@@ -5,12 +5,15 @@ namespace ApiModule;
 /**
  * TasksPresenter is used for serving list of task in experiment from REST API
  */
-class TasksPresenter extends \Nette\Application\UI\Presenter {
+class TasksPresenter extends BasePresenter {
 
 	private $tasksModel;
+	private $experimentsModel;
 
-	public function __construct( \Tasks $tasksModel ) {
+	public function __construct( \Nette\Http\Request $httpRequest, \Tasks $tasksModel, \Experiments $experimentsModel ) {
+		parent::__construct( $httpRequest );
 		$this->tasksModel = $tasksModel;
+		$this->experimentsModel = $experimentsModel;
 	}
 
 	public function renderDefault( $experimentId ) {
@@ -24,8 +27,8 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 			$taskResponse[ 'name' ] = $task->name;
 			$taskResponse[ 'description' ] = $task->description;
 			if( $show_administration ) {
-				$taskResponse[ 'edit_link' ] = $this->link( ':tasks:edit', $task->id );
-				$taskResponse[ 'delete_link' ] = $this->link( ':tasks:delete', $task->id );
+				$taskResponse[ 'edit_link' ] = $this->link( ':Tasks:edit', $task->id );
+				$taskResponse[ 'delete_link' ] = $this->link( ':Tasks:delete', $task->id );
 			}
 
 			$response[ 'tasks' ][ $task->id ] = $taskResponse;
@@ -33,6 +36,29 @@ class TasksPresenter extends \Nette\Application\UI\Presenter {
 
 		$response[ 'show_administration' ] = $show_administration;
 
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+	}
+
+	public function renderUpload() {
+		$name = $this->getPostParameter( 'name' );
+		$url_key = \Nette\Utils\Strings::webalize( $name );
+		$description = $this->getPostParameter( 'description' );
+		$experiment_id = $this->getPostParameter( 'experiment_id' );
+		$translation = $this->getPostFile( 'translation' );
+
+		$data = array(
+			'name' => $name,
+			'description' => $description,
+			'url_key' => $url_key,
+			'experiments_id' => $experiment_id
+		);
+
+		$experiment = $this->experimentsModel->getExperimentById( $experiment_id );
+		$path = __DIR__ . '/../../../data/' . $experiment->url_key . '/' . $url_key . '/';
+		$translation->move( $path . 'translation.txt' );
+		file_put_contents( $path . 'config.neon', "name: $name\ndescription: $description\nurl_key: $url_key" );
+
+		$response = array( 'experiment_id' => $this->tasksModel->saveTask( $data ) );
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
