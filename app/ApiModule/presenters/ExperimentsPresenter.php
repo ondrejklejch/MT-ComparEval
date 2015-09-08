@@ -30,7 +30,13 @@ class ExperimentsPresenter extends BasePresenter {
 		file_put_contents( $path . 'config.neon', "name: $name\ndescription: $description\nurl_key: $url_key" );
 
 		$response = array( 'experiment_id' => $this->model->saveExperiment( $data ) );
-		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+
+		if ( $this->getPostParameter( 'redirect', False ) ) {
+			$this->flashMessage( "Experiment was successfully uploaded. It will appear in this list once it is imported.", "success" );
+			$this->redirect( ":Experiments:list" );
+		} else {
+			$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+		}
 	}
 
 }

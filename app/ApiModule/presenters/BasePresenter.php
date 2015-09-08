@@ -10,8 +10,8 @@ class BasePresenter extends \Nette\Application\UI\Presenter {
 		$this->httpRequest = $httpRequest;
 	}
 
-	protected function getPostParameter( $name ) {
-		if ( !$this->httpRequest->getPost( $name ) ) {
+	protected function getPostParameter( $name, $sendError = TRUE ) {
+		if ( !$this->httpRequest->getPost( $name ) && $sendError ) {
 			return $this->sendResponse( new \Nette\Application\Responses\JsonResponse( array( 'error' => "Missing field $name" ) ) );
 		}
 
