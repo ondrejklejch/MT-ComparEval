@@ -27,6 +27,10 @@ class TasksPresenter extends BasePresenter {
 		$this->template->taskIds = array( $id1, $id2 );
 	}
 
+	public function renderNew( $id ) {
+		$this->template->experiment = $this->experimentsModel->getExperimentById( $id );
+	}
+
 	public function actionEdit( $id ) {
 		$data = $this->tasksModel->getTaskById( $id );
 		$this->getComponent( 'editForm' )->setDefaults( $data );

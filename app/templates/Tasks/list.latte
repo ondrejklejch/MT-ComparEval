@@ -188,7 +188,10 @@ $(document).ready( function() {
 
 
 		<form>
-			<input type="submit" value="compare" class="button compare" ng-if="tasks.length > 1" />
+			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
+			{if $showAdministration}
+				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
+			{/if}
 			<br><br>
 
 			<table class="table table-bordered">
@@ -222,7 +225,10 @@ $(document).ready( function() {
 				</tr>
 			</table>
 
-			<input type="submit" value="compare" class="button compare" ng-if="tasks.length > 1" />
+			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
+			{if $showAdministration}
+				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
+			{/if}
 
 			<div class="alert" ng-show="tasks.length <= 1">
 				You need to import at least 2 tasks to be able to compare them.

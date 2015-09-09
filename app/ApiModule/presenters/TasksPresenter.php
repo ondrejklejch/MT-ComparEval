@@ -58,8 +58,14 @@ class TasksPresenter extends BasePresenter {
 		$translation->move( $path . 'translation.txt' );
 		file_put_contents( $path . 'config.neon', "name: $name\ndescription: $description\nurl_key: $url_key" );
 
-		$response = array( 'experiment_id' => $this->tasksModel->saveTask( $data ) );
-		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+		$response = array( 'task_id' => $this->tasksModel->saveTask( $data ) );
+
+		if ( $this->getPostParameter( 'redirect', False ) ) {
+			$this->flashMessage( "Task was successfully uploaded. It will appear in this list once it is imported.", "success" );
+			$this->redirect( ":Tasks:list", $experiment_id );
+		} else {
+			$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+		}
 	}
 
 }
