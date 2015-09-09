@@ -34,6 +34,7 @@ class RouterFactory
 			$router[] = new Route('api/tasks/upload', 'Api:Tasks:upload');
 			$router[] = new Route('api/experiments/upload', 'Api:Experiments:upload');
 			$router[] = new Route('api/experiments/status/<id>', 'Api:Experiments:status');
+			$router[] = new Route('api/experiments/delete/<id>', 'Api:Experiments:delete');
 			$router[] = new Route('api/metrics', 'Api:Metrics:default');
 			$router[] = new Route('api/metrics/scores', 'Api:Metrics:scores');
 			$router[] = new Route('api/metrics/scores-in-experiment', 'Api:Metrics:scoresInExperiment');

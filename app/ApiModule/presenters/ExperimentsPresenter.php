@@ -53,4 +53,10 @@ class ExperimentsPresenter extends BasePresenter {
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
+	public function renderDelete( $id ) {
+		$response = array( 'status' => (bool) $this->model->deleteExperiment( $id ) );
+
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+	}
+
 }
