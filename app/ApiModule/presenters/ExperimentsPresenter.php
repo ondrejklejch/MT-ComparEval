@@ -39,4 +39,18 @@ class ExperimentsPresenter extends BasePresenter {
 		}
 	}
 
+	public function renderStatus( $id ) {
+		$experiment = $this->model->getExperimentById( $id );
+		$tasks = $experiment->related( 'tasks' );
+		$allTasksImported = array_reduce( $tasks->fetchAll(), function( $acc, $cur ) { return $acc && $cur->visible == 1; }, TRUE );
+
+		$response = array(
+			'experiment_imported' => @$experiment->visible == 1,
+			'all_tasks_imported' => $allTasksImported,
+			'url' => $this->link( '//:Tasks:list', $id ),
+		);
+
+		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
+	}
+
 }
