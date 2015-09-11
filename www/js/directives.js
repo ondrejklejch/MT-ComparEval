@@ -17,6 +17,26 @@ angular.module( 'MT-ComparEval', [] )
 							type: attrs.type || null,
 							height: attrs.height || null,
 							width: attrs.width || null,
+						},
+						plotOptions:{
+							series: {
+								events: {
+									show: function(e){
+										if (e.target._i >= 0){
+											var index = e.target._i + 2;
+											$('.tasksTable th').eq(index).show();
+											$('.tasksTable td:nth-child(' + index + ')').show();
+										}
+									},
+									hide: function(e){
+										if (e.target._i >= 0){
+											var index = e.target._i + 2;
+											$('.tasksTable th').eq(index).hide();
+											$('.tasksTable td:nth-child(' + index + ')').hide();
+										}
+									}
+								}
+							}
 						}
 					};
 
@@ -26,7 +46,6 @@ angular.module( 'MT-ComparEval', [] )
 					var deepCopy = true;
 					var newSettings = {};
 					$.extend(deepCopy, newSettings, chartsDefaults, JSON.parse(attrs.value));
-
 					var chart = new Highcharts.Chart(newSettings);
 				});
 			}
