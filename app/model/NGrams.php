@@ -23,9 +23,12 @@ class NGrams {
 		$task1Ngrams = $this->getConfirmed( $task1 );
 		$task2Ngrams = $this->getConfirmed( $task2 );
 
-		list( $improving1, $improving2 ) = $this->mergeNgrams( $task1Ngrams, $task2Ngrams );
-		$improving1 = $this->filterImproving( $improving1 );	
-		$improving2 = $this->filterImproving( $improving2 );
+		list( $allImproving1, $allImproving2 ) = $this->mergeNgrams( $task1Ngrams, $task2Ngrams );
+		$improving1 = $this->filterImproving( $allImproving1 );
+		$improving2 = $this->filterImproving( $allImproving2 );
+
+		$improving1 = $this->addOtherOccurences( $improving1, $allImproving2 );
+		$improving2 = $this->addOtherOccurences( $improving2, $allImproving1 );
 
 		$improving1 = $this->sortByOccurences( $improving1 );
 		$improving2 = $this->sortByOccurences( $improving2 );
@@ -36,7 +39,7 @@ class NGrams {
 		$improving1 = $this->getTop20( $improving1 );
 		$improving2 = $this->getTop20( $improving2 );
 
-		return array( 
+		return array(
 			$task1 => $improving1,
 			$task2 => $improving2
 		);
@@ -56,9 +59,12 @@ class NGrams {
 		$task1Ngrams = $this->getUnconfirmed( $task1 );
 		$task2Ngrams = $this->getUnconfirmed( $task2 );
 
-		list( $worsening1, $worsening2 ) = $this->mergeNgrams( $task1Ngrams, $task2Ngrams );
-		$worsening1 = $this->filterImproving( $worsening1 );	
-		$worsening2 = $this->filterImproving( $worsening2 );
+		list( $allWorsening1, $allWorsening2 ) = $this->mergeNgrams( $task1Ngrams, $task2Ngrams );
+		$worsening1 = $this->filterImproving( $allWorsening1 );
+		$worsening2 = $this->filterImproving( $allWorsening2 );
+
+		$worsening1 = $this->addOtherOccurences( $worsening1, $allWorsening2 );
+		$worsening2 = $this->addOtherOccurences( $worsening2, $allWorsening1 );
 
 		$worsening1 = $this->sortByOccurences( $worsening1 );
 		$worsening2 = $this->sortByOccurences( $worsening2 );
@@ -69,7 +75,7 @@ class NGrams {
 		$worsening1 = $this->getTop20( $worsening1 );
 		$worsening2 = $this->getTop20( $worsening2 );
 
-		return array( 
+		return array(
 			$task1 => $worsening1,
 			$task2 => $worsening2
 		);
@@ -180,15 +186,30 @@ class NGrams {
 		}
 	}
 
+	private function addOtherOccurences( $ngrams, $otherNgrams ) {
+		foreach( $ngrams as $ngram => &$value ) {
+			$value[ 'other_occurences' ] = (int) @$otherNgrams[ $value[ 'text' ] ][ 'all_occurences' ];
+		}
+
+		return $ngrams;
+	}
+
+
 	private function filterImproving( $ngrams ) {
 		return array_filter( $ngrams, function( $ngram ) {
 			return count( $ngram[ 'sentences' ] ) > 0;
-		} );	
+		} );
 	}
 
 	private function sortByOccurences( $ngrams ) {
 		usort( $ngrams, function( $a, $b ) {
-			return count( $b[ 'sentences' ] ) - count( $a[ 'sentences' ] );
+			$diff = ( $b[ 'all_occurences' ] - $b[ 'other_occurences' ] ) - ( $a[ 'all_occurences' ] - $a[ 'other_occurences' ] );
+
+			if( $diff != 0 ) {
+				return $diff;
+			} else {
+				return count( $b[ 'sentences' ] ) - count( $a[ 'sentences' ] );
+			}
 		} );
 
 		return $ngrams;
