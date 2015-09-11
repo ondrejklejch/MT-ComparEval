@@ -31,7 +31,8 @@ common:
 		router: @routerFactory::createRouter
 		authenticator: Authenticator
 		ngramsCache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/precomputed_ngrams ) )
-
+		cacheStorage:
+				class: Nette\Caching\Storages\DevNullStorage
 		# Models
 		experiments: Experiments
 		tasks: Tasks
@@ -41,6 +42,11 @@ common:
 
 		# Metrics
 		bleuMetric: Bleu( @geometricPrecisionMetric )
+		hjersonWOMetric: Hjerson("bhypRer")
+		hjersonFormMetric: Hjerson("bhypINFer")
+		hjersonOmissionMetric: Hjerson("bMISer")
+		hjersonAdditionMetric: Hjerson("bEXTer")
+		hjersonMistranslationMetric: Hjerson("bhypLEXer")
 		fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
 		bootstrapSampler: BootstrapSampler( 1000 )
 		geometricPrecisionMetric:
@@ -75,6 +81,11 @@ common:
 					PRECISION: @arithmeticPrecisionMetric,
 					RECALL: @arithmeticRecallMetric,
 					F-MEASURE: @fmeasureMetric,
+					H-WORDORDER: @hjersonWOMetric,
+					H-ADDITION: @hjersonAdditionMetric,
+					H-MISTRANSLATION: @hjersonMistranslationMetric,
+					H-OMISSION: @hjersonOmissionMetric,
+					H-FORM: @hjersonFormMetric,
 				]
 			)
 			setup:
