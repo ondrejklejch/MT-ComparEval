@@ -94,6 +94,13 @@ $(document).ready( function() {
 			}
 
 			var data = [];
+			var selectColor = function selectColor(colorNum, colors){
+				if (colors < 1) colors = 1; // defaults to one color - avoid divide by zero
+				return "hsl(" + (colorNum * (360 / colors) % 360) + ",100%,50%)";
+			};
+			var colorsArray = [];
+			var currentColorNum = 0;
+			var metricsNum = $scope.metrics.length;
 			$scope.metrics.forEach( function( metric, metricKey ) {
 				data[ metricKey ] = { 'name': metric.name, 'data': [] };
 
@@ -101,7 +108,8 @@ $(document).ready( function() {
 					if( !sortedTasks[ key ][ 'show' ] ) {
 						continue;
 					}
-
+					colorsArray.push(selectColor(currentColorNum,metricsNum));
+					currentColorNum++;
 					data[ metricKey ][ 'data' ].push( sortedTasks[ key ][ metric.name ] );
 				}
 			} );
@@ -110,7 +118,12 @@ $(document).ready( function() {
 				"chart": {
 					"zoomType": "x",
 				},
-				"colors": [
+				"colors": colorsArray, 
+				"temp": [
+					"#468847",
+					"#b94a48",
+					"#c09853",
+					"#3a87ad",
 					"#468847",
 					"#b94a48",
 					"#c09853",
