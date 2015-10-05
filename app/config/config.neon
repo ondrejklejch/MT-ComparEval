@@ -42,11 +42,11 @@ common:
 
 		# Metrics
 		bleuMetric: Bleu( @geometricPrecisionMetric )
-		hjersonWOMetric: Hjerson("bhypRer")
-		hjersonFormMetric: Hjerson("bhypINFer")
-		hjersonOmissionMetric: Hjerson("bMISer")
-		hjersonAdditionMetric: Hjerson("bEXTer")
-		hjersonMistranslationMetric: Hjerson("bhypLEXer")
+		#hjersonWOMetric: Hjerson("bhypRer")
+		#hjersonFormMetric: Hjerson("bhypINFer")
+		#hjersonOmissionMetric: Hjerson("bMISer")
+		#hjersonAdditionMetric: Hjerson("bEXTer")
+		#hjersonMistranslationMetric: Hjerson("bhypLEXer")
 		fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
 		bootstrapSampler: BootstrapSampler( 1000 )
 		geometricPrecisionMetric:
