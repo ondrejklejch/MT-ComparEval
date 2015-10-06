@@ -81,11 +81,11 @@ common:
 					PRECISION: @arithmeticPrecisionMetric,
 					RECALL: @arithmeticRecallMetric,
 					F-MEASURE: @fmeasureMetric,
-					H-WORDORDER: @hjersonWOMetric,
-					H-ADDITION: @hjersonAdditionMetric,
-					H-MISTRANSLATION: @hjersonMistranslationMetric,
-					H-OMISSION: @hjersonOmissionMetric,
-					H-FORM: @hjersonFormMetric,
+					#H-WORDORDER: @hjersonWOMetric,
+					#H-ADDITION: @hjersonAdditionMetric,
+					#H-MISTRANSLATION: @hjersonMistranslationMetric,
+					#H-OMISSION: @hjersonOmissionMetric,
+					#H-FORM: @hjersonFormMetric,
 				]
 			)
 			setup:
