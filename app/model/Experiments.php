@@ -71,9 +71,16 @@ class Experiments {
 	}
 
 	public function deleteExperiment( $experimentId ) {
-		return $this->db->table( 'experiments' )
-			->wherePrimary( $experimentId )
-			->delete();
+		try {
+			$experiment = $this->getExperimentById( $experimentId );
+			\Nette\Utils\FileSystem::delete( __DIR__ . '/../../data/' . $experiment[ 'url_key' ] );
+
+			return $this->db->table( 'experiments' )
+				->wherePrimary( $experimentId )
+				->delete();
+		} catch( \Exception $exception ) {
+			return FALSE;
+		}
 	}
 
 	public function deleteExperimentByName( $name ) {

@@ -36,14 +36,15 @@ class Tasks {
 			->fetch();
 	}
 
-	public function getTaskByName( $taskName ) {
+	public function getTaskByName( $taskName, $experimentId ) {
 		return $this->db->table( 'tasks' )
 			->where( 'url_key', $taskName )
+			->where( 'experiments_id', $experimentId )
 			->fetch();
 	}
 
 	public function saveTask( $data ) {
-		if ( !$row = $this->getTaskByName( $data[ 'url_key' ] ) ) {
+		if ( !$row = $this->getTaskByName( $data[ 'url_key' ], $data[ 'experiments_id' ] ) ) {
 			$row = $this->db->table( 'tasks' )->insert( $data );
 		}
 
@@ -154,9 +155,17 @@ class Tasks {
 	}
 
 	public function deleteTask( $taskId ) {
-		$this->db->table( 'tasks' )
-			->wherePrimary( $taskId )
-			->delete();
+		try {
+			$task = $this->getTaskById( $taskId );
+			$experiment = $task->experiment;
+			\Nette\Utils\FileSystem::delete( __DIR__ . '/../../data/' . $experiment[ 'url_key' ] . '/' . $task[ 'url_key' ] );
+
+			return $this->db->table( 'tasks' )
+				->wherePrimary( $taskId )
+				->delete();
+		} catch( \Exception $exception ) {
+			return FALSE;
+		}
 	}
 
 	public function deleteTaskByName( $experimentId, $name ) {

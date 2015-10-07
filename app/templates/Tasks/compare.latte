@@ -906,7 +906,9 @@ function Sentences( $scope, $http ) {
 											<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
 												{{ ngram.text }}
 											</a>
-											<em class="pull-right">{{ ngram.sentences.length }}</em>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
 										</td>
 									</tr>
 								</table>
@@ -925,7 +927,9 @@ function Sentences( $scope, $http ) {
 											<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
 												{{ ngram.text }}
 											</a>
-											<em class="pull-right">{{ ngram.sentences.length }}</em>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
 										</td>
 									</tr>
 								</table>
@@ -961,7 +965,9 @@ function Sentences( $scope, $http ) {
 											<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
 												{{ ngram.text }}
 											</a>
-											<em class="pull-right">{{ ngram.sentences.length }}</em>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
 										</td>
 									</tr>
 								</table>
@@ -980,7 +986,9 @@ function Sentences( $scope, $http ) {
 											<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
 												{{ ngram.text }}
 											</a>
-											<em class="pull-right">{{ ngram.sentences.length }}</em>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
 										</td>
 									</tr>
 								</table>

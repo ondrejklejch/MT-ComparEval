@@ -42,14 +42,24 @@ CREATE TABLE "metrics" (
   "name" text NOT NULL
 );
 
-INSERT INTO "metrics" ("id", "name") VALUES (1,	'BLEU');
-INSERT INTO "metrics" ("id", "name") VALUES (2,	'BLEU-cis');
-INSERT INTO "metrics" ("id", "name") VALUES (3,	'PRECISION');
-INSERT INTO "metrics" ("id", "name") VALUES (4,	'PRECISION-cis');
-INSERT INTO "metrics" ("id", "name") VALUES (5,	'RECALL');
-INSERT INTO "metrics" ("id", "name") VALUES (6,	'RECALL-cis');
-INSERT INTO "metrics" ("id", "name") VALUES (7,	'F-MEASURE');
-INSERT INTO "metrics" ("id", "name") VALUES (8,	'F-MEASURE-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (1, 'BLEU');
+INSERT INTO `metrics` (`id`, `name`) VALUES (2, 'BLEU-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (3, 'PRECISION');
+INSERT INTO `metrics` (`id`, `name`) VALUES (4, 'PRECISION-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (5, 'RECALL');
+INSERT INTO `metrics` (`id`, `name`) VALUES (6, 'RECALL-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (7, 'F-MEASURE');
+INSERT INTO `metrics` (`id`, `name`) VALUES (8, 'F-MEASURE-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (9, 'H-WORDORDER');
+INSERT INTO `metrics` (`id`, `name`) VALUES (10, 'H-WORDORDER-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (11, 'H-ADDITION');
+INSERT INTO `metrics` (`id`, `name`) VALUES (12, 'H-ADDITION-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (13, 'H-MISTRANSLATION');
+INSERT INTO `metrics` (`id`, `name`) VALUES (14, 'H-MISTRANSLATION-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (15, 'H-OMISSION');
+INSERT INTO `metrics` (`id`, `name`) VALUES (16, 'H-OMISSION-cis');
+INSERT INTO `metrics` (`id`, `name`) VALUES (17, 'H-FORM');
+INSERT INTO `metrics` (`id`, `name`) VALUES (18, 'H-FORM-cis');
 
 CREATE TABLE "translations_metrics" (
   "translations_id" integer NOT NULL,
