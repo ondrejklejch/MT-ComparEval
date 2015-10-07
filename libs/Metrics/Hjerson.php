@@ -33,6 +33,19 @@ class Hjerson implements IMetric {
 		$refTxt = implode("\n", $this->referenceText);
 		$hypTxt = implode("\n", $this->translationText);
 		if ($refTxt != "" && $hypTxt != ""){
+			$textsHash = md5('Hyp:' . $hypTxt . "Ref:" . $refTxt);
+			$temporaryResultsFile = "temp/hjerson." . $textsHash;
+			if (file_exists($temporaryResultsFile)){
+				$output = file($temporaryResultsFile);
+				foreach ($output as $line){
+					$tempArray = explode("\t", $line);
+					$typeName = trim(str_replace(":","",$tempArray[0]));
+					if ($typeName == $this->type){
+						return $tempArray[1]; // if you want to use % representation, use [2] instead
+					}
+				}
+			}
+
 			file_put_contents($reference, $refTxt);
 			file_put_contents($hypothesis, $hypTxt);
 			$cmd = sprintf("%s -R %s -H %s", $this->externalCmd, $reference, $hypothesis);
@@ -42,6 +55,7 @@ class Hjerson implements IMetric {
 			if ($return != 0){
 				return -1;
 			} else {
+				file_put_contents($temporaryResultsFile, implode("\n", $output));
 				foreach ($output as $line){
 					$tempArray = explode("\t", $line);
 					$typeName = trim(str_replace(":","",$tempArray[0]));
