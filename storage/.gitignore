@@ -2,4 +2,5 @@
 *
 # Except this file
 !precomputed_ngrams
+!hjerson
 !.gitignore
