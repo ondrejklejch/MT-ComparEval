@@ -130,7 +130,7 @@ class TasksImporter extends Importer {
 	}
 
 	protected function deleteUnimported( $metadata ) {
-		$this->tasksModel->deleteTask( $metadata[ 'task_id' ] );
+		$this->tasksModel->deleteTask( $metadata[ 'task_id' ], FALSE );
 	}
 
 	protected function showImported( $metadata ) {

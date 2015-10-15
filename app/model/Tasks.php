@@ -154,11 +154,14 @@ class Tasks {
 		$this->db->commit();
 	}
 
-	public function deleteTask( $taskId ) {
+	public function deleteTask( $taskId, $deleteFromFileSystem = TRUE ) {
 		try {
 			$task = $this->getTaskById( $taskId );
 			$experiment = $task->experiment;
-			\Nette\Utils\FileSystem::delete( __DIR__ . '/../../data/' . $experiment[ 'url_key' ] . '/' . $task[ 'url_key' ] );
+
+			if ( $deleteFromFileSystem ) {
+				\Nette\Utils\FileSystem::delete( __DIR__ . '/../../data/' . $experiment[ 'url_key' ] . '/' . $task[ 'url_key' ] );
+			}
 
 			return $this->db->table( 'tasks' )
 				->wherePrimary( $taskId )
