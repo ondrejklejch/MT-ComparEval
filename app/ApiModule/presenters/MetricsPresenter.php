@@ -21,10 +21,7 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 
 	public function renderDefault() {
 		$response = array();
-		$response[ 'metrics' ] = array();
-		foreach( $this->metricsModel->getMetrics() as $metric ) {
-			$response[ 'metrics' ][] = $metric->name;
-		}
+		$response[ 'metrics' ] = $this->metricsModel->getEnabledMetrics();
 
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
@@ -43,9 +40,9 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 		$tasks = array();
 		$metrics = array();
 
-		foreach( $this->metricsModel->getMetrics() as $metric ) {
-			$metrics[ $metric->name ] = array(
-				'name' => $metric->name,
+		foreach( $this->metricsModel->getEnabledMetrics() as $metric ) {
+			$metrics[ $metric ] = array(
+				'name' => $metric,
 				'data' => array()
 			);
 		}
@@ -54,13 +51,13 @@ class MetricsPresenter extends \Nette\Application\UI\Presenter {
 			$tasks[ $task->id ] = $task->name;
 
 			foreach( $this->tasksModel->getTaskMetrics( $task ) as $name => $score ) {
+				if( !$this->metricsModel->isMetricEnabled( $name ) ) {
+					continue;
+				}
+
 				$metrics[ $name ][ 'data' ][ $task->id ] = $score;
 			}
 		}
-
-		$metrics = array_filter( $metrics, function( $metric ) {
-			return strpos( $metric[ 'name' ], '-cis' ) === FALSE;
-		} );
 
 		$response = array(
 			'tasks' => $tasks,

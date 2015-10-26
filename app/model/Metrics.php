@@ -7,8 +7,11 @@ class Metrics {
 
 	private $db;
 
-	public function __construct( Nette\Database\Context $db ) {
+	private $enabledMetrics;
+
+	public function __construct( Nette\Database\Context $db, EnabledMetricsList $enabledMetrics ) {
 		$this->db = $db;
+		$this->enabledMetrics = (array) $enabledMetrics;
 	}
 
 	public function getMetrics() {
@@ -90,4 +93,13 @@ class Metrics {
 			->order( 'sample_position' );
 	}
 
+
+	public function getEnabledMetrics() {
+		return array_keys( $this->enabledMetrics );
+	}
+
+
+	public function isMetricEnabled( $metric ) {
+		return array_key_exists( $metric, $this->enabledMetrics );
+	}
 }
