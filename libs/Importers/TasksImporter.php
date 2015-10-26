@@ -1,6 +1,6 @@
 <?php
 
-/** 
+/**
  * Importer implementation for importing tasks into MT-ComparEval
  *
  * TasksImporter loads translations from specified file (either by configuration or default value).
@@ -48,11 +48,11 @@ class TasksImporter extends Importer {
 	}
 
 	protected function processSentences( $config, $metadata, $rawSentences ) {
-		$metrics = array();
+		$sentenceMetrics = array();
 
 		foreach( array( FALSE, TRUE ) as $isCaseSensitive ) {
 			$preprocessor = $this->preprocessor;
-			$sentences = new MapperIterator( 
+			$sentences = new MapperIterator(
 				new \ZipperIterator( $rawSentences, TRUE ),
 				function( $sentence ) use ( $preprocessor, $isCaseSensitive ) {
 					$sentence[ 'is_case_sensitive' ] = $isCaseSensitive;
@@ -61,49 +61,47 @@ class TasksImporter extends Importer {
 				}
 			);
 
+			$metrics = array();
 			foreach( $this->metrics as $name => $metric ) {
-				$metric->init(); 
-				$name = $this->getMetricName( $name, $isCaseSensitive );
-				$metrics[ $name ] = array();
+				if( $metric[ 'case_sensitive' ] !== $isCaseSensitive ) {
+					continue;
+				}
+
+				$metric = $metric[ 'class' ];
+				$metric->init();
+
+				$metrics[ $name ] = $metric;
+				$sentenceMetrics[ $name ] = array();
 			}
 
 			foreach( $sentences as $sentence ) {
-				foreach( $this->metrics as $name => $metric ) {
-					$name = $this->getMetricName( $name, $isCaseSensitive );
-					$metrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
+				foreach( $metrics as $name => $metric ) {
+					$sentenceMetrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
 				}
 			}
 
-			foreach( $this->metrics as $name => $metric ) {
-				$name = $this->getMetricName( $name, $isCaseSensitive );
-
-				$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() ); 
+			foreach( $metrics as $name => $metric ) {
+				$this->tasksModel->addMetric( $metadata['task_id'], $name, $metric->getScore() );
 			}
 
-			foreach( $this->metrics as $name => $metric ) {
-				$name = $this->getMetricName( $name, $isCaseSensitive );
+			foreach( $metrics as $name => $metric ) {
+				if( $this->metrics[ $name ][ 'compute_bootstrap' ] !== TRUE ) {
+					continue;
+				}
 
-				$this->logger->log( "Generating $name samples for {$config['url_key']}." ); 
+				$this->logger->log( "Generating $name samples for {$config['url_key']}." );
 				$samples = $this->sampler->generateSamples( $metric, iterator_to_array( $sentences ) );
 				$this->tasksModel->addSamples( $metadata['task_id'], $name, $samples );
 				$this->logger->log( "Samples generated." );
 			}
 		}
 
-		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $metrics );
+		$this->tasksModel->addSentences( $metadata['task_id'], $sentences, $sentenceMetrics );
 
 		if( $config[ 'precompute_ngrams' ] ) {
 			$this->logger->log( "Precomputing n-grams for {$config['url_key']}." );
-			$this->ngramsModel->precomputeNgrams( $config['experiment']['id'], $metadata['task_id'] ); 
+			$this->ngramsModel->precomputeNgrams( $config['experiment']['id'], $metadata['task_id'] );
 			$this->logger->log( "N-grams precomputation done." );
-		}
-	}
-
-	private function getMetricName( $name, $isCaseSensitive ) {
-		if( $isCaseSensitive ) {
-			return $name;
-		} else {
-			return $name . '-cis';
 		}
 	}
 

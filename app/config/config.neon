@@ -80,15 +80,56 @@ common:
 					@ngramsCounterPreprocessor
 				] ),
 				[
-					BLEU: @bleuMetric,
-					PRECISION: @arithmeticPrecisionMetric,
-					RECALL: @arithmeticRecallMetric,
-					F-MEASURE: @fmeasureMetric,
-					#H-WORDORDER: @hjersonWOMetric,
-					#H-ADDITION: @hjersonAdditionMetric,
-					#H-MISTRANSLATION: @hjersonMistranslationMetric,
-					#H-OMISSION: @hjersonOmissionMetric,
-					#H-FORM: @hjersonFormMetric,
+					BLEU-cis: [
+						class: @bleuMetric,
+						case_sensitive: False,
+						compute_bootstrap: True,
+					],
+					BLEU: [
+						class: @bleuMetric,
+						case_sensitive: True,
+						compute_bootstrap: False,
+					],
+					PRECISION: [
+						class: @arithmeticPrecisionMetric,
+						case_sensitive: False,
+						compute_bootstrap: False,
+					],
+					RECALL: [
+						class: @arithmeticRecallMetric,
+						case_sensitive: False,
+						compute_bootstrap: False,
+					],
+					F-MEASURE: [
+						class: @fmeasureMetric,
+						case_sensitive: False,
+						compute_bootstrap: False,
+					],
+					#H-WORDORDER: [
+					#	class: @hjersonWOMetric,
+					#	case_sensitive: False,
+					#	compute_bootstrap: False,
+					#],
+					#H-ADDITION: [
+					#	class: @hjersonAdditionMetric,
+					#	case_sensitive: False,
+					#	compute_bootstrap: False,
+					#],
+					#H-MISTRANSLATION: [
+					#	class: @hjersonMistranslationMetric,
+					#	case_sensitive: False,
+					#	compute_bootstrap: False,
+					#],
+					#H-OMISSION: [
+					#	class: @hjersonOmissionMetric,
+					#	case_sensitive: False,
+					#	compute_bootstrap: False,
+					#],
+					#H-FORM: [
+					#	class: @hjersonFormMetric,
+					#	case_sensitive: False,
+					#	compute_bootstrap: False,
+					#],
 				]
 			)
 			setup:
@@ -106,11 +147,6 @@ common:
 		ngramsPreprocessor: NGramsPreprocessor
 		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
 		ngramsCounterPreprocessor: NGramsCounterPreprocessor
-
-
-
-
-
 
 production < common:
 
