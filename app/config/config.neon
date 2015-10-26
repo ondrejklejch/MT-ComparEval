@@ -79,62 +79,64 @@ common:
 					@confirmedNGramsPreprocessor
 					@ngramsCounterPreprocessor
 				] ),
-				[
-					BLEU-cis: [
-						class: @bleuMetric,
-						case_sensitive: False,
-						compute_bootstrap: True,
-					],
-					BLEU: [
-						class: @bleuMetric,
-						case_sensitive: True,
-						compute_bootstrap: False,
-					],
-					PRECISION: [
-						class: @arithmeticPrecisionMetric,
-						case_sensitive: False,
-						compute_bootstrap: False,
-					],
-					RECALL: [
-						class: @arithmeticRecallMetric,
-						case_sensitive: False,
-						compute_bootstrap: False,
-					],
-					F-MEASURE: [
-						class: @fmeasureMetric,
-						case_sensitive: False,
-						compute_bootstrap: False,
-					],
-					#H-WORDORDER: [
-					#	class: @hjersonWOMetric,
-					#	case_sensitive: False,
-					#	compute_bootstrap: False,
-					#],
-					#H-ADDITION: [
-					#	class: @hjersonAdditionMetric,
-					#	case_sensitive: False,
-					#	compute_bootstrap: False,
-					#],
-					#H-MISTRANSLATION: [
-					#	class: @hjersonMistranslationMetric,
-					#	case_sensitive: False,
-					#	compute_bootstrap: False,
-					#],
-					#H-OMISSION: [
-					#	class: @hjersonOmissionMetric,
-					#	case_sensitive: False,
-					#	compute_bootstrap: False,
-					#],
-					#H-FORM: [
-					#	class: @hjersonFormMetric,
-					#	case_sensitive: False,
-					#	compute_bootstrap: False,
-					#],
-				]
+				@enabledMetrics,
 			)
 			setup:
 				- setLogger( @logger )
 				- setNormalizer( @normalizer )
+
+		enabledMetrics:	EnabledMetricsList( [
+			BLEU-cis: [
+				class: @bleuMetric,
+				case_sensitive: False,
+				compute_bootstrap: True,
+			],
+			BLEU: [
+				class: @bleuMetric,
+				case_sensitive: True,
+				compute_bootstrap: False,
+			],
+			PRECISION: [
+				class: @arithmeticPrecisionMetric,
+				case_sensitive: False,
+				compute_bootstrap: False,
+			],
+			RECALL: [
+				class: @arithmeticRecallMetric,
+				case_sensitive: False,
+				compute_bootstrap: False,
+			],
+			F-MEASURE: [
+				class: @fmeasureMetric,
+				case_sensitive: False,
+				compute_bootstrap: False,
+			],
+			#H-WORDORDER: [
+			#	class: @hjersonWOMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-ADDITION: [
+			#	class: @hjersonAdditionMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-MISTRANSLATION: [
+			#	class: @hjersonMistranslationMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-OMISSION: [
+			#	class: @hjersonOmissionMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-FORM: [
+			#	class: @hjersonFormMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+		] )
 
 		# Importers dependencies
 		logger: EchoLogger
