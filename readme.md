@@ -85,3 +85,11 @@ A curl command to create a task:
 ```bash
 curl -X POST -F "name=task name" -F "description=description" -F "experiment_id=1" -F "translation=@translation.txt" http://localhost:8080/api/tasks/upload
 ```
+
+## How to remove a task manually
+
+* Retrieve the experiment id from frontend. When you open an experiment you can see the id in the URL.
+* Stop watcher
+* Remove task from folder `data/.../`
+* Find out task id, e.g. `sqlite3 storage/database "SELECT id, name FROM tasks WHERE experiments_id=XYZ"`;
+* Delete task: `sqlite3 storage/database "sqlite3 storage/database "DELETE FROM tasks WHERE id=ABC";"`
