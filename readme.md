@@ -93,3 +93,4 @@ curl -X POST -F "name=task name" -F "description=description" -F "experiment_id=
 * Remove task from folder `data/.../`
 * Find out task id, e.g. `sqlite3 storage/database "SELECT id, name FROM tasks WHERE experiments_id=XYZ"`;
 * Delete task: `sqlite3 storage/database "sqlite3 storage/database "DELETE FROM tasks WHERE id=ABC";"`
+* Restart watcher
