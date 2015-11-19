@@ -60,7 +60,7 @@ class GeometricRecall implements IMetric {
 			$geometricAverage += 1/4 * log( $recall );
 		}
 
-		return number_format( exp( $geometricAverage ), 4 );
+		return number_format( exp( $geometricAverage ) * 100, 2 );
 	}
 
 }

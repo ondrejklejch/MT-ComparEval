@@ -41,7 +41,7 @@ class Bleu implements IMetric {
 	public function computeBleu( $precision, $referenceLength, $translationLength ) {
 		$brevityPenalty = $this->computeBrevityPenalty( $referenceLength, $translationLength );
 
-		return number_format( $brevityPenalty * $precision, 4 );
+		return number_format( $brevityPenalty * $precision, 2 );
 	}
 
 	private function computeBrevityPenalty( $referenceLength, $translationLength ) {
