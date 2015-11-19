@@ -58,28 +58,32 @@ $(document).ready( function() {
 				"experimentId": {!$experimentId}
 			};
 
-			$http.get( '{!$basePath}/api/tasks', payload ).success( function( data ) {
-				$scope.tasks = data.tasks;
-				$scope.showAdministration = data.show_administration;
-			} );
+			$http.get( '{!$basePath}/api/tasks', payload )
+				.then( function( response ) {
+					var data = response.data;
+					$scope.tasks = data.tasks;
+					$scope.showAdministration = data.show_administration;
 
-			$http.get( '{!$basePath}/api/metrics/scores-in-experiment', payload ).success( function( data ) {
-				$scope.$watch( function() { return $scope.hiddenTasks; }, function( value ) {
-					loadScores();
-				} );
+					return $http.get( '{!$basePath}/api/metrics/scores-in-experiment', payload );
+				} )
+				.then( function( response ) {
+					var data = response.data;
+					$scope.$watch( function() { return $scope.hiddenTasks; }, function( value ) {
+						loadScores();
+					} );
 
-				$scope.metrics = data.metrics;
-				$scope.metrics.forEach( function( metric ) {
-					for( taskId in metric[ 'data' ] ) {
-						$scope.tasks[ taskId ][ metric[ 'name' ] ] = metric[ 'data' ][ taskId ];
-					}
-				} );
+					$scope.metrics = data.metrics;
+					$scope.metrics.forEach( function( metric ) {
+						for( taskId in metric[ 'data' ] ) {
+							$scope.tasks[ taskId ][ metric[ 'name' ] ] = metric[ 'data' ][ taskId ];
+						}
+					} );
 
-				$scope.tasks = array_values( $scope.tasks );
-				$scope.tasks.forEach( function( task ) {
-					task[ 'show' ] = true;
+					$scope.tasks = array_values( $scope.tasks );
+					$scope.tasks.forEach( function( task ) {
+						task[ 'show' ] = true;
+					} );
 				} );
-			} );
 		}
 
 		function loadScores() {
@@ -118,7 +122,7 @@ $(document).ready( function() {
 				"chart": {
 					"zoomType": "x",
 				},
-				"colors": colorsArray, 
+				"colors": colorsArray,
 				"temp": [
 					"#468847",
 					"#b94a48",
