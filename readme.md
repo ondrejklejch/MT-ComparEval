@@ -90,7 +90,7 @@ curl -X POST -F "name=task name" -F "description=description" -F "experiment_id=
 
 * Retrieve the experiment id from frontend. When you open an experiment you can see the id in the URL.
 * Stop watcher
-* Remove task from folder `data/.../`
+* Remove task from folder `data/.../` (or if you want to reimport the task after watcher is restarted, delete the hidden files `.imported` and `.notimported`)
 * Find out task id, e.g. `sqlite3 storage/database "SELECT id, name FROM tasks WHERE experiments_id=XYZ"`;
 * Delete task: `sqlite3 storage/database "sqlite3 storage/database "DELETE FROM tasks WHERE id=ABC";"`
 * Restart watcher
