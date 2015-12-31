@@ -14,7 +14,7 @@ class GeometricRecall implements IMetric {
 		$this->referenceNGrams = $this->confirmedNGrams = array( 1 => 0, 2 => 0, 3 => 0, 4 => 0 );
 	}
 
-	public function addSentence( $reference, $reference, $meta ) {
+	public function addSentence( $reference, $translation, $meta ) {
 		$this->addReferenceNGrams( $meta[ 'reference_ngrams_counts' ] );
 		$this->addConfirmedNgrams( $meta[ 'confirmed_ngrams_counts' ] );
 
