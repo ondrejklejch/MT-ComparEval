@@ -42,6 +42,7 @@ CREATE TABLE "metrics" (
   "name" text NOT NULL
 );
 
+INSERT INTO `metrics` (`id`, `name`) VALUES (0, 'BREVITY-PENALTY');
 INSERT INTO `metrics` (`id`, `name`) VALUES (1, 'BLEU');
 INSERT INTO `metrics` (`id`, `name`) VALUES (2, 'BLEU-cis');
 INSERT INTO `metrics` (`id`, `name`) VALUES (3, 'PRECISION');

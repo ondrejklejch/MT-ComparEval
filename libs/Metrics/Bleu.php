@@ -6,60 +6,34 @@
 class Bleu implements IMetric {
 
 	private $precision;
-	private $referenceLength;
-	private $translationLength;
+	private $brevityPenalty;
 
-	public function __construct( GeometricPrecision $precision ) {
+	public function __construct( GeometricPrecision $precision, BrevityPenalty $brevityPenalty ) {
 		$this->precision = $precision;
+		$this->brevityPenalty = $brevityPenalty;
 	}
 
 	public function init() {
 		$this->precision->init();
-		$this->referenceLength = 0;
-		$this->translationLength = 0;
+		$this->brevityPenalty->init();
 	}
 
 	public function addSentence( $reference, $translation, $meta ) {
 		$precision = $this->precision->addSentence( $reference, $translation, $meta );
-		$referenceLength = $meta[ 'reference_ngrams_counts'][1];
-		$translationLength = $meta[ 'translation_ngrams_counts'][1];
+		$brevityPenalty = $this->brevityPenalty->addSentence( $reference, $translation, $meta );
 
-		$this->referenceLength += $referenceLength;
-		$this->translationLength += $translationLength;
-
-		return $this->computeBleu( $precision, $referenceLength, $translationLength );
+		return $this->computeBleu( $precision, $brevityPenalty );
 	}
 
 	public function getScore() {
 		$precision = $this->precision->getScore();
-		$referenceLength = $this->referenceLength;
-		$translationLength = $this->translationLength;
+		$brevityPenalty = $this->brevityPenalty->getScore();
 
-		return $this->computeBleu( $precision, $referenceLength, $translationLength );
+		return $this->computeBleu( $precision, $brevityPenalty );
 	}
 
-	public function computeBleu( $precision, $referenceLength, $translationLength ) {
-		$brevityPenalty = $this->computeBrevityPenalty( $referenceLength, $translationLength );
-
+	public function computeBleu( $precision, $brevityPenalty ) {
 		return number_format( $brevityPenalty * $precision, 2 );
 	}
-
-	private function computeBrevityPenalty( $referenceLength, $translationLength ) {
-		if( $translationLength <= $referenceLength ) {
-			return exp( 1 - $referenceLength / $translationLength );
-		} else {
-			return 1;
-		}
-	}
-
-
-
-
-
-
-
-
-
-
 
 }

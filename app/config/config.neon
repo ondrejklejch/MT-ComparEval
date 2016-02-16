@@ -44,7 +44,8 @@ common:
 		ngrams: CachedNGrams
 
 		# Metrics
-		bleuMetric: Bleu( @geometricPrecisionMetric )
+		brevityPenaltyMetric: BrevityPenalty
+		bleuMetric: Bleu( @geometricPrecisionMetric, @brevityPenaltyMetric )
 		#hjersonWOMetric: Hjerson("bhypRer", @hjersonCache)
 		#hjersonFormMetric: Hjerson("bhypINFer", @hjersonCache)
 		#hjersonOmissionMetric: Hjerson("bMISer", @hjersonCache)
@@ -86,6 +87,11 @@ common:
 				- setNormalizer( @normalizer )
 
 		enabledMetrics:	EnabledMetricsList( [
+			BREVITY-PENALTY: [
+				class: @brevityPenaltyMetric,
+				case_sensitive: False,
+				compute_bootstrap: False,
+			],
 			BLEU-cis: [
 				class: @bleuMetric,
 				case_sensitive: False,
