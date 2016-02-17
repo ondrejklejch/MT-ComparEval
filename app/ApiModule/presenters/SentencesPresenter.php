@@ -8,9 +8,11 @@ namespace ApiModule;
 class SentencesPresenter extends \Nette\Application\UI\Presenter {
 
 	private $sentencesModel;
+	private $httpRequest;
 
-	public function __construct( \Sentences $sentencesModel ) {
+	public function __construct( \Sentences $sentencesModel, \Nette\Http\Request $httpRequest ) {
 		$this->sentencesModel = $sentencesModel;
+		$this->httpRequest = $httpRequest;
 	}
 
 	public function renderDefault( array $taskIds, $offset = 0, $limit = 20, $orderBy = 'id', $order = 'asc' ) {
@@ -24,9 +26,13 @@ class SentencesPresenter extends \Nette\Application\UI\Presenter {
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
-	public function renderById( array $taskIds, $sentences, $offset = 0, $limit = 20 ) {
-		$taskIds = array_values( $taskIds );
-		$sentencesIds = explode( ',', $sentences );
+	public function renderById() {
+		$params = (array) \Nette\Utils\Json::decode( $this->httpRequest->getRawBody() )->params;
+
+		$taskIds = array( $params["taskIds[0]"], $params["taskIds[1]"] );
+		$sentencesIds = explode( ',', $params["sentences"] );
+		$offset = $params["offset"];
+		$limit = $params["limit"];
 
 		$response = array();
 		$response['offset'] = $offset;

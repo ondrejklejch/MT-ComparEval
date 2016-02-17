@@ -93,7 +93,7 @@ function Sentences( $scope, $http ) {
 				$scope.sentencesToLoadCount[ sentenceId ] = 0;
 			}
 
-			$scope.sentencesToLoadCount[ sentenceId ]++; 
+			$scope.sentencesToLoadCount[ sentenceId ]++;
 		} );
 
 		$('a[href="#sentences"]').tab('show');
@@ -576,24 +576,19 @@ function Sentences( $scope, $http ) {
 	}
 
 	function createSentenceRequest() {
-		return $http.get( getSentenceRequestUrl(), getSentenceRequestPayload() )
-	}
-
-
-	function getSentenceRequestUrl() {
 		if ( $scope.sentencesToLoad.length == 0 ) {
-			return '{!$basePath}/api/sentences';
+			return $http.get( '{!$basePath}/api/sentences', getSentenceRequestPayload() )
 		} else {
- 			return '{!$basePath}/api/sentences/by-id';
+			return $http.post( '{!$basePath}/api/sentences/by-id', getSentenceRequestPayload() )
 		}
 	}
 
 	function getSentenceRequestPayload() {
 		var payload = {};
 		payload.params = {
-				"taskIds[0]": $scope.task0,
-				"offset": $scope.offset,
-				"limit": 10,
+			"taskIds[0]": $scope.task0,
+			"offset": $scope.offset,
+			"limit": 10,
 		};
 
 		if( $scope.task1 != "" ) {
@@ -886,7 +881,7 @@ function Sentences( $scope, $http ) {
 
 			<div ng-hide="confirmedNgrams || loadingConfirmedNgrams" class="alert">
 				Confirmed n-grams can't be shown because they were not precomputed.
-				If you really want to show confirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.				
+				If you really want to show confirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.
 			</div>
 
 			<div class="alert text-center" ng-show="loadingConfirmedNgrams">
