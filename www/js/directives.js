@@ -23,15 +23,15 @@ angular.module( 'MT-ComparEval', [] )
 								events: {
 									show: function(e){
 										if (e.target._i >= 0){
-											var index = e.target._i + 2;
-											$('.tasksTable th').eq(index).show();
+											var index = e.target._i + 3;
+											$('.tasksTable th:nth-child(' + index + ')').show();
 											$('.tasksTable td:nth-child(' + index + ')').show();
 										}
 									},
 									hide: function(e){
 										if (e.target._i >= 0){
-											var index = e.target._i + 2;
-											$('.tasksTable th').eq(index).hide();
+											var index = e.target._i + 3;
+											$('.tasksTable th:nth-child(' + index + ')').hide();
 											$('.tasksTable td:nth-child(' + index + ')').hide();
 										}
 									}
