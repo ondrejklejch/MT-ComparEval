@@ -146,9 +146,12 @@ common:
 
 		# Importers dependencies
 		logger: EchoLogger
-		normalizer: MTEvalNormalizer
 		tokenizer: Tokenizer( true )
 		ngramizer: NGramizer
+
+		# Replace MTEvalInternationalNormalizer with MTEvalNormalizer
+		# if you want to get results compatible with matrix.statmt.org
+		normalizer: MTEvalInternationalNormalizer
 
 		# Sentences preprocessors
 		initialPreprocessor: InitialPreprocessor
