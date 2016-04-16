@@ -35,7 +35,11 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 					$existing = $this->usersModel->registerFromGoogle($google->getUser(), $me);
 				}
 
-				$existing->roles = array();
+				if ( in_array( $existing->email, $this->context->parameters["administrators"] ) ) {
+					$existing->roles = array( "admin" );
+				} else {
+					$existing->roles = array();
+				}
 
 				$this->user->login(new \Nette\Security\Identity($existing->id, $existing->roles, $existing));
 			} catch (\Exception $e) {
