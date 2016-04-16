@@ -14,7 +14,11 @@ class Users {
 			->wherePrimary( $id )
 			->fetch();
 
-		return $this->getUserDataAsObject($data);
+		if ( $data ) {
+			return $this->getUserDataAsObject($data);
+		} else {
+			return FALSE;
+		}
 	}
 
 	private function getUserDataAsObject($data) {
@@ -22,7 +26,8 @@ class Users {
 			"id" => $data["id"],
 			"name" => $data["name"],
 			"email" => $data["email"],
-			"picture" => $data["picture"]
+			"picture" => $data["picture"],
+			"token" => $data["token"],
 		);
 	}
 
@@ -32,6 +37,7 @@ class Users {
 			"name" => $data["name"],
 			"email" => $data["email"],
 			"picture" => $data["picture"],
+			"token" => \Nette\Utils\Random::generate(32)
 		);
 
 		$this->db->table( 'users' )
