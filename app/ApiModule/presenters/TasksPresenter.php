@@ -18,7 +18,6 @@ class TasksPresenter extends BasePresenter {
 
 	public function renderDefault( $experimentId ) {
 		$parameters = $this->context->getParameters();
-		$show_administration = $parameters[ "show_administration" ];
 
 		$response = array();
 		$response[ 'tasks' ] = array();
@@ -26,20 +25,25 @@ class TasksPresenter extends BasePresenter {
 			$taskResponse[ 'id' ] = $task->id;
 			$taskResponse[ 'name' ] = $task->name;
 			$taskResponse[ 'description' ] = $task->description;
-			if( $show_administration ) {
+			if( call_user_func( $this->canTaskBeRemoved, $task ) ) {
+				$taskResponse[ 'show_administration' ] = TRUE;
 				$taskResponse[ 'edit_link' ] = $this->link( ':Tasks:edit', $task->id );
 				$taskResponse[ 'delete_link' ] = $this->link( ':Tasks:delete', $task->id );
+			} else {
+				$taskResponse[ 'show_administration' ] = FALSE;
 			}
 
 			$response[ 'tasks' ][ $task->id ] = $taskResponse;
 		}
 
-		$response[ 'show_administration' ] = $show_administration;
-
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 	}
 
 	public function renderUpload() {
+		if ( !call_user_func( $this->isInsertAllowed ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$name = $this->getPostParameter( 'name' );
 		$url_key = \Nette\Utils\Strings::webalize( $name );
 		$description = $this->getPostParameter( 'description' );

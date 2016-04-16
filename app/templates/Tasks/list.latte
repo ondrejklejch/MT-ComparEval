@@ -62,7 +62,6 @@ $(document).ready( function() {
 				.then( function( response ) {
 					var data = response.data;
 					$scope.tasks = data.tasks;
-					$scope.showAdministration = data.show_administration;
 
 					return $http.get( '{!$basePath}/api/metrics/scores-in-experiment', payload );
 				} )
@@ -206,7 +205,7 @@ $(document).ready( function() {
 
 		<form>
 			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
-			{if $showAdministration}
+			{if $isInsertAllowed()}
 				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
 			{/if}
 			<br><br>
@@ -222,7 +221,7 @@ $(document).ready( function() {
 						<a ng-click="changeOrder( metric[ 'name' ] )">{{ metric[ 'name' ] }}</a>
 						<span class="icon" ng-class="{ 'icon-arrow-up': !ascending, 'icon-arrow-down': ascending}" ng-show="order == metric[ 'name' ]"></span>
 					</th>
-					<th class="span2"></th>
+					<th class="span3"></th>
 				</tr>
 				<tr ng-repeat="task in tasks | filter:{ show: true } | orderBy:getOrderByValue:ascending">
 					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'id' ] }}"/>{{ task[ 'name' ] }}</th>
@@ -234,16 +233,16 @@ $(document).ready( function() {
 					<td ng-repeat="metric in metrics" class="span2" style="text-align:center">{{ task[ metric[ 'name' ] ] }}</td>
 					<td>
 						<div class="text-right">
+							<a href="{{ task[ 'edit_link' ] }}" ng-show="task['show_administration']">edit</a>
+							<a href="{{ task[ 'delete_link' ] }}" ng-show="task['show_administration']" onclick="return confirm('do you really want to delete this? there is no way to undo this action')">delete</a>
 							<a ng-click="hideTask( task )">hide</a>
-							<a href="{{ task[ 'edit_link' ] }}" ng-show="showAdministration">edit</a>
-							<a href="{{ task[ 'delete_link' ] }}" ng-show="showAdministration" onclick="return confirm('do you really want to delete this? there is no way to undo this action')">delete</a>
 						</div>
 					</td>
 				</tr>
 			</table>
 
 			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
-			{if $showAdministration}
+			{if $isInsertAllowed()}
 				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
 			{/if}
 

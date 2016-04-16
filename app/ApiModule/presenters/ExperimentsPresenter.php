@@ -12,6 +12,10 @@ class ExperimentsPresenter extends BasePresenter {
 	}
 
 	public function renderUpload() {
+		if ( !call_user_func( $this->isInsertAllowed ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$name = $this->getPostParameter( 'name' );
 		$url_key = \Nette\Utils\Strings::webalize( $name );
 		$description = $this->getPostParameter( 'description' );
@@ -54,6 +58,11 @@ class ExperimentsPresenter extends BasePresenter {
 	}
 
 	public function renderDelete( $id ) {
+		$data = $this->experimentsModel->getExperimentById( $id );
+		if ( !call_user_func( $this->canExperimentBeRemoved, $data ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$response = array( 'status' => (bool) $this->model->deleteExperiment( $id ) );
 
 		$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );

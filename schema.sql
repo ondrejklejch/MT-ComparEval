@@ -11,7 +11,9 @@ CREATE TABLE "experiments" (
   "name" text NOT NULL,
   "url_key" text NOT NULL UNIQUE,
   "description" text NOT NULL,
-  "visible" integer(0) NULL
+  "visible" integer(0) NULL,
+  "created_by" varchar(32) DEFAULT NULL,
+  FOREIGN KEY ("created_by") REFERENCES "users" ("id") ON DELETE CASCADE
 );
 
 
@@ -30,6 +32,8 @@ CREATE TABLE "tasks" (
   "name" text NOT NULL,
   "url_key" text NOT NULL,
   "description" text NULL, "visible" integer(0) NULL,
+  "created_by" varchar(32) DEFAULT NULL,
+  FOREIGN KEY ("created_by") REFERENCES "users" ("id") ON DELETE CASCADE,
   FOREIGN KEY ("experiments_id") REFERENCES "experiments" ("id") ON DELETE CASCADE,
   UNIQUE("experiments_id","url_key")
 );

@@ -2,7 +2,7 @@
 
 namespace ApiModule;
 
-class BasePresenter extends \Nette\Application\UI\Presenter {
+class BasePresenter extends \BasePresenter {
 
 	private $httpRequest;
 

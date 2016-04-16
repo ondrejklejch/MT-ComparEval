@@ -10,6 +10,35 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 
 	private $usersModel;
 
+	protected $isInsertAllowed;
+
+	protected $canExperimentBeRemoved;
+
+	protected $canTaskBeRemoved;
+
+	public function startup() {
+		parent::startup();
+
+		$parameters = $this->context->getParameters();
+		$user = $this->user;
+		$this->isInsertAllowed = function() use ($parameters, $user) {
+			return $parameters[ "show_administration" ] || $user->isLoggedIn();
+		};
+
+		$this->canExperimentBeRemoved = function($experiment) use ($parameters, $user) {
+			return $parameters[ "show_administration" ] ||
+				$user->isInRole( "admin" ) ||
+				$user->isLoggedIn() && $experiment[ "created_by" ] === $user->getId();
+		};
+
+		$this->canTaskBeRemoved = function($task) use ($parameters, $user) {
+			return $parameters[ "show_administration" ] ||
+				$user->isInRole( "admin" ) ||
+				$user->isLoggedIn() && $task[ "created_by" ] == $user->getId();
+		};
+	}
+
+
 	public function actionLogout() {
 		$this->user->logout();
 		$this->redirect(':Experiments:list');
@@ -56,7 +85,9 @@ abstract class BasePresenter extends Nette\Application\UI\Presenter
 	public function beforeRender() {
 		$parameters = $this->context->getParameters();
 		$this->template->title = $parameters[ "title" ];
-		$this->template->showAdministration = $parameters[ "show_administration" ];
+		$this->template->isInsertAllowed = $this->isInsertAllowed;
+		$this->template->canExperimentBeRemoved = $this->canExperimentBeRemoved;
+		$this->template->canTaskBeRemoved = $this->canTaskBeRemoved;
 	}
 
 }

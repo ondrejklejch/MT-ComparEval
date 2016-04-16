@@ -18,6 +18,10 @@ class ExperimentsPresenter extends BasePresenter {
 
 	public function actionEdit( $id ) {
 		$data = $this->experimentsModel->getExperimentById( $id );
+		if ( !call_user_func( $this->canExperimentBeRemoved, $data ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$this->getComponent( 'editForm' )->setDefaults( $data );
 	}
 
@@ -34,6 +38,11 @@ class ExperimentsPresenter extends BasePresenter {
 	}
 
 	public function actionDelete( $id ) {
+		$data = $this->experimentsModel->getExperimentById( $id );
+		if ( !call_user_func( $this->canExperimentBeRemoved, $data ) ) {
+			throw \Nette\Security\AuthenticationException();
+		}
+
 		$this->experimentsModel->deleteExperiment( $id );
 
 		$this->redirect( 'list' );

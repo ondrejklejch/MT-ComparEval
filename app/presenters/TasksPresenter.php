@@ -33,6 +33,10 @@ class TasksPresenter extends BasePresenter {
 
 	public function actionEdit( $id ) {
 		$data = $this->tasksModel->getTaskById( $id );
+		if ( !call_user_func( $this->canTaskBeRemoved, $data ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$this->getComponent( 'editForm' )->setDefaults( $data );
 	}
 
@@ -50,6 +54,11 @@ class TasksPresenter extends BasePresenter {
 	}
 
 	public function actionDelete( $taskId ) {
+		$data = $this->tasksModel->getTaskById( $id );
+		if ( !call_user_func( $this->canTaskBeRemoved, $data ) ) {
+			throw new \Nette\Security\AuthenticationException();
+		}
+
 		$experimentId = $this->tasksModel->getTask( $taskId )->experiments_id;
 		$this->tasksModel->deleteTask( $taskId );
 
