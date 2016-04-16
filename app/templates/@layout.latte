@@ -47,6 +47,17 @@
 					<div class="container">
 						<a class="brand" href="{$basePath}/">{$title}</a>
 						{block title}{/block}
+
+						{if $user->isLoggedIn()}
+							<div class="pull-right">
+								<p class="navbar-text">
+									You are logged in as {$user->getIdentity()->name}
+									(<a href="{plink logout}">Logout</a>)
+								</p>
+							</div>
+						{else}
+							<a href="{plink googleLogin-open!}" class="btn btn-default pull-right">Login with Google+</a>
+						{/if}
 					</div>
 				</div>
 			</div>

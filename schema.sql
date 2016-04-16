@@ -1,3 +1,10 @@
+CREATE TABLE "users" (
+  "id" varchar(32) NOT NULL PRIMARY KEY,
+  "email" varchar(128) NOT NULL,
+  "name" varchar(128) NOT NULL,
+  "picture" varchar(128) NOT NULL
+);
+
 CREATE TABLE "experiments" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "name" text NOT NULL,

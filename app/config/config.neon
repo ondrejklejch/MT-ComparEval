@@ -5,6 +5,11 @@
 # http://nette.org/security-warning
 #
 common:
+	google:
+	    clientId: "clientId"
+	    clientSecret: "clientSecret"
+	    returnUri: ':Experiments:list'(do=googleLogin-response)
+
 	parameters:
 		title: MT-ComparEval
 		show_administration: true
@@ -37,6 +42,7 @@ common:
 		cacheStorage:
 				class: Nette\Caching\Storages\DevNullStorage
 		# Models
+		users: Users
 		experiments: Experiments
 		tasks: Tasks
 		sentences: Sentences
@@ -158,6 +164,9 @@ common:
 		ngramsPreprocessor: NGramsPreprocessor
 		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
 		ngramsCounterPreprocessor: NGramsCounterPreprocessor
+
+	extensions:
+		google: Kdyby\Google\DI\GoogleExtension
 
 production < common:
 
