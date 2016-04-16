@@ -25,7 +25,8 @@ class ExperimentsPresenter extends BasePresenter {
 		$data = array(
 			'name' => $name,
 			'description' => $description,
-			'url_key' => $url_key
+			'url_key' => $url_key,
+			'created_by' => $this->user->getId(),
 		);
 
 		$path = __DIR__ . '/../../../data/' . $url_key . '/';

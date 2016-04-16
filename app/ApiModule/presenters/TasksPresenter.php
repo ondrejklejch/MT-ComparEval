@@ -54,7 +54,8 @@ class TasksPresenter extends BasePresenter {
 			'name' => $name,
 			'description' => $description,
 			'url_key' => $url_key,
-			'experiments_id' => $experiment_id
+			'experiments_id' => $experiment_id,
+			'created_by' => $this->user->getId(),
 		);
 
 		$experiment = $this->experimentsModel->getExperimentById( $experiment_id );

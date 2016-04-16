@@ -3,18 +3,23 @@
 
 {if count($experiments)}
 <table class="table table-bordered">
+	<tr>
+		<th class="span3">Name</th>
+		<th>Description</th>
+		<th class="span2"></th>
+	</tr>
 {foreach $experiments->order( 'name' ) as $experiment}
 	<tr class="experiment" data-id="{$experiment['url_key']}">
 		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
-		{if $canExperimentBeRemoved($experiment)}
 		<td class="span2">
+			{if $canExperimentBeRemoved($experiment)}
 			<div class="text-right">
 				<a href="{plink Experiments:edit $experiment['id']}">edit</a>
 				<a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
 			</div>
+			{/if}
 		</td>
-		{/if}
 	</tr>
 {/foreach}
 </table>

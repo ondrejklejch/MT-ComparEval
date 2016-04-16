@@ -54,7 +54,7 @@ class TasksPresenter extends BasePresenter {
 	}
 
 	public function actionDelete( $taskId ) {
-		$data = $this->tasksModel->getTaskById( $id );
+		$data = $this->tasksModel->getTaskById( $taskId );
 		if ( !call_user_func( $this->canTaskBeRemoved, $data ) ) {
 			throw new \Nette\Security\AuthenticationException();
 		}
