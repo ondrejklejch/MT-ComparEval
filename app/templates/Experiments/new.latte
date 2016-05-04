@@ -32,4 +32,10 @@
 			<input type="hidden" name="redirect" value="new" />
 		</div>
 	</div>
+
+	{if $user->isLoggedIn()}
+	<div class="alert alert-success">
+		Use <code>-F "token={$user->getIdentity()->token}"</code> in your curl command if you want to use REST API to upload your experiment.
+	</div>
+	{/if}
 </form>
