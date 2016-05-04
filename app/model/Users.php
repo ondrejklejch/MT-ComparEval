@@ -15,7 +15,19 @@ class Users {
 			->fetch();
 
 		if ( $data ) {
-			return $this->getUserDataAsObject($data);
+			return $this->getUserDataAsObject( $data );
+		} else {
+			return FALSE;
+		}
+	}
+
+	public function findByToken($token) {
+		$data = $this->db->table( 'users' )
+			->where( 'token', $token )
+			->fetch();
+
+		if ( $data ) {
+			return $this->getUserDataAsObject( $data );
 		} else {
 			return FALSE;
 		}
