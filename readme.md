@@ -8,10 +8,15 @@ It allows users to compare translations according to several criteria, such as:
 MT-ComparEval also plots a chart with absolute differences of metrics computed on single sentences
   and a chart with values obtained from paired bootstrap resampling.
 
-
 MT-ComparEval is distributed under Apache 2.0 license with an exception of [Highcharts.js](http://www.highcharts.com/) library
   which is distributed under [Creative Commons Attribution-NonCommercial 3.0 License](http://creativecommons.org/licenses/by-nc/3.0/).
 
+# Papers
+When using MT-ComparEval please cite:
+ - Ondřej Klejch, Eleftherios Avramidis, Aljoscha Burchardt, Martin Popel: [MT-ComparEval: Graphical evaluation interface for Machine Translation development](http://ufal.mff.cuni.cz/pbml/104/art-klejch-et-al.pdf). The Prague Bulletin of Mathematical Linguistics, No. 104, 2015, pp. 63–74.
+
+For a user-focused show-case study explaining most of the features, see:
+ - Roman Sudarikov, Martin Popel, Ondrej Bojar, Aljoscha Burchardt, Ondřej Klejch: [Using MT-ComparEval](http://ufal.mff.cuni.cz/~popel/papers/2016_lrec_compareval.pdf). LREC 2016 [MT-Eval Workshop](http://www.cracking-the-language-barrier.eu/mt-eval-workshop-2016/).
 
 # Installation
 In order to be able to run MT-ComparEval several dependencies have to be installed.
