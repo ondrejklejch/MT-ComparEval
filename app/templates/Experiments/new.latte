@@ -35,7 +35,7 @@
 
 	{if $user->isLoggedIn()}
 	<div class="alert alert-success">
-		Use <code>-F "token={$user->getIdentity()->token}"</code> in your curl command if you want to use REST API to upload your experiment.
+		Use <code>-F "token={$user->getIdentity()->token}"</code> in your curl command if you want to use <a href="https://github.com/choko/MT-ComparEval#api-to-create-experiments-and-tasks">REST API</a> to upload your experiment.
 	</div>
 	{/if}
 </form>
