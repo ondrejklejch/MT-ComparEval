@@ -7,9 +7,13 @@ It allows users to compare translations according to several criteria, such as:
 
 MT-ComparEval also plots a chart with absolute differences of metrics computed on single sentences
   and a chart with values obtained from paired bootstrap resampling.
-
 MT-ComparEval is distributed under Apache 2.0 license with an exception of [Highcharts.js](http://www.highcharts.com/) library
   which is distributed under [Creative Commons Attribution-NonCommercial 3.0 License](http://creativecommons.org/licenses/by-nc/3.0/).
+
+# Try it online before installing on your server
+
+- http://wmt.ufal.cz: all systems from the [WMT](http://www.statmt.org/wmt16/) 2014–2016
+- http://mt-compareval.ufal.cz: upload and analyze your translations
 
 # Papers
 When using MT-ComparEval please cite:
