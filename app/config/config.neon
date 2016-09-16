@@ -92,15 +92,15 @@ common:
 				case_sensitive: False,
 				compute_bootstrap: False,
 			],
-			BLEU-cis: [
+			BLEU: [
 				class: @bleuMetric,
 				case_sensitive: False,
 				compute_bootstrap: True,
 			],
-			BLEU: [
+			BLEU-cased: [
 				class: @bleuMetric,
 				case_sensitive: True,
-				compute_bootstrap: False,
+				compute_bootstrap: True,
 			],
 			PRECISION: [
 				class: @arithmeticPrecisionMetric,
