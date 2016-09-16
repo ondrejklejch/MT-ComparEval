@@ -25,7 +25,7 @@ function Sentences( $scope, $http ) {
 	$scope.sentences = [];
 	$scope.offset = 0;
 	$scope.hasNext = true;
-	$scope.currentMetric = 'BLEU-cis';
+	$scope.currentMetric = 'BLEU';
 	$scope.asc = true;
 	$scope.isMatchingActive = true;
 	$scope.isImprovingActive = true;
@@ -70,11 +70,11 @@ function Sentences( $scope, $http ) {
 
 	$scope.sortSentencesAscending = function() {
 		$scope.asc = true;
-	}	
+	}
 
 	$scope.sortSentencesDescending = function() {
 		$scope.asc = false;
-	}	
+	}
 
 	$scope.loadMore = function() {
 		loadSentences();
@@ -150,7 +150,7 @@ function Sentences( $scope, $http ) {
 		payload.params = {
 				"task1": $scope.task0,
 				"task2": $scope.task1,
-				"metric": ( !$scope.currentMetric ) ? 'bleu-cis' : $scope.currentMetric
+				"metric": ( !$scope.currentMetric ) ? 'bleu' : $scope.currentMetric
 		};
 
 		$http.get( '{!$basePath}/api/metrics/results', payload ).success( function( data ) {
@@ -159,11 +159,11 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Sentence-level " + ( $scope.currentMetric || 'bleu-cis' ) + " differences",
+					"text": "Sentence-level " + ( $scope.currentMetric || 'bleu' ) + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -196,7 +196,7 @@ function Sentences( $scope, $http ) {
 
 					},
 				},
-				"series": [ 
+				"series": [
 					{
 						"name": $scope.taskNames[ $scope.task0 ] + " wins",
 						"data": data.diffs.data,
@@ -212,7 +212,7 @@ function Sentences( $scope, $http ) {
 		} );
 
 		$http.get( '{!$basePath}/api/metrics/samples-diff', payload ).success( function( data ) {
-			var all = data.samples.data.length;	
+			var all = data.samples.data.length;
 			var worser = data.samples.data.filter( function( x ) { return x < 0; } ).length;
 			var better = data.samples.data.filter( function( x ) { return x > 0; } ).length;
 
@@ -225,7 +225,7 @@ function Sentences( $scope, $http ) {
 				var p = worser / all;
 				var line = 5;
 			}
-			
+
 			if ( p == 0 ) {
 				var significant = "p-value < 0.001 (significant)";
 			} else if ( p > 0.05 ) {
@@ -242,14 +242,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'bleu-cis' ) + " differences",
+					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " differences",
 				},
 				"subtitle": {
 					"text": $scope.taskNames[ $scope.task0 ] + " is " + isBetter + " than " + $scope.taskNames[ $scope.task1 ] + ": " + significant,
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -316,14 +316,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu-cis' ) + " " + $scope.taskNames[ $scope.task0 ]
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task0 ]
 				},
 				"subtitle": {
-					"text": ( $scope.currentMetric || 'BLEU-cis' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
+					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
 				},
 				"yAxis": {
 					"title": {
-						"text": ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task0 ] + ")",
+						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -395,14 +395,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu-cis' ) + " " + $scope.taskNames[ $scope.task1 ]
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task1 ]
 				},
 				"subtitle": {
-					"text": ( $scope.currentMetric || 'BLEU-cis' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
+					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
 				},
 				"yAxis": {
 					"title": {
-						"text": ( $scope.currentMetric || 'bleu-cis' ) + " (" + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -486,7 +486,7 @@ function Sentences( $scope, $http ) {
 
 		$http.get( '{!$basePath}/api/metrics/scores', payload ).success( function( data ) {
 			$scope.taskMetrics = data;
-			
+
 			var categories = $scope.metrics;
 			var task1Metrics = [];
 			categories.forEach( function( metric ) {
@@ -614,7 +614,7 @@ function Sentences( $scope, $http ) {
 				metricA = sentence.translations[0].metrics[ metric ];
 				metricB = sentence.translations[1].metrics[ metric ];
 
-				sentence.metrics_diff[ metric ] = metricA - metricB; 
+				sentence.metrics_diff[ metric ] = metricA - metricB;
 			} );
 
 
@@ -726,7 +726,7 @@ function Sentences( $scope, $http ) {
 							for( var i = index; i < index + length; i++ ) {
 								isTokenInImproving = isTokenInImproving || improving[ translationNumber ][ i ];
 								var isCurrentWorsening = !translation.tokens[ i ].in_reference &&
-									!translation.tokens[ i ].in_other;  
+									!translation.tokens[ i ].in_other;
 								isTokenInWorsening = isTokenInWorsening || isCurrentWorsening || worsening[ translationNumber ][ i ];
 							}
 
@@ -777,8 +777,8 @@ function Sentences( $scope, $http ) {
 		} else if( sentence.translations.length == 1 ) {
 			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
 		} else {
-			var metricA = parseFloat( sentence.translations[0].metrics[$scope.currentMetric] ); 
-			var metricB = parseFloat( sentence.translations[1].metrics[$scope.currentMetric] ); 
+			var metricA = parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
+			var metricB = parseFloat( sentence.translations[1].metrics[$scope.currentMetric] );
 
 			return metricA - metricB;
 		}
@@ -940,7 +940,7 @@ function Sentences( $scope, $http ) {
 
 			<div ng-hide="unconfirmedNgrams || loadingUnconfirmedNgrams" class="alert">
 				Unconfirmed n-grams can't be shown because they were not precomputed.
-				If you really want to show unconfirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.				
+				If you really want to show unconfirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.
 			</div>
 
 			<div class="alert text-center" ng-show="loadingUnconfirmedNgrams">
