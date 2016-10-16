@@ -7,13 +7,53 @@ use \Nette\Forms\Controls;
 class ExperimentsPresenter extends BasePresenter {
 
 	private $experimentsModel;
+	private $tasksModel;
 
-	public function __construct( Experiments $experimentsModel ) {
+	public function __construct( Experiments $experimentsModel, Tasks $tasksModel ) {
 		$this->experimentsModel = $experimentsModel;
+		$this->tasksModel = $tasksModel;
 	}
 
 	public function renderList() {
 		$this->template->experiments = $this->experimentsModel->getExperiments();
+	}
+
+	public function renderDownload() {
+		$output = fopen( "php://output", "w" ) or die( "Can't open php://output" );
+		header( "Content-Type:application/csv" );
+		header( "Content-Disposition:attachment;filename=statistics.csv" );
+
+		$metricNames = array();
+		foreach( $this->experimentsModel->getExperiments() as $experiment ) {
+			foreach( $this->tasksModel->getTasks( $experiment->id ) as $task ) {
+				$row = array();
+				$row[] = $experiment->name;
+				$row[] = $task->name;
+				$row[] = $task->description;
+
+				$metrics = $this->tasksModel->getTaskMetrics( $task->id );
+				if( !$metricNames ) {
+					$metricNames = array_keys( $metrics );
+				}
+
+				foreach( $metricNames as $metricName ) {
+					$row[] = $metrics[ $metricName ];
+				}
+
+				$data[] = $row;
+			}
+		}
+
+		$header = array( "Experiment", "Task", "Description" );
+		$header = array_merge( $header, $metricNames );
+		fputcsv( $output, $header );
+
+		foreach( $data as $row ) {
+			fputcsv( $output, $row );
+		}
+
+		fclose( $output ) or die( "Can't close php://output" );
+		$this->terminate();
 	}
 
 	public function actionEdit( $id ) {
