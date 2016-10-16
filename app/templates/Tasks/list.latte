@@ -246,6 +246,7 @@ $(document).ready( function() {
 			{if $showAdministration}
 				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
 			{/if}
+			<a href="{plink Tasks:downloadPValues $experimentId, "BLEU"}" class="btn btn-default">Download BLEU p-values</a>
 
 			<div class="alert" ng-show="tasks.length <= 1">
 				You need to import at least 2 tasks to be able to compare them.

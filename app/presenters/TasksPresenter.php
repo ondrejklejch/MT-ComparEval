@@ -10,14 +10,58 @@ class TasksPresenter extends BasePresenter {
 
 	private $experimentsModel;
 
-	public function __construct( Tasks $tasksModel, Experiments $experimentsModel ) {
+	private $metricsModel;
+
+	public function __construct( Tasks $tasksModel, Experiments $experimentsModel, Metrics $metricsModel ) {
 		$this->tasksModel = $tasksModel;
 		$this->experimentsModel = $experimentsModel;
+		$this->metricsModel = $metricsModel;
 	}
 
 	public function renderList( $experimentId ) {
 		$this->template->experimentId = $experimentId;
 		$this->template->experiment = $this->experimentsModel->getExperimentById( $experimentId );
+	}
+
+	public function renderDownloadPValues( $experimentId, $metricName ) {
+		$output = fopen( "php://output", "w" ) or die( "Can't open php://output" );
+		header( "Content-Type:application/csv" );
+		header( "Content-Disposition:attachment;filename=p-values.csv" );
+
+		$tasks = $this->tasksModel->getTasks( $experimentId )->order( "id DESC" )->fetchAll();
+		$header = array("Name");
+		foreach( $tasks as $task ) {
+			$header[] = $task->name;
+		}
+
+		$metricId = $this->metricsModel->getMetricsId( $metricName );
+		$data = array();
+		foreach( $tasks as $task1 ) {
+			$row = array( $task1->name );
+
+			foreach( $tasks as $task2 ) {
+				if( $task1->id <= $task2->id ) {
+					$row[] = "-";
+					continue;
+				}
+
+				$samples = $this->metricsModel->getMetricSamplesDiff( $metricId, $task1->id, $task2->id );
+				$length = count( $samples );
+				$positive = count(array_filter( $samples, function( $x ) { return $x > 0; } ) );
+
+				$row[] = number_format( $positive / $length, 4 );
+			}
+
+			$data[] = $row;
+		}
+
+		fputcsv( $output, $header );
+		foreach( $data as $row ) {
+			fputcsv( $output, $row );
+		}
+
+		fclose( $output ) or die( "Can't close php://output" );
+		$this->terminate();
 	}
 
 	public function renderCompare( $id1, $id2 ) {
