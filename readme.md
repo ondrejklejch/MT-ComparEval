@@ -25,15 +25,22 @@ For a user-focused show-case study explaining most of the features, see:
 # Installation
 In order to be able to run MT-ComparEval several dependencies have to be installed.
 Namely, PHP version 5.4 and Sqlite 3.
-On Ubuntu 14.04 these dependencies can be installed with the following commands.
+On Ubuntu 14.04 these dependencies can be installed with the following commands:
 ```
-sudo apt-get install sqlite3 php5-cli php5-sqlite
+sudo apt-get install sqlite3 php5-cli php5-sqlite curl
 ```
+On Ubuntu 16.04 use:
+```
+sudo apt install sqlite3 php7.0-cli php7.0-sqlite3 curl php7.0-mbstring
+```
+
 
 Then the application can be installed with the following command:
 ```
 bash bin/install.sh
 ```
+During the installation you will be probably asked to enter GitHub OAuth token.
+Just follow the instructions (open the url in your browser, generate the token and enter it).
 
 # Running MT-ComparEval
 To start MT-ComparEval two processes have to be run:
