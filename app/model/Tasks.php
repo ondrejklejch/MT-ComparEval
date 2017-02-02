@@ -143,7 +143,7 @@ class Tasks {
 		foreach( $samples as $position => $score ) {
 			$data = array(
 				'tasks_id' => $taskId,
-				'metrics_id' => $metricId, 
+				'metrics_id' => $metricId,
 				'sample_position' => $position,
 				'score' => $score
 			);
@@ -159,7 +159,7 @@ class Tasks {
 			$task = $this->getTaskById( $taskId );
 			$experiment = $task->experiment;
 
-			if ( $deleteFromFileSystem ) {
+			if ( $task && $deleteFromFileSystem ) {
 				\Nette\Utils\FileSystem::delete( __DIR__ . '/../../data/' . $experiment[ 'url_key' ] . '/' . $task[ 'url_key' ] );
 			}
 
