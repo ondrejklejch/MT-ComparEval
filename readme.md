@@ -12,7 +12,7 @@ MT-ComparEval is distributed under Apache 2.0 license with an exception of [High
 
 # Try it online before installing on your server
 
-- http://wmt.ufal.cz: all systems from the [WMT](http://www.statmt.org/wmt16/) 2014–2016
+- http://wmt.ufal.cz: all systems from the [WMT](http://www.statmt.org/wmt16/) 2014–2017
 - http://mt-compareval.ufal.cz: upload and analyze your translations
 
 # Papers
