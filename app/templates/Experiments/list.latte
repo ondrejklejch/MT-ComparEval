@@ -1,0 +1,31 @@
+{block #content}
+<h1>Experiments</h1>
+
+{if count($experiments)}
+<table class="table table-bordered">
+{foreach $experiments->order( 'name' ) as $experiment}
+	<tr class="experiment" data-id="{$experiment['url_key']}">
+		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
+		<td class="description">{$experiment['description']}</td>
+		{if $showAdministration}
+		<td class="span2">
+			<div class="text-right">
+				<a href="{plink Experiments:edit $experiment['id']}">edit</a>
+				<a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
+			</div>
+		</td>
+		{/if}
+	</tr>
+{/foreach}
+</table>
+{else}
+	<div class="alert">
+		There are no experiments.
+	</div>
+{/if}
+
+{if $showAdministration}
+	<a href="{plink Experiments:new}" class="btn btn-default">New Experiment</a>
+{/if}
+
+<a href="{plink Experiments:download}" class="btn btn-default">Download statistics</a>

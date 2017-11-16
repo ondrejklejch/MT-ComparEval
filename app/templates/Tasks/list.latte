@@ -1,0 +1,261 @@
+{block scripts}
+{include #parent}
+<script type="text/javascript" src="{$basePath}/js/directives.js"></script>
+<script type="text/javascript" src="{$basePath}/js/ngrams.js"></script>
+<script type="text/javascript" src="{$basePath}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$basePath}/js/highcharts.src.js"></script>
+<script type="text/javascript">
+$(document).ready( function() {
+	$('.compare').click( function( event ) {
+		event.preventDefault();
+		var tasksIds = $(this).closest('form')
+			.find( "input:checkbox:checked" )
+			.toArray()
+			.map( function( element ) { return $(element).attr( 'data-task-id' ); } );
+
+		if( tasksIds.length != 2 ) {
+			return alert( "You can compare only 2 tasks." );
+		}
+
+		window.location = "{!$basePath}/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
+	} );
+} );
+</script>
+
+<script type="text/javascript">
+	function Tasks( $scope, $filter, $http ) {
+
+		$scope.hiddenTasks = 0;
+		$scope.chartType = 'line';
+		$scope.order = 'id';
+		$scope.ascending = false;
+
+		$scope.changeOrder = function( order ) {
+			if( $scope.order == order ) {
+				$scope.ascending = !$scope.ascending;
+			} else {
+				$scope.order = order;
+				$scope.ascending = false;
+			}
+
+			loadScores();
+		}
+
+		$scope.getOrderByValue = function( task ) {
+			return task[ $scope.order ];
+		}
+
+		$scope.hideTask = function( task ) {
+			task[ 'show' ] = false;
+			$scope.hiddenTasks++;
+		}
+
+		loadTasks();
+
+		function loadTasks() {
+			var payload = {};
+			payload.params = {
+				"experimentId": {!$experimentId}
+			};
+
+			$http.get( '{!$basePath}/api/tasks', payload )
+				.then( function( response ) {
+					var data = response.data;
+					$scope.tasks = data.tasks;
+					$scope.showAdministration = data.show_administration;
+
+					return $http.get( '{!$basePath}/api/metrics/scores-in-experiment', payload );
+				} )
+				.then( function( response ) {
+					var data = response.data;
+					$scope.$watch( function() { return $scope.hiddenTasks; }, function( value ) {
+						loadScores();
+					} );
+
+					$scope.metrics = data.metrics;
+					$scope.metrics.forEach( function( metric ) {
+						for( taskId in metric[ 'data' ] ) {
+							$scope.tasks[ taskId ][ metric[ 'name' ] ] = metric[ 'data' ][ taskId ];
+						}
+					} );
+
+					$scope.tasks = array_values( $scope.tasks );
+					$scope.tasks.forEach( function( task ) {
+						task[ 'show' ] = true;
+					} );
+				} );
+		}
+
+		function loadScores() {
+			var sortedTasks = $filter( 'orderBy' )( $scope.tasks, $scope.getOrderByValue, $scope.ascending )
+			var categories = [];
+			for( key in sortedTasks ) {
+				if( !sortedTasks[ key ][ 'show' ] ) {
+					continue;
+				}
+
+				categories.push( sortedTasks[ key ][ 'name' ] );
+			}
+
+			var data = [];
+			var selectColor = function selectColor(colorNum, colors){
+				if (colors < 1) colors = 1; // defaults to one color - avoid divide by zero
+				return "hsl(" + (colorNum * (360 / colors) % 360) + ",100%,50%)";
+			};
+			var colorsArray = [];
+			var currentColorNum = 0;
+			var metricsNum = $scope.metrics.length;
+			$scope.metrics.forEach( function( metric, metricKey ) {
+				data[ metricKey ] = { 'name': metric.name, 'data': [] };
+
+				for( key in sortedTasks ) {
+					if( !sortedTasks[ key ][ 'show' ] ) {
+						continue;
+					}
+					colorsArray.push(selectColor(currentColorNum,metricsNum));
+					currentColorNum++;
+					data[ metricKey ][ 'data' ].push( sortedTasks[ key ][ metric.name ] );
+				}
+			} );
+
+			$scope.scores = {
+				"chart": {
+					"zoomType": "x",
+				},
+				"colors": colorsArray,
+				"temp": [
+					"#468847",
+					"#b94a48",
+					"#c09853",
+					"#3a87ad",
+					"#468847",
+					"#b94a48",
+					"#c09853",
+					"#3a87ad"
+				],
+				"title": {
+					"text": "Tasks metric scores progress",
+				},
+				"yAxis": {
+					"title": {
+						"text": "score",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"categories": categories,
+					"title": {
+						"text": "tasks"
+					}
+				},
+				"legend": {
+					"enabled": true,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": true,
+					"shared": true,
+					"crosshairs": true
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": true,
+					},
+				},
+				"series": data
+			};
+		}
+
+		function array_values( object ) {
+			array = [];
+			for( key in object ) {
+				array.push( object[ key ] );
+			}
+
+			return array;
+		}
+	}
+</script>
+{/block}
+
+{block #content}
+<h1>{$experiment["name"]}</h1>
+
+<p>{$experiment["description"]}</p>
+
+<div ng-app="MT-ComparEval" ng-controller="Tasks">
+	<div ng-if="tasks.length > 0">
+		<div ng-if="tasks.length > 1">
+			<div class="btn-group pull-right">
+				<a ng-click="chartType = 'line'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'line' }">Lines</a>
+				<a ng-click="chartType = 'column'" class="btn btn-small" ng-class="{ 'btn-success': chartType == 'column' }">Bars</a>
+			</div>
+
+			<div style="clear: both">
+				<chart value="{{ scores }}" type="{{ chartType }}"> 1"></chart>
+			</div>
+		<div>
+
+
+		<form>
+			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
+			{if $showAdministration}
+				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
+			{/if}
+			<br><br>
+
+			<table class="table table-bordered tasksTable">
+				<tr>
+					<th class="span2">
+						<a ng-click="changeOrder( 'name' )">name</a>
+						<span class="icon" ng-class="{ 'icon-arrow-up': !ascending, 'icon-arrow-down': ascending}" ng-show="order == 'name'"></span>
+					</th>
+					<th class="span3">description</th>
+					<th ng-repeat="metric in metrics" class="span2" style="text-align:center">
+						<a ng-click="changeOrder( metric[ 'name' ] )">{{ metric[ 'name' ] }}</a>
+						<span class="icon" ng-class="{ 'icon-arrow-up': !ascending, 'icon-arrow-down': ascending}" ng-show="order == metric[ 'name' ]"></span>
+					</th>
+					<th class="span2"></th>
+				</tr>
+				<tr ng-repeat="task in tasks | filter:{ show: true } | orderBy:getOrderByValue:ascending">
+					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'id' ] }}"/>{{ task[ 'name' ] }}</th>
+					<td class="description">
+						<span collapse-long collapse-long-text="{{ task[ 'description' ] }}" max-length=20>
+							{{ task[ 'description' ] }}
+						</span>
+					</td>
+					<td ng-repeat="metric in metrics" class="span2" style="text-align:center">{{ task[ metric[ 'name' ] ] }}</td>
+					<td>
+						<div class="text-right">
+							<a ng-click="hideTask( task )">hide</a>
+							<a href="{{ task[ 'edit_link' ] }}" ng-show="showAdministration">edit</a>
+							<a href="{{ task[ 'delete_link' ] }}" ng-show="showAdministration" onclick="return confirm('do you really want to delete this? there is no way to undo this action')">delete</a>
+						</div>
+					</td>
+				</tr>
+			</table>
+
+			<input type="submit" value="compare" class="btn btn-default compare" ng-if="tasks.length > 1" />
+			{if $showAdministration}
+				<a href="{plink Tasks:new $experimentId}" class="btn btn-default">New Task</a>
+			{/if}
+			<a href="{plink Tasks:downloadPValues $experimentId, "BLEU"}" class="btn btn-default">Download BLEU p-values</a>
+
+			<div class="alert" ng-show="tasks.length <= 1">
+				You need to import at least 2 tasks to be able to compare them.
+			</div>
+		</form>
+	</div>
+
+	<div class="alert" ng-show="tasks.length == 0">
+		There are no tasks in this experiment.
+	</div>
+</div>
+

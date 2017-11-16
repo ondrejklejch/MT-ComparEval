@@ -1,0 +1,44 @@
+{
+	"name": "klejcho/mtcompareval",
+	"description": "MT-ComparEval is a tool for comparing and evaluating machine translations.",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Ondrej Klejch"
+		}
+	],
+	"config": {
+		"vendor-dir": "vendor",
+		"bin-dir": "bin"
+	},
+	"require": {
+		"php": ">= 5.3.7",
+		"nette/nette": "~2.3.0"
+	},
+	"require-dev": {
+		"nette/tester": "@dev",
+		"behat/behat": "2.4.*@stable",
+		"behat/mink": "1.4@stable",
+		"behat/mink-extension": "*",
+		"behat/mink-selenium2-driver": "*",
+		"PHPTestCase": "1.0" 
+	},
+	"repositories": {
+		"PHPTestCase": { 
+			"type": "package", 
+			"package": {
+				"name": "PHPTestCase",
+				"version": "1.0",
+				"source": {
+					"url": "https://github.com/DeveloperHub/PHPTestCase.git", 
+					"type": "git", 
+					"reference": "1.0.0"
+				}
+			}
+		},
+		"nette": {
+			"type": "vcs",
+			"url": "https://github.com/choko/nette"
+		}
+	}
+}

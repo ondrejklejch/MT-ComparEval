@@ -1,0 +1,35 @@
+{block #content}
+<h1>New Experiment</h1>
+
+<form class="form-horizontal" method="POST" action="{plink Api:Experiments:upload}" enctype="multipart/form-data">
+	<div class="control-group">
+		<label class="control-label" for="name">Name</label>
+		<div class="controls">
+			<input type="text" id="name" name="name" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="description">Description</label>
+		<div class="controls">
+			<input type="text" id="description" name="description" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="source">Source</label>
+		<div class="controls">
+			<input type="file" id="source" name="source" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label" for="reference">Reference</label>
+		<div class="controls">
+			<input type="file" id="reference" name="reference" class="input-block-level">
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<button type="submit" class="btn">Save</button>
+			<input type="hidden" name="redirect" value="new" />
+		</div>
+	</div>
+</form>

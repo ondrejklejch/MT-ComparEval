@@ -1,0 +1,1196 @@
+{block title}
+<a class="brand" href="{plink Tasks:list $experimentId}"><small>{$experiment->name}</small></a>
+{/block}
+
+{block styles}
+{include #parent}
+<link rel="stylesheet" href="{$basePath}/css/compare.css" />
+{/block}
+
+{block scripts}
+{include #parent}
+<script type="text/javascript" src="{$basePath}/js/directives.js"></script>
+<script type="text/javascript" src="{$basePath}/js/ngrams.js"></script>
+<script type="text/javascript" src="{$basePath}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$basePath}/js/highcharts.src.js"></script>
+<script type="text/javascript">
+function Sentences( $scope, $http ) {
+	{foreach $taskIds as $i => $id}
+	$scope.task{$i} = {!$id};
+	{/foreach}
+	$scope.tasks = [];
+	$scope.taskNames = {};
+	$scope.metrics = [];
+
+	$scope.sentences = [];
+	$scope.offset = 0;
+	$scope.hasNext = true;
+	$scope.currentMetric = 'BLEU';
+	$scope.asc = true;
+	$scope.isMatchingActive = true;
+	$scope.isImprovingActive = true;
+	$scope.isWorseningActive = true;
+	$scope.showDiffWithReference = false;
+	$scope.showDiffWithEachOther = false;
+	$scope.showDiffFor = 0;
+	$scope.showSource = true;
+	$scope.showReference = true;
+	$scope.showTask0 = true;
+	$scope.showTask1 = true;
+	$scope.showMetrics = true;
+	$scope.loading = false;
+	$scope.confirmedNgrams = [];
+	$scope.unconfirmedNgrams = [];
+	$scope.sentencesToLoad = [];
+	$scope.taskMetrics = {};
+
+	loadTasks();
+	loadMetrics();
+	loadConfirmedNgrams();
+	loadUnconfirmedNgrams();
+	loadSentences();
+
+	$scope.$watch( 'currentMetric+asc+task0+task1', reloadSentences );
+	$scope.$watch( 'sentencesToLoad', reloadSentences );
+	$scope.$watch( 'currentMetric+task0+task1', loadCharts );
+	$scope.$watch( 'task0+task1', reloadNgrams );
+	$scope.$watch( 'task0+task1', loadTaskMetrics );
+
+	function reloadSentences( oldValue, newValue ) {
+		if( oldValue == newValue ) {
+			return;
+		}
+
+		$scope.sentences = [];
+		$scope.offset = 0;
+		$scope.hasNext = true;
+
+		loadSentences();
+	}
+
+	$scope.sortSentencesAscending = function() {
+		$scope.asc = true;
+	}
+
+	$scope.sortSentencesDescending = function() {
+		$scope.asc = false;
+	}
+
+	$scope.loadMore = function() {
+		loadSentences();
+	}
+
+	$scope.loadSentencesWithNgram = function( ngram, type, task, sentences ) {
+		$scope.ngram = ngram;
+		$scope.type = type;
+		$scope.sentencesToLoad = sentences;
+		$scope.highlightTask = task;
+		$scope.asc = false;
+
+		$scope.sentencesToLoadCount = {};
+		sentences.forEach( function( sentenceId ) {
+			if( typeof( $scope.sentencesToLoadCount[ sentenceId ] ) == 'undefined' ) {
+				$scope.sentencesToLoadCount[ sentenceId ] = 0;
+			}
+
+			$scope.sentencesToLoadCount[ sentenceId ]++;
+		} );
+
+		$('a[href="#sentences"]').tab('show');
+	}
+
+	$scope.loadAllSentences = function() {
+		$scope.ngram = null;
+		$scope.type = null;
+		$scope.sentencesToLoad = [];
+	}
+
+	$scope.swapTasks = function() {
+		var tmp = $scope.task0;
+		$scope.task0 = $scope.task1;
+		$scope.task1 = tmp;
+	}
+
+	function reloadNgrams() {
+		loadConfirmedNgrams();
+		loadUnconfirmedNgrams();
+	}
+
+	function loadConfirmedNgrams() {
+		$scope.loadingConfirmedNgrams = true;
+
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1
+		};
+
+		$http.get( '{!$basePath}/api/ngrams/confirmed', payload ).success( function( data ) {
+			$scope.confirmedNgrams = data;
+			$scope.loadingConfirmedNgrams = false;
+		} );
+	}
+
+	function loadUnconfirmedNgrams() {
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1
+		};
+
+		$scope.loadingUnconfirmedNgrams = true;
+		$http.get( '{!$basePath}/api/ngrams/unconfirmed', payload ).success( function( data ) {
+			$scope.unconfirmedNgrams = data;
+			$scope.loadingUnconfirmedNgrams = false;
+		} );
+	}
+
+	function loadCharts() {
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1,
+				"metric": ( !$scope.currentMetric ) ? 'bleu' : $scope.currentMetric
+		};
+
+		$http.get( '{!$basePath}/api/metrics/results', payload ).success( function( data ) {
+			$scope.diffs = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": "Sentence-level " + ( $scope.currentMetric || 'bleu' ) + " differences",
+				},
+				"yAxis": {
+					"title": {
+						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"title": {
+						"text": "sentences"
+					},
+				},
+				"legend": {
+					"enabled": true,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": false,
+						"negativeColor": "#b94a48",
+					},
+					"area": {
+
+
+					},
+				},
+				"series": [
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " wins",
+						"data": data.diffs.data,
+						"color": "#468847"
+					},
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " loses",
+						"data": [],
+						"color": "#b94a48"
+					}
+				]
+			};
+		} );
+
+		$http.get( '{!$basePath}/api/metrics/samples-diff', payload ).success( function( data ) {
+			var all = data.samples.data.length;
+			var worser = data.samples.data.filter( function( x ) { return x < 0; } ).length;
+			var better = data.samples.data.filter( function( x ) { return x > 0; } ).length;
+
+			if ( worser > all / 2 ) {
+				var isBetter = "worse";
+				var p = better / all;
+				var line = 95;
+			} else {
+				var isBetter = "better";
+				var p = worser / all;
+				var line = 5;
+			}
+
+			if ( p == 0 ) {
+				var significant = "p-value < 0.001 (significant)";
+			} else if ( p > 0.05 ) {
+				var significant = "p-value=" + p + " (not significant)";
+			} else {
+				var significant = "p-value=" + p + " (significant)";
+			}
+
+
+			var isSignificant = "significant";
+
+			$scope.samples_diff = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " differences",
+				},
+				"subtitle": {
+					"text": $scope.taskNames[ $scope.task0 ] + " is " + isBetter + " than " + $scope.taskNames[ $scope.task1 ] + ": " + significant,
+				},
+				"yAxis": {
+					"title": {
+						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"title": {
+						"text": "samples"
+					},
+					"plotLines": [ {
+						color: 'red',
+						width: 2,
+						value: Math.floor( data.samples.data.length * line / 100 ),
+						"label": {
+							"verticalAlign": "bottom",
+							"rotation": 270,
+							"textAlign": "right",
+							"text": line + '%'
+						}
+					} ]
+				},
+				"legend": {
+					"enabled": true,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": true,
+						"negativeColor": "#b94a48"
+					}
+				},
+
+				"series": [
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " wins",
+						"data": data.samples.data,
+						"color": "#468847"
+					},
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " loses",
+						"data": [],
+						"color": "#b94a48"
+					}
+				]
+			};
+		} );
+
+		payload.params.task = $scope.task0;
+		$http.get( '{!$basePath}/api/metrics/samples', payload ).success( function( data ) {
+			var all = data.samples.data.length;
+			var first = data.samples.data[ Math.floor( all * 0.025 ) ];
+			var last = data.samples.data[ Math.ceil( all * 0.975 ) ];
+
+			$scope.samples1 = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task0 ]
+				},
+				"subtitle": {
+					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
+				},
+				"yAxis": {
+					"title": {
+						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0 ] + ")",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"title": {
+						"text": "samples"
+					},
+					"plotLines": [ {
+						color: 'red',
+						width: 2,
+						value: Math.floor( data.samples.data.length * 0.025 ),
+						"label": {
+							"verticalAlign": "bottom",
+							"rotation": 270,
+							"textAlign": "right",
+							"text": '2.5%'
+						}
+					}, {
+						color: 'red',
+						width: 2,
+						value: Math.floor( data.samples.data.length * 0.975 ),
+						"label": {
+							"verticalAlign": "bottom",
+							"rotation": 270,
+							"textAlign": "right",
+							"text": '97.5%'
+						}
+					} ]
+				},
+				"legend": {
+					"enabled": false,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": false,
+						"negativeColor": "#b94a48"
+					}
+				},
+
+				"series": [
+					{
+						"name": $scope.taskNames[ $scope.task0 ] + " wins",
+						"data": data.samples.data,
+						"color": "#c09853",
+					}
+				]
+			};
+		} );
+
+		payload.params.task = $scope.task1;
+		$http.get( '{!$basePath}/api/metrics/samples', payload ).success( function( data ) {
+			var all = data.samples.data.length;
+			var first = data.samples.data[ Math.floor( all * 0.025 ) ];
+			var last = data.samples.data[ Math.ceil( all * 0.975 ) ];
+
+			$scope.samples2 = {
+				"chart": {
+					"zoomType": "x"
+				},
+				"title": {
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task1 ]
+				},
+				"subtitle": {
+					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
+				},
+				"yAxis": {
+					"title": {
+						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task1 ] + ")",
+					}
+				},
+				"xAxis": {
+					"showFirstLabel": true,
+					"showLastLabel": true,
+					"title": {
+						"text": "samples"
+					},
+					"plotLines": [ {
+						color: 'red',
+						width: 2,
+						value: Math.floor( data.samples.data.length * 0.025 ),
+						"label": {
+							"verticalAlign": "bottom",
+							"rotation": 270,
+							"textAlign": "right",
+							"text": '2.5%'
+						}
+					}, {
+						color: 'red',
+						width: 2,
+						value: Math.floor( data.samples.data.length * 0.975 ),
+						"label": {
+							"verticalAlign": "bottom",
+							"rotation": 270,
+							"textAlign": "right",
+							"text": '97.5%'
+						}
+					} ]
+				},
+				"legend": {
+					"enabled": false,
+					"borderWidth": 0,
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"credits": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"marker": {
+							"enabled": false,
+						},
+						"enableMouseTracking": false,
+						"negativeColor": "#b94a48"
+					}
+				},
+
+				"series": [
+					{
+						"name": $scope.taskNames[ $scope.task1 ] + " wins",
+						"data": data.samples.data,
+						"color": "#3a87ad",
+					}
+				]
+			};
+		} );
+
+	}
+
+
+	function loadMetrics() {
+		$http.get( '{!$basePath}/api/metrics' ).success( addMetrics );
+
+	}
+
+	function addMetrics( data ) {
+		data.metrics.forEach( function( metric ) {
+			$scope.metrics.push( metric );
+		} );
+	}
+
+	function loadTaskMetrics() {
+		var payload = {};
+		payload.params = {
+				"task1": $scope.task0,
+				"task2": $scope.task1,
+		};
+
+		$http.get( '{!$basePath}/api/metrics/scores', payload ).success( function( data ) {
+			$scope.taskMetrics = data;
+
+			var categories = $scope.metrics;
+			var task1Metrics = [];
+			categories.forEach( function( metric ) {
+				task1Metrics.push( data[ $scope.task0 ][ metric ] );
+			} );
+
+			var task2Metrics = [];
+			categories.forEach( function( metric ) {
+				task2Metrics.push( data[ $scope.task1 ][ metric ] );
+			} );
+
+			$scope.metricsComparsion = {
+				"colors": [
+					"#c09853",
+					"#3a87ad",
+				],
+				"title": {
+					"text": "Metrics comparsion"
+				},
+				"xAxis": {
+					"categories": categories,
+					"reversed": true
+				},
+				"yAxis": {
+					"title": {
+						"text": "Score",
+					}
+				},
+				"credits": {
+					"enabled": false
+				},
+				"tooltip": {
+					"enabled": false
+				},
+				"plotOptions": {
+					"series": {
+						"dataLabels": {
+							"enabled": false,
+							"color": "white",
+						}
+					}
+				},
+				"series": [ {
+					"name": $scope.taskNames[ $scope.task0 ],
+					"data": task1Metrics,
+					"dataLabels": {
+						"align": "left",
+					}
+				},{
+					"name": $scope.taskNames[ $scope.task1 ],
+					"data": task2Metrics,
+					"dataLabels": {
+						"align": "right",
+					}
+				} ]
+			};
+		} );
+	}
+
+
+	function loadTasks() {
+		$http.get( '{!$basePath}/api/tasks', {
+			params: {
+				"experimentId": {!$experimentId},
+			}
+		} ).success( addTasks );
+	}
+
+	function addTasks( data ) {
+		for ( taskId in data.tasks ) {
+			$scope.taskNames[ taskId ] = data.tasks[ taskId ].name;
+			$scope.tasks.push( data.tasks[ taskId ] );
+		}
+	}
+
+
+	function loadSentences() {
+		if ( $scope.loading || !$scope.hasNext ) {
+			return;
+		} else {
+			$scope.loading = true;
+
+			createSentenceRequest()
+				.success( addSentences )
+				.error( function() { $scope.loading = false; } );
+		}
+	}
+
+	function createSentenceRequest() {
+		if ( $scope.sentencesToLoad.length == 0 ) {
+			return $http.get( '{!$basePath}/api/sentences', getSentenceRequestPayload() )
+		} else {
+			return $http.post( '{!$basePath}/api/sentences/by-id', getSentenceRequestPayload() )
+		}
+	}
+
+	function getSentenceRequestPayload() {
+		var payload = {};
+		payload.params = {
+			"taskIds[0]": $scope.task0,
+			"offset": $scope.offset,
+			"limit": 10,
+		};
+
+		if( $scope.task1 != "" ) {
+			payload.params[ "taskIds[1]" ] = $scope.task1;
+		}
+
+		if ( $scope.sentencesToLoad.length == 0 ) {
+			payload.params.orderBy = ( !$scope.currentMetric ) ? 'id' : $scope.currentMetric;
+			payload.params.order = ( $scope.asc ) ? 'asc' : 'desc';
+		} else {
+			payload.params.sentences = $scope.sentencesToLoad.join( ',' );
+		}
+
+		return payload
+	}
+
+	function addSentences( data ) {
+		$scope.hasNext = data.has_next;
+
+		data.sentences.forEach( function( sentence ) {
+			sentence.metrics_diff = {};
+			$scope.metrics.forEach( function( metric ) {
+				metricA = sentence.translations[0].metrics[ metric ];
+				metricB = sentence.translations[1].metrics[ metric ];
+
+				sentence.metrics_diff[ metric ] = metricA - metricB;
+			} );
+
+
+			if( sentence.translations.length == 2 && $scope.currentMetric ) {
+				metricA = sentence.translations[0].metrics[$scope.currentMetric];
+				metricB = sentence.translations[1].metrics[$scope.currentMetric];
+
+				sentence.diff = metricA - metricB;
+			}
+
+			sentence.reference_tokens = initClasses( tokenize( sentence.reference ) );
+			sentence.translations.forEach( function( translation, translationNumber ) {
+				translation.tokens = initClasses( tokenize( translation.text ) );
+
+				var matchingPositions = getMatchingPositions( getNGrams( sentence.reference ), getNGrams( translation.text ) );
+				for ( var i in matchingPositions.reference ) {
+					if( matchingPositions.reference[i] == true ) {
+						sentence.reference_tokens[i].class.push( 'matching-' + translationNumber );
+					}
+				}
+
+				for ( var i in matchingPositions.translation ) {
+					if( matchingPositions.translation[i] == true ) {
+						translation.tokens[i].class.push( 'matching-' + translationNumber );
+					}
+				}
+
+				var traceBack = computeTracebackMatrix(
+					sentence.reference_tokens.map( function( t ) { return t.token } ),
+					translation.tokens.map( function( t ) { return t.token } ),
+					function( a, b ) { return ( a == b ) ? 1 : -10; }, -1
+				);
+
+
+				var i = sentence.reference_tokens.length;
+				var j = translation.tokens.length;
+				while( i != 0 || j != 0 ) {
+					switch( traceBack[j][i] ) {
+						case 'M':
+							i--;
+							j--;
+							sentence.reference_tokens[i].class.push( 'diff-matching-' + translationNumber );
+							translation.tokens[j].class.push( 'diff-matching-' + translationNumber );
+							break;
+						case 'D':
+							j--;
+							translation.tokens[j].class.push( 'diff-del-' + translationNumber );
+							translation.tokens[j].in_reference = false;
+							break;
+						case 'I':
+							i--;
+							sentence.reference_tokens[i].class.push( 'diff-ins-' + translationNumber );
+							break;
+					}
+				}
+
+			} );
+
+			if( sentence.translations.length == 2 ) {
+				var traceBack = computeTracebackMatrix(
+					sentence.translations[0].tokens.map( function( t ) { return t.token } ),
+					sentence.translations[1].tokens.map( function( t ) { return t.token } ),
+					function( a, b ) { return ( a == b ) ? 1 : -10; }, -1
+				);
+
+				var i = sentence.translations[0].tokens.length;
+				var j = sentence.translations[1].tokens.length;
+				while( i != 0 || j != 0 ) {
+					switch( traceBack[j][i] ) {
+						case 'M':
+							i--;
+							j--;
+							sentence.translations[0].tokens[i].class.push( 'diff-matching-both' );
+							sentence.translations[1].tokens[j].class.push( 'diff-matching-both' );
+							break;
+						case 'D':
+							j--;
+							sentence.translations[1].tokens[j].class.push( 'diff-del-both' );
+							sentence.translations[1].tokens[j].in_other = false;
+							break;
+						case 'I':
+							i--;
+							sentence.translations[0].tokens[i].class.push( 'diff-ins-both' );
+							sentence.translations[0].tokens[i].in_other = false;
+							break;
+					}
+				}
+			}
+
+
+			var translationNGrams = sentence.translations.map( function( translation ) { return getNGrams( translation.text ); } );
+			var improving = getImproving(
+				getNGrams( sentence.reference ),
+				translationNGrams
+			);
+
+			var worsening = getWorsening(
+				getNGrams( sentence.reference ),
+				translationNGrams
+			);
+
+			if( sentence.translations.length > 1 ) {
+				sentence.translations.forEach( function( translation, translationNumber ) {
+					[1,2,3,4].forEach( function( length ) {
+						translationNGrams[ translationNumber ][ length ].forEach( function( ngram, index ) {
+							var isTokenInImproving = false;
+							var isTokenInWorsening = false;
+
+							for( var i = index; i < index + length; i++ ) {
+								isTokenInImproving = isTokenInImproving || improving[ translationNumber ][ i ];
+								var isCurrentWorsening = !translation.tokens[ i ].in_reference &&
+									!translation.tokens[ i ].in_other;
+								isTokenInWorsening = isTokenInWorsening || isCurrentWorsening || worsening[ translationNumber ][ i ];
+							}
+
+							for( var i = index; i < index + length; i++ ) {
+								if( isTokenInImproving ) {
+									translation.tokens[ i ].improving_ngrams[ ngram ] = {
+										'start': i == index,
+										'end': i == index + length - 1
+									};
+								}
+
+								if( isTokenInWorsening ) {
+									translation.tokens[ i ].worsening_ngrams[ ngram ] = {
+										'start': i == index,
+										'end': i == index + length - 1
+									};
+								}
+							}
+						} );
+					} );
+
+					improving[ translationNumber ].forEach( function( isImproving, token ) {
+						if( isImproving ) {
+							translation.tokens[ token ].class.push( 'improving' );
+						}
+					} );
+
+					worsening[ translationNumber ].forEach( function( isWorsening, token ) {
+						if( isWorsening ) {
+							translation.tokens[ token ].class.push( 'worsening' );
+						}
+					} );
+				} );
+			}
+
+			$scope.sentences.push( sentence );
+			$scope.offset++;
+		} );
+
+		$scope.loading = false;
+	}
+
+	$scope.predicate = function( sentence ) {
+		if( !$scope.currentMetric ) {
+			return parseInt( sentence.sentence_id );
+		} else if( $scope.sentencesToLoad.length != 0 ) {
+			return $scope.sentencesToLoadCount[ sentence.sentence_id ];
+		} else if( sentence.translations.length == 1 ) {
+			return parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
+		} else {
+			var metricA = parseFloat( sentence.translations[0].metrics[$scope.currentMetric] );
+			var metricB = parseFloat( sentence.translations[1].metrics[$scope.currentMetric] );
+
+			return metricA - metricB;
+		}
+	}
+};
+
+
+</script>
+{/block}
+
+{block #content}
+<div
+	ng-app="MT-ComparEval"
+	ng-controller="Sentences"
+	ng-class="{
+		'matching-active': isMatchingActive,
+		'improving-active': isImprovingActive,
+		'worsening-active': isWorseningActive,
+		'highlight-improving-ngram': type == 'improving',
+		'highlight-worsening-ngram': type == 'worsening',
+		'diff-active-0': showDiffWithReference && showDiffFor == 0,
+		'diff-active-1': showDiffWithReference && showDiffFor == 1,
+		'diff-active-both': showDiffWithEachOther
+	}"
+>
+	<div class="navbar">
+		<div class="navbar-inner">
+			<ul class="nav pull-left">
+				<li>
+					<form class="navbar-form">
+						<select ng-model="task0" ng-required ng-options="task.id as task.name for task in tasks | filter: { 'id': '!'+task1 }">
+						</select>
+
+						<a ng-click="swapTasks()" class="btn"><i class="icon-refresh"> </i></a>
+
+						<select ng-model="task1" ng-options="task.id as task.name for task in tasks | filter: { 'id': '!'+task0 }">
+						</select>
+					</form>
+				</li>
+			</ul>
+			<ul class="nav pull-right">
+				<li>
+					<form class="navbar-form form-inline">
+						<select ng-model="currentMetric" id="metrics" ng-options="metric for metric in metrics">
+							<option value="">Sort sentences by id</option>
+						</select>
+						<div class="btn-group">
+							<a ng-click="sortSentencesAscending()" class="btn" ng-class="{'btn-success': asc}" id="sort-asc"><i class="icon-arrow-up"> </i></a>
+							<a ng-click="sortSentencesDescending()" class="btn" ng-class="{'btn-success': !asc}" id="sort-desc"><i class="icon-arrow-down"> </i></a>
+						</div>
+					</form>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#sentences" data-toggle="tab">Sentences</a></li>
+		<li><a href="#stats" data-toggle="tab">Statistics</a></li>
+		<li><a href="#confirmed" data-toggle="tab">Confirmed n-grams</a></li>
+		<li><a href="#unconfirmed" data-toggle="tab">Unconfirmed n-grams</a></li>
+	</ul>
+
+	<div class="tab-content">
+		<div class="tab-pane" id="stats">
+			<div class="row">
+				<div class="span6">
+					<h3>Statistics</h3>
+					<table class="table table-bordered table-condensed">
+						<tr>
+							<th class="span2">Metric</th>
+							<th class="span2" style="text-align: center">{{ taskNames[ task0 ] }}</th>
+							<th class="span2" style="text-align: center">{{ taskNames[ task1 ] }}</th>
+						</tr>
+
+						<tr ng-repeat="metric in metrics">
+							<th>{{ metric }}</th>
+							<td style="text-align: center">{{ taskMetrics[ task0 ][ metric ] }}</td>
+							<td style="text-align: center">{{ taskMetrics[ task1 ][ metric ] }}</td>
+						</tr>
+					</table>
+				</div>
+				<chart value="{{ metricsComparsion }}" type="bar" class="span6"></span>
+			</div>
+
+			<div class="row">
+				<chart value="{{ diffs }}" type="area" class="span6"></chart>
+				<chart value="{{ samples_diff }}" type="area" class="span6"></chart>
+			</div>
+
+			<div class="row">
+				<chart value="{{ samples1 }}" type="area" class="span6"></chart>
+				<chart value="{{ samples2 }}" type="area" class="span6"></chart>
+			</div>
+		</div>
+
+
+		<div class="tab-pane" id="confirmed">
+			<h3>n-grams confirmed by the reference</h3>
+
+			<div ng-hide="confirmedNgrams || loadingConfirmedNgrams" class="alert">
+				Confirmed n-grams can't be shown because they were not precomputed.
+				If you really want to show confirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.
+			</div>
+
+			<div class="alert text-center" ng-show="loadingConfirmedNgrams">
+				Loading...
+			</div>
+
+			<div ng-show="confirmedNgrams && !loadingConfirmedNgrams">
+				<div class="row">
+					<div class="span6" ng-repeat="length in [1,2]">
+						<div class="row">
+							<h5 class="text-center">{{ length }}-gram</h5>
+							<div class="span3" ng-repeat="task in [task0, task1]">
+								<table class="table table-bordered table-condensed">
+									<caption>{{ taskNames[ task ] }} wins</caption>
+									<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+										<td style="font-size: 0.9em">
+											<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
+												{{ ngram.text }}
+											</a>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="span6" ng-repeat="length in [3,4]">
+						<div class="row">
+							<h5 class="text-center">{{ length }}-gram</h5>
+							<div class="span3" ng-repeat="task in [task0, task1]">
+								<table class="table table-bordered table-condensed">
+									<caption>{{ taskNames[ task ] }} wins</caption>
+									<tr ng-repeat="ngram in confirmedNgrams[ task ][ length ].slice(0,10)">
+										<td style="font-size: 0.9em">
+											<a ng-click="loadSentencesWithNgram( ngram.text, 'improving', task, ngram.sentences )">
+												{{ ngram.text }}
+											</a>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="tab-pane" id="unconfirmed">
+			<h3>n-grams unconfirmed by the reference</h3>
+
+			<div ng-hide="unconfirmedNgrams || loadingUnconfirmedNgrams" class="alert">
+				Unconfirmed n-grams can't be shown because they were not precomputed.
+				If you really want to show unconfirmed n-grams, please, import these tasks with configuration option <code>precompute_ngrams: true</code>.
+			</div>
+
+			<div class="alert text-center" ng-show="loadingUnconfirmedNgrams">
+				Loading...
+			</div>
+
+			<div ng-show="unconfirmedNgrams && !loadingUnconfirmedNgrams">
+				<div class="row">
+					<div class="span6" ng-repeat="length in [1,2]">
+						<div class="row">
+							<h5 class="text-center">{{ length }}-gram</h5>
+							<div class="span3" ng-repeat="task in [task0, task1]">
+								<table class="table table-bordered table-condensed">
+									<caption>{{ taskNames[ task ] }} loses</caption>
+									<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
+										<td style="font-size: 0.9em">
+											<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
+												{{ ngram.text }}
+											</a>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="span6" ng-repeat="length in [3,4]">
+						<div class="row">
+							<h5 class="text-center">{{ length }}-gram</h5>
+							<div class="span3" ng-repeat="task in [task0, task1]">
+								<table class="table table-bordered table-condensed">
+									<caption>{{ taskNames[ task ] }} loses</caption>
+									<tr ng-repeat="ngram in unconfirmedNgrams[ task ][ length ].slice(0,10)">
+										<td style="font-size: 0.9em">
+											<a ng-click="loadSentencesWithNgram( ngram.text, 'worsening', task, ngram.sentences )">
+												{{ ngram.text }}
+											</a>
+											<em class="pull-right">
+												{{ ngram.all_occurences }} - {{ ngram.other_occurences }} = {{ ngram.all_occurences - ngram.other_occurences }}
+											</em>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			class="tab-pane active"
+			id="sentences"
+			when-scrolled="loadMore()"
+		>
+
+			<h3>Sentences</h3>
+			<div class="well">
+				<h3>Options<h3>
+				<div class="row">
+				<div class="span4">
+					<h4>N-grams higlighting options</h4>
+					<form class="form-horizontal">
+						<div class="control-group">
+							<label class="checkbox">
+								<input type="checkbox" ng-model="isMatchingActive" />
+								Highlight confirmed n-grams
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="isImprovingActive" />
+								Highlight improving n-grams
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="isWorseningActive" />
+								Highlight worsening n-grams
+							</label>
+						</div>
+					</form>
+				</div>
+
+				<div class="span3">
+					<h4>Diff higlighting options</h4>
+					<form class="form-horizontal">
+						<div class="control-group">
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showDiffWithReference" />
+								Show diff with reference
+							</label>
+
+							<label class="radio">
+								<input ng-model="showDiffFor" value="0" type="radio" name="show-diff-for" />
+								Show diff for {{ taskNames[ task0 ] }}
+							</label>
+							<label class="radio">
+								<input ng-model="showDiffFor" value="1" type="radio" name="show-diff-for" />
+								Show diff for {{ taskNames[ task1 ] }}
+							</label>
+
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showDiffWithEachOther" />
+								Show diff with each other
+							</label>
+						</div>
+					</form>
+				</div>
+
+				<div class="span4">
+					<h4>Sentences visibility options</h4>
+					<form class="form-horizontal">
+						<div class="control-group">
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showSource" />
+								Show source
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showReference" />
+								Show reference
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showTask0" />
+								Show {{ taskNames[ task0 ] }}
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showTask1" />
+								Show {{ taskNames[ task1 ] }}
+							</label>
+
+							<label class="checkbox">
+								<input type="checkbox" ng-model="showMetrics" />
+								Show sentence level metrics
+							</label>
+						</div>
+					</form>
+				</div>
+				</div>
+			</div>
+			<div class="alert" ng-show="sentencesToLoad.length">
+				You are displaying sentences with {{ type }} n-gram <strong>{{ ngram }}</strong>.
+				<a ng-click="loadAllSentences()">Show all senteces</a>
+			</div>
+
+
+			<table
+				ng-repeat="sentence in sentences | orderBy:predicate:!asc"
+				class="sentence table table-condensed table-bordered"
+				data-id="{{ sentence.sentence_id }}"
+			>
+				<tr ng-show="showSource">
+					<th class="span2">Source</th>
+					<td class="source text">{{ sentence.source }}</td>
+				</tr>
+
+				<tr ng-show="showReference">
+					<th>Reference</th>
+					<td class="reference text">
+						<span ng-repeat="token in sentence.reference_tokens" ng-class="token.class"> {{ token.token }} </span>
+					</td>
+				</tr>
+
+				<tr
+					ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)"
+					class="translation"
+					ng-show="( translation.task_id == task0 && showTask0 ) || ( translation.task_id == task1 && showTask1 )"
+				>
+					<th>{{ taskNames[ translation.task_id ] }}</th>
+					<td class="text">
+						<span
+							ng-repeat="token in translation.tokens"
+							ng-class="{
+								'highlight-current-task': translation.task_id == highlightTask,
+								'highlight-improving': token.improving_ngrams[ ngram ],
+								'highlight-improving-start': token.improving_ngrams[ ngram ].start,
+								'highlight-improving-end': token.improving_ngrams[ ngram ].end,
+								'highlight-worsening': token.worsening_ngrams[ ngram ],
+								'highlight-worsening-start': token.worsening_ngrams[ ngram ].start,
+								'highlight-worsening-end': token.worsening_ngrams[ ngram ].end
+							}"
+							class="{{ token.class.join( ' ' ) }}"
+						>
+							{{ token.token }}
+						</span>
+					</td>
+				</tr>
+				<tr ng-show="showMetrics">
+					<td colspan="2" style="padding: 0px">
+						<table class="table table-condensed table-bordered" style="font-size: 0.8em; margin: 0px; border-width: 0px">
+							<tr>
+								<td class="span2"></td>
+								<th
+									ng-repeat="metric in metrics"
+									ng-class="{'active-metric': metric == currentMetric}"
+									class="span2"
+									style="text-align:center"
+								>
+									{{ metric }}
+								</th>
+							</tr>
+							<tr
+								ng-repeat="translation in sentence.translations| orderBy:'+task_id':(task0>task1)"
+							>
+								<th>{{ taskNames[ translation.task_id ] }}</th>
+								<td
+									ng-repeat="metric in metrics"
+									ng-class="{'active-metric': metric == currentMetric}"
+									style="text-align: center"
+								>
+									{{ translation.metrics[ metric ] }}
+								</td>
+							</tr>
+							<tr>
+								<th>Diff</th>
+								<td
+									ng-repeat="metric in metrics"
+									ng-class="{'active-metric': metric == currentMetric}"
+									style="text-align: center"
+								>
+									{{ sentence.metrics_diff[ metric ].toFixed( 4 ) }}
+								</td>
+							</tr>
+						</table>
+						</td>
+				</tr>
+			</table>
+
+
+
+			<div class="alert text-center" ng-class="{ 'hidden': !loading }">
+				Loading...
+			</div>
+
+			<div class="alert text-center" ng-class="{ 'hidden': hasNext || sentencesToLoad.length != 0}">
+				All sentences loaded
+			</div>
+
+			<div class="alert" ng-show="!hasNext && sentencesToLoad.length">
+				All sentences with {{ type }} n-gram <strong>{{ ngram }}</strong> loaded.
+				<a ng-click="loadAllSentences()">Show all senteces</a>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+

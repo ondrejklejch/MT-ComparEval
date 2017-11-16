@@ -1,0 +1,83 @@
+.hidden {
+	display: none;
+}
+
+span {
+	padding: 0em 0.1em;
+}
+
+.matching-active .matching-0 {
+	background-color: #fcf8e3;
+	color: #c09853;
+}
+
+.matching-active .matching-1 {
+	background-color: #d9edf7;
+	color: #3a87ad;
+}
+
+.matching-active .matching-0.matching-1 {
+	color: #468847;
+	background-color: #dff0d8;
+}
+
+.improving-active .matching-0.improving {
+	background-color: #c09853;
+	color: #fcf8e3;
+}
+
+.improving-active .matching-1.improving {
+	background-color: #3a87ad;
+	color: #d9edf7;
+}
+
+.worsening-active .worsening {
+	background-color: #f2dede;
+	color: #b94a48;
+}
+
+.diff-active-1 .diff-ins-1, .diff-active-0 .diff-ins-0 {
+	border-bottom: 3px solid #c09853; 
+}
+
+.diff-active-1 .diff-matching-1, .diff-active-0 .diff-matching-0 {
+	border-bottom: 3px solid #468847;
+}
+
+.diff-active-1 .diff-del-1, .diff-active-0 .diff-del-0 {
+	border-bottom: 3px solid #b94a48;
+}
+
+.diff-active-both .worsening.diff-ins-both, .diff-active-both .worsening.diff-del-both {
+	border-bottom: 3px solid #b94a48;
+}
+
+.diff-active-both .improving.diff-ins-both, .diff-active-both .improving.diff-del-both {
+	border-bottom: 3px solid #468847;
+}
+
+.active-metric {
+	color: #468847;
+}
+
+.highlight-improving-ngram .highlight-current-task.highlight-improving, 
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening {
+	border-bottom: 3px solid black;
+	border-top: 3px solid black;
+	font-weight: bolder;
+}
+
+.highlight-improving-ngram .highlight-current-task.highlight-improving-start, 
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening-start {
+	border-left: 3px solid black;
+}
+
+.highlight-improving-ngram .highlight-current-task.highlight-improving-end,
+.highlight-worsening-ngram .highlight-current-task.highlight-worsening-end {
+	border-right: 3px solid black;
+}
+
+.text {
+	line-height: 1.8em; 
+}
+
