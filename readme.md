@@ -46,11 +46,41 @@ bash bin/install.sh
 During the installation you will be probably asked to enter GitHub OAuth token.
 Just follow the instructions (open the url in your browser, generate the token and enter it).
 
+## Windows
+
+ - Download and install the following prerequisites: [GIT](https://git-scm.com/download/win), [Composer](https://getcomposer.org/download), [GNU CoreUtils Complete package, except sources](http://gnuwin32.sourceforge.net/packages/coreutils.htm) and [Python 2.7.x](https://www.python.org/downloads/release/python-2714).
+ - Open the Windows Explorer. Browse to `C:\Program Files` (or whatever your default installation directory is) and create a new folder `sqlite`. Download [SQLite Precompiled Binaries for Windows](https://sqlite.org/download.html) (probably 64bit, but this  depends on your version of Windows) and the [SQLite Tools Bundle](https://sqlite.org/download.html). Extract the contents directly in the directory `sqlite`, withouth creating any subfolder
+ - Download [MT-Compareval](https://github.com/choko/MT-ComparEval/archive/master.zip) and unzip its content in C:\Program Files\ΜΤ-ComparEval
+ - Click on the Start menu, type `Command Prompt` and click to open the command prompt window. Then type the following commands and let them run:
+```
+composer update
+%programfiles%\sqlite\sqlite3 storage/database < schema.sql
+```
+ 
+
 # Running MT-ComparEval
+
+## Start the program
+
+### Linux
 To start MT-ComparEval two processes have to be run:
+
  - `bin/server.sh` which starts the application server on the address [localhost:8080](http://localhost:8080)
   (you can can check/adapt `app/config/config.neon` first to set the main title, set of metrics etc. See the [default config](app/config/config.neon).)
  - `bin/watcher.sh` which monitors folder `data` for new experiments and tasks (the `data` folder must exist before you run `bin/watcher.sh`.)
+
+### Windows
+ - As above, click on the Start menu, type `Command Prompt` and click to open the command prompt window. You will need two of them. In the first one, type to launch the web server
+```
+php -S localhost:8080 -t ./www
+```
+ - In the second command promt windoe, type to launch the "Watcher"
+```
+set path=%path%;"%programfiles%\GnuWin32\bin";"%programfiles%\Python27"
+php -f www/index.php Background:Watcher:Watch --folder=./data
+```
+ - While these two programs are running, navigate your browser to the address [localhost:8080](http://localhost:8080)
+
 
 ## Structure of the `data` folder
 Folder `data` contains folders with *experiments* (e.g. `EN-CS-WMT15`), which contains subfolders with *tasks* for each experiment (e.g. `MOSES`). For example:
