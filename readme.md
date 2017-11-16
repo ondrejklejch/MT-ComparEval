@@ -23,6 +23,11 @@ For a user-focused show-case study explaining most of the features, see:
  - Roman Sudarikov, Martin Popel, Ondrej Bojar, Aljoscha Burchardt, Ondřej Klejch: [Using MT-ComparEval](http://www.cracking-the-language-barrier.eu/wp-content/uploads/Sudarikov-etal.pdf). LREC 2016 [MT-Eval Workshop](http://www.cracking-the-language-barrier.eu/mt-eval-workshop-2016/). See [slides](http://ufal.mff.cuni.cz/~popel/papers/2016_05_24_using_mt-compareval.pdf) and a [poster](http://ufal.mff.cuni.cz/~popel/papers/2016_lrec_tools-and-guidelines_poster.pdf).
 
 # Installation
+
+## Ubuntu/Debian Linux
+
+MT-ComparEval has been designed and tested on Ubuntu and Debian systems. Such an operating system is therefore suggested. 
+
 In order to be able to run MT-ComparEval several dependencies have to be installed.
 Namely, PHP version 5.4 and Sqlite 3.
 On Ubuntu 14.04 these dependencies can be installed with the following commands:
@@ -31,9 +36,8 @@ sudo apt-get install sqlite3 php5-cli php5-sqlite curl
 ```
 On Ubuntu 16.04 use:
 ```
-sudo apt install sqlite3 php7.0-cli php7.0-sqlite3 curl php7.0-mbstring
+sudo apt install sqlite3 php7.0-cli php7.0-sqlite3 curl php7.0-mbstring php7.0-xml
 ```
-
 
 Then the application can be installed with the following command:
 ```
