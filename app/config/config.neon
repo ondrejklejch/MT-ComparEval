@@ -46,11 +46,19 @@ common:
 		# Metrics
 		brevityPenaltyMetric: BrevityPenalty
 		bleuMetric: Bleu( @geometricPrecisionMetric, @brevityPenaltyMetric )
+<<<<<<< HEAD
 		hjersonWOMetric: Hjerson("bhypRer", @hjersonCache)
 		hjersonFormMetric: Hjerson("bhypINFer", @hjersonCache)
 		hjersonOmissionMetric: Hjerson("bMISer", @hjersonCache)
 		hjersonAdditionMetric: Hjerson("bEXTer", @hjersonCache)
 		hjersonMistranslationMetric: Hjerson("bhypLEXer", @hjersonCache)
+=======
+		#hjersonWOMetric: Hjerson("bhypRer", @hjersonCache)
+		#hjersonFormMetric: Hjerson("bhypINFer", @hjersonCache)
+		#hjersonOmissionMetric: Hjerson("bMISer", @hjersonCache)
+		#hjersonAdditionMetric: Hjerson("bEXTer", @hjersonCache)
+		#hjersonMistranslationMetric: Hjerson("bhypLEXer", @hjersonCache)
+>>>>>>> ce1fcb366c2aad0c88b6a297bb7b7a7977da4031
 		fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
 		bootstrapSampler: BootstrapSampler( 1000 )
 		geometricPrecisionMetric:
@@ -117,6 +125,7 @@ common:
 				case_sensitive: False,
 				compute_bootstrap: False,
 			],
+<<<<<<< HEAD
 			H-WORDORDER: [
 				class: @hjersonWOMetric,
 				case_sensitive: False,
@@ -142,6 +151,33 @@ common:
 				case_sensitive: False,
 				compute_bootstrap: False,
 			],
+=======
+			#H-WORDORDER: [
+			#	class: @hjersonWOMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-ADDITION: [
+			#	class: @hjersonAdditionMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-MISTRANSLATION: [
+			#	class: @hjersonMistranslationMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-OMISSION: [
+			#	class: @hjersonOmissionMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+			#H-FORM: [
+			#	class: @hjersonFormMetric,
+			#	case_sensitive: False,
+			#	compute_bootstrap: False,
+			#],
+>>>>>>> ce1fcb366c2aad0c88b6a297bb7b7a7977da4031
 		] )
 
 		# Importers dependencies

@@ -76,7 +76,6 @@ class TasksImporter extends Importer {
 
 			foreach( $sentences as $sentence ) {
 				foreach( $metrics as $name => $metric ) {
-					$this->logger->log( $name );
 					$sentenceMetrics[ $name ][] = $metric->addSentence( $sentence['experiment']['reference'], $sentence['translation'], $sentence['meta'] );
 				}
 			}

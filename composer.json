@@ -30,7 +30,11 @@
 				"name": "PHPTestCase",
 				"version": "1.0",
 				"source": {
+<<<<<<< HEAD
 					"url": "https://github.com/DeveloperHub/PHPTestCase.git", 
+=======
+					"url": "http://github.com/DeveloperHub/PHPTestCase.git", 
+>>>>>>> ce1fcb366c2aad0c88b6a297bb7b7a7977da4031
 					"type": "git", 
 					"reference": "1.0.0"
 				}
