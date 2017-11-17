@@ -48,13 +48,15 @@ Just follow the instructions (open the url in your browser, generate the token a
 
 ## Windows
 
- - Download and install the following prerequisites: [GIT](https://git-scm.com/download/win), [Composer](https://getcomposer.org/download), [GNU CoreUtils Complete package, except sources](http://gnuwin32.sourceforge.net/packages/coreutils.htm) and [Python 2.7.x](https://www.python.org/downloads/release/python-2714).
- - Open the Windows Explorer. Browse to `C:\Program Files` (or whatever your default installation directory is) and create a new folder `sqlite`. Download [SQLite Precompiled Binaries for Windows](https://sqlite.org/download.html) (probably 64bit, but this  depends on your version of Windows) and the [SQLite Tools Bundle](https://sqlite.org/download.html). Extract the contents directly in the directory `sqlite`, withouth creating any subfolder
- - Download [MT-Compareval](https://github.com/choko/MT-ComparEval/archive/master.zip) and unzip its content in C:\Program Files\ΜΤ-ComparEval
+ - Download and install the following prerequisites: [GIT](https://git-scm.com/download/win), [Composer](https://getcomposer.org/download), [GNU CoreUtils Complete package, except sources](http://gnuwin32.sourceforge.net/packages/coreutils.htm) in the default locations.
+ - Download [Python 2.7.x](https://www.python.org/downloads/release/python-2714) and install in the Program Files folder, in a subfolder named Python27 (The Program Files folder is normally `C:\Program Files\` but it may vary depending on the language and the installation of your system.
+ - Open the Windows Explorer. Browse to the Program Files folder and create a new subfolder `sqlite`. Download [SQLite Precompiled Binaries for Windows](https://sqlite.org/download.html) (probably 64bit, this  depends on your version of Windows) and the [SQLite Tools Bundle](https://sqlite.org/download.html). Extract the contents directly in the directory `sqlite`, withouth creating any subfolder. A permissions question will appear, this is normal.
+ - Using the Windows Explorer, go to `C:\` and create a directory `tools`. Download [MT-Compareval](https://github.com/choko/MT-ComparEval/archive/master.zip), open the zip file and copy the folder MT-ComparEval-master into `C:\tools` directory. Rename the folder from `MT-ComparEval-master` to `MT-ComparEval`.
  - Click on the Start menu, type `Command Prompt` and click to open the command prompt window. Then type the following commands and let them run:
 ```
+cd C:\tools\MT-ComparEval
 composer update
-%programfiles%\sqlite\sqlite3 storage/database < schema.sql
+"%programfiles%\sqlite\sqlite3" storage/database < schema.sql
 ```
  
 
@@ -72,11 +74,13 @@ To start MT-ComparEval two processes have to be run:
 ### Windows
  - As above, click on the Start menu, type `Command Prompt` and click to open the command prompt window. You will need two of them. In the first one, type to launch the web server
 ```
+cd "C:\tools\MT-ComparEval"
 php -S localhost:8080 -t ./www
 ```
  - In the second command promt windoe, type to launch the "Watcher"
 ```
 set path=%path%;"%programfiles%\GnuWin32\bin";"%programfiles%\Python27"
+cd C:\tools\MT-ComparEval
 php -f www/index.php Background:Watcher:Watch --folder=./data
 ```
  - While these two programs are running, navigate your browser to the address [localhost:8080](http://localhost:8080)
