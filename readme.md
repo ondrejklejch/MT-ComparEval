@@ -79,7 +79,6 @@ To start MT-ComparEval two processes have to be run:
  - Open Windows Explorer and navigate to C:\tools\MT-ComparEval\bin\win. 
  - Double-click on `server` or `server.bat` to start the web server. Leave the window open
  - Double-click on `watcher` or `watcher.bat` to start the watcher. Leave this window open too
- - As above, click on the Start menu, type `Command Prompt` and click to open the command prompt.
  - Optionally: right click on these programs, create shortcuts and move the shortcuts on your desktop or in any convenient menu entry.
  - While these two programs are running, navigate your browser to the address [localhost:8080](http://localhost:8080)
 
