@@ -35,8 +35,6 @@ class Hjerson implements IMetric {
 		}
 
 		list($return, $output) = $this->cache->call(array($this, 'runExternalCommandOnSentences'), $this->referenceText, $this->translationText);
-		echo( $return );
-		print_r( $output );
 		echo( $cmd );
 		if ($return != 0){
 			return -1;
