@@ -24,7 +24,15 @@ For a user-focused show-case study explaining most of the features, see:
 
 # Installation
 
-## Ubuntu/Debian Linux
+## Advanced Installation with additional Metrics
+
+The default configuration shipped with the software includes only the basic BLEU-related metrics. If you are interested only for these metrics, proceed to the next chapter "Basic Installation".
+
+There is the possibility to enable additional metrics. At the moment, the tool "Hjerson" is supported but it is optional. Its entries are commented out in the file `composer.json`, in the main directory, after downloading the software. If you are interested in enabling Hjerson, you should edit this file and uncomment (remove the leading `#` from) the lines that contain the name of the metric. Then proceed to the installation as following.
+
+## Basic Installation
+
+### Ubuntu/Debian Linux
 
 MT-ComparEval has been designed and tested on Ubuntu and Debian systems. Such an operating system is therefore suggested. 
 
@@ -39,25 +47,21 @@ On Ubuntu 16.04 use:
 sudo apt install sqlite3 php7.0-cli php7.0-sqlite3 curl php7.0-mbstring php7.0-xml
 ```
 
-Then the application can be installed with the following command:
+Download or clone the application and set your commandline within the new directory. Then the application can be installed with the following command:
 ```
 bash bin/install.sh
 ```
-During the installation you will be probably asked to enter GitHub OAuth token.
+During the installation you may be asked to enter GitHub OAuth token.
 Just follow the instructions (open the url in your browser, generate the token and enter it).
 
-## Windows
+### Windows
 
  - Download and install the following prerequisites: [GIT](https://git-scm.com/download/win), [Composer](https://getcomposer.org/download), [GNU CoreUtils Complete package, except sources](http://gnuwin32.sourceforge.net/packages/coreutils.htm) in the default locations.
  - Download [Python 2.7.x](https://www.python.org/downloads/release/python-2714) and install in the Program Files folder, in a subfolder named Python27 (The Program Files folder is normally `C:\Program Files\` but it may vary depending on the language and the installation of your system.
- - Open the Windows Explorer. Browse to the Program Files folder and create a new subfolder `sqlite`. Download [SQLite Precompiled Binaries for Windows](https://sqlite.org/download.html) (probably 64bit, this  depends on your version of Windows) and the [SQLite Tools Bundle](https://sqlite.org/download.html). Extract the contents directly in the directory `sqlite`, withouth creating any subfolder. A permissions question will appear, this is normal.
+ - Open the Windows Explorer. Browse to the Program Files folder and create a new subfolder `sqlite`. Download [SQLite Precompiled Binaries for Windows](https://sqlite.org/download.html) (probably 64bit, this  depends on your version of Windows) and the [SQLite Tools Bundle](https://sqlite.org/download.html). Extract the contents directly in the subfolder `sqlite` that you created previously, withouth creating or including any other subfolder. A permissions question will appear, this is normal.
  - Using the Windows Explorer, go to `C:\` and create a directory `tools`. Download [MT-Compareval](https://github.com/choko/MT-ComparEval/archive/master.zip), open the zip file and copy the folder MT-ComparEval-master into `C:\tools` directory. Rename the folder from `MT-ComparEval-master` to `MT-ComparEval`.
- - Click on the Start menu, type `Command Prompt` and click to open the command prompt window. Then type the following commands and let them run:
-```
-cd C:\tools\MT-ComparEval
-composer update
-"%programfiles%\sqlite\sqlite3" storage/database < schema.sql
-```
+ - Using the Windows Explorer, go to `C:\tools\MT-ComparEval\bin\win` and double click on `install` or `install.bat`. This will perform the installation. During the installation you may be asked to enter GitHub OAuth token. Just follow the instructions (open the url in your browser, generate the token and enter it).
+ - If you have chosen different paths in the above steps, you have to edit install.bat and watcher.bat to reflect the accurate entries.
  
 
 # Running MT-ComparEval
@@ -72,17 +76,11 @@ To start MT-ComparEval two processes have to be run:
  - `bin/watcher.sh` which monitors folder `data` for new experiments and tasks (the `data` folder must exist before you run `bin/watcher.sh`.)
 
 ### Windows
- - As above, click on the Start menu, type `Command Prompt` and click to open the command prompt window. You will need two of them. In the first one, type to launch the web server
-```
-cd "C:\tools\MT-ComparEval"
-php -S localhost:8080 -t ./www
-```
- - In the second command promt windoe, type to launch the "Watcher"
-```
-set path=%path%;"%programfiles%\GnuWin32\bin";"%programfiles%\Python27"
-cd C:\tools\MT-ComparEval
-php -f www/index.php Background:Watcher:Watch --folder=./data
-```
+ - Open Windows Explorer and navigate to C:\tools\MT-ComparEval\bin\win. 
+ - Double-click on `server` or `server.bat` to start the web server. Leave the window open
+ - Double-click on `watcher` or `watcher.bat` to start the watcher. Leave this window open too
+ - As above, click on the Start menu, type `Command Prompt` and click to open the command prompt.
+ - Optionally: right click on these programs, create shortcuts and move the shortcuts on your desktop or in any convenient menu entry.
  - While these two programs are running, navigate your browser to the address [localhost:8080](http://localhost:8080)
 
 
