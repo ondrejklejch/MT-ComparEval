@@ -28,7 +28,7 @@ For a user-focused show-case study explaining most of the features, see:
 
 The default configuration shipped with the software includes only the basic BLEU-related metrics. If you are interested only for these metrics, proceed to the next chapter "Basic Installation".
 
-There is the possibility to enable additional metrics. At the moment, the tool "Hjerson" is supported but it is optional. Its entries are commented out in the file `composer.json`, in the main directory, after downloading the software. If you are interested in enabling Hjerson, you should edit this file and uncomment (remove the leading `#` from) the lines that contain the name of the metric. Then proceed to the installation as following.
+There is the possibility to enable additional metrics. At the moment, the tool "Hjerson" is supported but it is optional. Its entries are commented out in the file `config.neon` , in folder `app\config`, after downloading the software. If you are interested in enabling Hjerson, you should edit this file and uncomment (remove the leading `#` from) the lines that contain the name of the metric. Then proceed to the installation as following.
 
 ## Basic Installation
 
