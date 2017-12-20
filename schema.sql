@@ -61,6 +61,7 @@ INSERT INTO `metrics` (`id`, `name`) VALUES (15, 'H-OMISSION-cased');
 INSERT INTO `metrics` (`id`, `name`) VALUES (16, 'H-OMISSION');
 INSERT INTO `metrics` (`id`, `name`) VALUES (17, 'H-FORM-cased');
 INSERT INTO `metrics` (`id`, `name`) VALUES (18, 'H-FORM');
+INSERT INTO `metrics` (`id`, `name`) VALUES (19, 'TER');
 
 CREATE TABLE "translations_metrics" (
   "translations_id" integer NOT NULL,
