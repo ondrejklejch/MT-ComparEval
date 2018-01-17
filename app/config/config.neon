@@ -147,10 +147,10 @@ common:
 				compute_bootstrap: False,
 			],
 			TER: [
-		   	class: @terMetric,
-		   	case_sensitive: False,
-		    	compute_bootstrap: True, 
-		   ],
+				class: @terMetric,
+				case_sensitive: False,
+				compute_bootstrap: False,
+			]
 		] )
 
 		# Importers dependencies
