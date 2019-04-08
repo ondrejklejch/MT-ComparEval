@@ -17,17 +17,19 @@ class ExperimentsPresenter extends BasePresenter {
 		$description = $this->getPostParameter( 'description' );
 		$source = $this->getPostFile( 'source' );
 		$reference = $this->getPostFile( 'reference' );
+		$project = $this->getPostParameter( 'project' );
 
 		$data = array(
 			'name' => $name,
 			'description' => $description,
+			'project' => $project,
 			'url_key' => $url_key
 		);
 
 		$path = __DIR__ . '/../../../data/' . $url_key . '/';
 		$source->move( $path . 'source.txt' );
 		$reference->move( $path . 'reference.txt' );
-		file_put_contents( $path . 'config.neon', "name: $name\ndescription: $description\nurl_key: $url_key" );
+		file_put_contents( $path . 'config.neon', "name: $name\ndescription: $description\nproject: $project\nurl_key: $url_key" );
 
 		$response = array( 'experiment_id' => $this->model->saveExperiment( $data ) );
 

@@ -29,6 +29,23 @@ class Experiments {
 			->fetch();
 	}
 
+	public function getProjects() {
+		$experiments = $this->getExperiments();
+		$projects = array();
+		foreach ($experiments as $experiment) {
+			if (!in_array($experiment['project'], $projects)) {
+				array_push($projects, $experiment['project']);
+			}
+		}
+		sort($projects);
+		return $projects;
+	}
+
+	public function getExperimentsByProject( $project ) {
+		return $this->db->table( 'experiments' )
+			->where( 'project', $project );
+	}
+
 	public function saveExperiment( $data ) {
 		if ( !$row = $this->getExperimentByName( $data[ 'url_key' ] ) ) {
 			$row = $this->db->table( 'experiments' )->insert( $data );
@@ -37,11 +54,10 @@ class Experiments {
 		return $row->getPrimary( TRUE );
 	}
 
-	public function updateExperiment( $experimentId, $name, $description ) {
+	public function updateExperiment( $experimentId, $name, $description, $project ) {
 		$this->db->table( 'experiments' )
 			->get( $experimentId )
-			->update( array( 'name' => $name, 'description' => $description ) );
-
+			->update( array( 'name' => $name, 'description' => $description, 'project' => $project ) );
 	}
 
 	public function setVisible( $experimentId ) {
