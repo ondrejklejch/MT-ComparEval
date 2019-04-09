@@ -1,0 +1,22 @@
+{block #content}
+<h1>Projects</h1>
+
+{if count($projects)}
+	{foreach $projects as $project}
+		<h2><a href="/api/projects/{$project}">{$project}</a></h2>
+	{/foreach}
+	<div style="margin-bottom:20px;"></div>
+{else}
+	<div class="alert">
+		There are no projects.
+	</div>
+{/if}
+
+{if $showAdministration}
+	<a href="{plink Experiments:new}" class="btn btn-default">New Experiment</a>
+{/if}
+
+<a href="{plink Experiments:download}" class="btn btn-default">Download statistics</a>
+
+<div style="margin-top:30px;"><a href="/">List of all experiments</a></div>
+<div><a href="/api/projects/experiments">List of all experiments per project</a></div>

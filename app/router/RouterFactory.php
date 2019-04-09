@@ -45,7 +45,11 @@ class RouterFactory
 			$router[] = new Route('api/ngrams/unconfirmed', 'Api:NGrams:unconfirmed');
 			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
 			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
+			$router[] = new Route('api/projects', 'Experiments:projects');
+			$router[] = new Route('api/projects/experiments', 'Experiments:listperproj');
+			$router[] = new Route('api/projects/<name>', 'Experiments:listforproj');
 			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
+
 		}
 
 		return $router;

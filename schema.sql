@@ -3,6 +3,7 @@ CREATE TABLE "experiments" (
   "name" text NOT NULL,
   "url_key" text NOT NULL UNIQUE,
   "description" text NOT NULL,
+  "project" text DEFAULT NULL,
   "visible" integer(0) NULL
 );
 

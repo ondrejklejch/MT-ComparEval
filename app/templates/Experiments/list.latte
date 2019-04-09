@@ -3,10 +3,17 @@
 
 {if count($experiments)}
 <table class="table table-bordered">
+<tr>
+	<th>Name</th>
+	<th>Description</th>
+	<th>Project</th>
+	<th>Actions</th>
+</tr>
 {foreach $experiments->order( 'name' ) as $experiment}
 	<tr class="experiment" data-id="{$experiment['url_key']}">
 		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
+		<td class="project">{$experiment['project']}</td>
 		{if $showAdministration}
 		<td class="span2">
 			<div class="text-right">
@@ -29,3 +36,6 @@
 {/if}
 
 <a href="{plink Experiments:download}" class="btn btn-default">Download statistics</a>
+
+<div style="margin-top:30px;"><a href="/api/projects">List of all projects</a></div>
+<div><a href="/api/projects/experiments">List of all experiments per project</a></div>

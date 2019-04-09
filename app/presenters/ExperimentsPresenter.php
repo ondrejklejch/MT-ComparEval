@@ -18,6 +18,20 @@ class ExperimentsPresenter extends BasePresenter {
 		$this->template->experiments = $this->experimentsModel->getExperiments();
 	}
 
+	public function renderListperproj() {
+		$this->template->experiments = $this->experimentsModel->getExperiments();
+		$this->template->projects = $this->experimentsModel->getProjects();
+	}
+
+	public function renderListforproj( $name ) {
+		$this->template->project = $name;
+		$this->template->experiments = $this->experimentsModel->getExperimentsByProject($name);
+	}
+
+	public function renderProjects() {
+		$this->template->projects = $this->experimentsModel->getProjects();
+	}
+
 	public function renderDownload() {
 		$output = fopen( "php://output", "w" ) or die( "Can't open php://output" );
 		header( "Content-Type:application/csv" );
@@ -66,8 +80,9 @@ class ExperimentsPresenter extends BasePresenter {
 		$id = $data[ 'id' ];
 		$name = $data[ 'name' ];
 		$description = $data[ 'description' ];
+		$project = $data[ 'project' ];
 
-		$this->experimentsModel->updateExperiment( $id, $name, $description );
+		$this->experimentsModel->updateExperiment( $id, $name, $description, $project );
 
 		$this->flashMessage( 'Experiment was successfully updated.', 'alert-success' );
 		$this->redirect( 'list' );
@@ -85,6 +100,7 @@ class ExperimentsPresenter extends BasePresenter {
 			->addRule( Form::FILLED, 'Please, fill in a name of the experiment.' );
 		$form->addTextArea( 'description', 'Description' )
 			->addRule( Form::FILLED, 'Please, fill in a description of the experiment.' );
+		$form->addText( 'project', 'Project' );
 		$form->addHidden( 'id' );
 		$form->addSubmit('save', 'Save');
 		$form->onSubmit[] = array( $this, 'saveEditForm' );
@@ -102,6 +118,7 @@ class ExperimentsPresenter extends BasePresenter {
 		$renderer->wrappers[ 'control' ][ 'container' ] = 'div class=controls';
 		$renderer->wrappers[ 'label' ][ 'container' ] = 'div class=control-label';
 		$renderer->wrappers[ 'control' ][ 'description' ] = 'span class=help-inline';
+		$renderer->wrappers[ 'control' ][ 'project' ] = 'span class=help-inline';
 		$renderer->wrappers[ 'control' ][ 'errorcontainer' ] = 'span class=help-inline';
 		$form->getElementPrototype()->class( 'form-horizontal' );
 

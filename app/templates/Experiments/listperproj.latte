@@ -1,0 +1,48 @@
+{block #content}
+<h1>Experiments per project</h1>
+
+{if count($experiments)}
+	{foreach $projects as $project}
+		<h2><a href="/api/projects/{$project}">{$project}</a></h2>
+		<table class="table table-bordered">
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Project</th>
+			<th>Actions</th>
+		</tr>
+
+		{foreach $experiments->order( 'name' ) as $experiment}
+			{if $experiment['project'] == $project}
+				<tr class="experiment" data-id="{$experiment['url_key']}">
+					<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
+					<td class="description">{$experiment['description']}</td>
+					<td class="project">{$experiment['project']}</td>
+					{if $showAdministration}
+					<td class="span2">
+						<div class="text-right">
+							<a href="{plink Experiments:edit $experiment['id']}">edit</a>
+							<a href="{plink Experiments:delete $experiment['id']}" onclick="return confirm('Do you really want to delete this? There is no way to undo this action')">delete</a>
+						</div>
+					</td>
+					{/if}
+				</tr>
+			{/if}
+		{/foreach}
+
+	</table>
+	{/foreach}
+{else}
+	<div class="alert">
+		There are no experiments.
+	</div>
+{/if}
+
+{if $showAdministration}
+	<a href="{plink Experiments:new}" class="btn btn-default">New Experiment</a>
+{/if}
+
+<a href="{plink Experiments:download}" class="btn btn-default">Download statistics</a>
+
+<div style="margin-top:30px;"><a href="/api/projects">List of all projects</a></div>
+<div><a href="/">List of all experiments</a></div>
