@@ -55,7 +55,7 @@ class ArithmeticPrecision implements IMetric {
 			$arithmeticAverage += 1/4 * $precision;
 		}
 
-		return number_format( $arithmeticAverage * 100, 2 );
+		return $arithmeticAverage * 100;
 	}
 
 }

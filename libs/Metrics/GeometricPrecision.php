@@ -60,7 +60,7 @@ class GeometricPrecision implements IMetric {
 			$geometricAverage += 1/4 * log( $precision );
 		}
 
-		return number_format( exp( $geometricAverage ) * 100, 2 );
+		return exp( $geometricAverage ) * 100;
 	}
 
 }

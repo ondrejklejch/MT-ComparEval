@@ -55,7 +55,7 @@ class ArithmeticRecall implements IMetric {
 			$arithmeticAverage += 1/4 * $recall;
 		}
 
-		return number_format( $arithmeticAverage * 100, 2 );
+		return $arithmeticAverage * 100;
 	}
 
 }

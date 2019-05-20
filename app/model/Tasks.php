@@ -117,7 +117,7 @@ class Tasks {
 				$data = array(
 					'translations_id' => $translationId,
 					'metrics_id' => $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id,
-					'score' => $values[ $key ]
+					'score' => number_format( $values[ $key ], 2 )
 				);
 				$this->db->table( 'translations_metrics' )->insert( $data );
 			}
@@ -130,7 +130,7 @@ class Tasks {
 		$data = array(
 			'tasks_id' => $taskId,
 			'metrics_id' => $this->db->table( 'metrics' )->where( 'name', $metric )->fetch()->id,
-			'score' => $value
+			'score' => number_format( $value, 2 )
 		);
 
 		$this->db->table( 'tasks_metrics' )->insert( $data );
@@ -145,7 +145,7 @@ class Tasks {
 				'tasks_id' => $taskId,
 				'metrics_id' => $metricId,
 				'sample_position' => $position,
-				'score' => $score
+				'score' => number_format( $score, 2 )
 			);
 
 			$this->db->table( 'tasks_metrics_samples' )->insert( $data );

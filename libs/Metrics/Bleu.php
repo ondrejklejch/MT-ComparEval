@@ -33,7 +33,7 @@ class Bleu implements IMetric {
 	}
 
 	public function computeBleu( $precision, $brevityPenalty ) {
-		return number_format( $brevityPenalty * $precision, 2 );
+		return $brevityPenalty * $precision;
 	}
 
 }

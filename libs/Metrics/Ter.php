@@ -63,7 +63,7 @@ class Ter implements IMetric {
 		// tercom 0.6 provides output that looks like:
 		// HTER: 0.884615 (23/26)
 		$tempArray = explode(" ", end($output));
-		return number_format( floatval($tempArray[1]) * 100, 2); 
+		return floatval($tempArray[1]) * 100;
 	}
 
 }
