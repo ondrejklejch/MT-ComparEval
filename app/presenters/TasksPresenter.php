@@ -18,9 +18,9 @@ class TasksPresenter extends BasePresenter {
 		$this->metricsModel = $metricsModel;
 	}
 
-	public function renderList( $experimentId ) {
-		$this->template->experimentId = $experimentId;
-		$this->template->experiment = $this->experimentsModel->getExperimentById( $experimentId );
+	public function renderList( $experimentName ) {
+		$this->template->experiment = $this->experimentsModel->getExperimentByName( $experimentName );
+		$this->template->experimentId = $this->template->experiment->id;
 	}
 
 	public function renderDownloadPValues( $experimentId, $metricName ) {
@@ -64,10 +64,13 @@ class TasksPresenter extends BasePresenter {
 		$this->terminate();
 	}
 
-	public function renderCompare( $id1, $id2 ) {
-		$experimentId = $this->tasksModel->getTask( $id1 )->experiments_id;
-		$this->template->experimentId = $experimentId;
-		$this->template->experiment = $this->experimentsModel->getExperimentById( $experimentId );
+	public function renderCompare( $experimentName, $taskName1, $taskName2 ) {
+		$this->template->experiment = $this->experimentsModel->getExperimentByName( $experimentName );
+		$this->template->experimentId = $this->template->experiment->id;
+
+		$id1 = $this->tasksModel->getTaskByName( $taskName1, $this->template->experimentId )->id;
+		$id2 = $this->tasksModel->getTaskByName( $taskName2, $this->template->experimentId )->id;
+
 		$this->template->taskIds = array( $id1, $id2 );
 	}
 
@@ -134,7 +137,6 @@ class TasksPresenter extends BasePresenter {
 				$control->getControlPrototype()->addClass( 'input-block-level' );
 			}
 		}
-
 	}
 
 }

@@ -25,6 +25,7 @@ class TasksPresenter extends BasePresenter {
 		foreach( $this->tasksModel->getTasks( $experimentId ) as $task ) {
 			$taskResponse[ 'id' ] = $task->id;
 			$taskResponse[ 'name' ] = $task->name;
+			$taskResponse[ 'url_key' ] = $task->url_key;
 			$taskResponse[ 'description' ] = $task->description;
 			if( $show_administration ) {
 				$taskResponse[ 'edit_link' ] = $this->link( ':Tasks:edit', $task->id );

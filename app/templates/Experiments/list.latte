@@ -5,7 +5,7 @@
 <table class="table table-bordered">
 {foreach $experiments->order( 'name' ) as $experiment}
 	<tr class="experiment" data-id="{$experiment['url_key']}">
-		<td class="name span3"><a href="{plink Tasks:list $experiment['id']}">{$experiment['name']}</a></td>
+		<td class="name span3"><a href="{plink Tasks:list $experiment['url_key']}">{$experiment['name']}</a></td>
 		<td class="description">{$experiment['description']}</td>
 		{if $showAdministration}
 		<td class="span2">

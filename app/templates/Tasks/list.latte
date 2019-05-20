@@ -17,7 +17,7 @@ $(document).ready( function() {
 			return alert( "You can compare only 2 tasks." );
 		}
 
-		window.location = "{!$basePath}/tasks/" + tasksIds[0] + "-" + tasksIds[1] + "/compare";
+		window.location = "{!$basePath}/{!$experiment->url_key}/compare/" + tasksIds[0] + "/" + tasksIds[1];
 	} );
 } );
 </script>
@@ -27,7 +27,7 @@ $(document).ready( function() {
 
 		$scope.hiddenTasks = 0;
 		$scope.chartType = 'line';
-		$scope.order = 'id';
+		$scope.order = 'name';
 		$scope.ascending = false;
 
 		$scope.changeOrder = function( order ) {
@@ -225,7 +225,7 @@ $(document).ready( function() {
 					<th class="span2"></th>
 				</tr>
 				<tr ng-repeat="task in tasks | filter:{ show: true } | orderBy:getOrderByValue:ascending">
-					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'id' ] }}"/>{{ task[ 'name' ] }}</th>
+					<th class="name span2"><input type="checkbox" data-task-id="{{ task[ 'url_key' ] }}"/>{{ task[ 'name' ] }}</th>
 					<td class="description">
 						<span collapse-long collapse-long-text="{{ task[ 'description' ] }}" max-length=20>
 							{{ task[ 'description' ] }}

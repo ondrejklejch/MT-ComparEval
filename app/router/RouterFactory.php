@@ -43,8 +43,8 @@ class RouterFactory
 			$router[] = new Route('api/metrics/samples-diff', 'Api:Metrics:samplesDiff');
 			$router[] = new Route('api/ngrams/confirmed', 'Api:NGrams:confirmed');
 			$router[] = new Route('api/ngrams/unconfirmed', 'Api:NGrams:unconfirmed');
-			$router[] = new Route('tasks/<id1>-<id2>/compare', 'Tasks:compare');
-			$router[] = new Route('tasks/<id>/detail', 'Tasks:detail');
+			$router[] = new Route('<experimentName>/', 'Tasks:list');
+			$router[] = new Route('<experimentName>/compare/<taskName1>/<taskName2>', 'Tasks:compare');
 			$router[] = new Route('<presenter>/<action>[/<id>]', 'Experiments:list');
 		}
 
