@@ -63,7 +63,7 @@ class TasksPresenter extends BasePresenter {
 
 		if ( $this->getPostParameter( 'redirect', False ) ) {
 			$this->flashMessage( "Task was successfully uploaded. It will appear in this list once it is imported.", "success" );
-			$this->redirect( ":Tasks:list", $experiment_id );
+			$this->redirect( ":Tasks:list", $experiment->url_key );
 		} else {
 			$this->sendResponse( new \Nette\Application\Responses\JsonResponse( $response ) );
 		}
