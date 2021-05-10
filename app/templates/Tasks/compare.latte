@@ -16,7 +16,7 @@
 <script type="text/javascript">
 function Sentences( $scope, $http ) {
 	{foreach $taskIds as $i => $id}
-	$scope.task{$i} = {!$id};
+	$scope.task{$i} = {$id|noescape};
 	{/foreach}
 	$scope.tasks = [];
 	$scope.taskNames = {};
@@ -125,7 +125,7 @@ function Sentences( $scope, $http ) {
 				"task2": $scope.task1
 		};
 
-		$http.get( '{!$basePath}/api/ngrams/confirmed', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/ngrams/confirmed', payload ).success( function( data ) {
 			$scope.confirmedNgrams = data;
 			$scope.loadingConfirmedNgrams = false;
 		} );
@@ -139,7 +139,7 @@ function Sentences( $scope, $http ) {
 		};
 
 		$scope.loadingUnconfirmedNgrams = true;
-		$http.get( '{!$basePath}/api/ngrams/unconfirmed', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/ngrams/unconfirmed', payload ).success( function( data ) {
 			$scope.unconfirmedNgrams = data;
 			$scope.loadingUnconfirmedNgrams = false;
 		} );
@@ -153,7 +153,7 @@ function Sentences( $scope, $http ) {
 				"metric": ( !$scope.currentMetric ) ? 'bleu' : $scope.currentMetric
 		};
 
-		$http.get( '{!$basePath}/api/metrics/results', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/metrics/results', payload ).success( function( data ) {
 			$scope.diffs = {
 				"chart": {
 					"zoomType": "x"
@@ -211,7 +211,7 @@ function Sentences( $scope, $http ) {
 			};
 		} );
 
-		$http.get( '{!$basePath}/api/metrics/samples-diff', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/metrics/samples-diff', payload ).success( function( data ) {
 			var all = data.samples.data.length;
 			var worser = data.samples.data.filter( function( x ) { return x < 0; } ).length;
 			var better = data.samples.data.filter( function( x ) { return x > 0; } ).length;
@@ -306,7 +306,7 @@ function Sentences( $scope, $http ) {
 		} );
 
 		payload.params.task = $scope.task0;
-		$http.get( '{!$basePath}/api/metrics/samples', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/metrics/samples', payload ).success( function( data ) {
 			var all = data.samples.data.length;
 			var first = data.samples.data[ Math.floor( all * 0.025 ) ];
 			var last = data.samples.data[ Math.ceil( all * 0.975 ) ];
@@ -385,7 +385,7 @@ function Sentences( $scope, $http ) {
 		} );
 
 		payload.params.task = $scope.task1;
-		$http.get( '{!$basePath}/api/metrics/samples', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/metrics/samples', payload ).success( function( data ) {
 			var all = data.samples.data.length;
 			var first = data.samples.data[ Math.floor( all * 0.025 ) ];
 			var last = data.samples.data[ Math.ceil( all * 0.975 ) ];
@@ -467,7 +467,7 @@ function Sentences( $scope, $http ) {
 
 
 	function loadMetrics() {
-		$http.get( '{!$basePath}/api/metrics' ).success( addMetrics );
+		$http.get( '{$basePath|noescape}/api/metrics' ).success( addMetrics );
 
 	}
 
@@ -484,7 +484,7 @@ function Sentences( $scope, $http ) {
 				"task2": $scope.task1,
 		};
 
-		$http.get( '{!$basePath}/api/metrics/scores', payload ).success( function( data ) {
+		$http.get( '{$basePath|noescape}/api/metrics/scores', payload ).success( function( data ) {
 			$scope.taskMetrics = data;
 
 			var categories = $scope.metrics;
@@ -548,9 +548,9 @@ function Sentences( $scope, $http ) {
 
 
 	function loadTasks() {
-		$http.get( '{!$basePath}/api/tasks', {
+		$http.get( '{$basePath|noescape}/api/tasks', {
 			params: {
-				"experimentId": {!$experimentId},
+				"experimentId": {$experimentId|noescape},
 			}
 		} ).success( addTasks );
 	}
@@ -577,9 +577,9 @@ function Sentences( $scope, $http ) {
 
 	function createSentenceRequest() {
 		if ( $scope.sentencesToLoad.length == 0 ) {
-			return $http.get( '{!$basePath}/api/sentences', getSentenceRequestPayload() )
+			return $http.get( '{$basePath|noescape}/api/sentences', getSentenceRequestPayload() )
 		} else {
-			return $http.post( '{!$basePath}/api/sentences/by-id', getSentenceRequestPayload() )
+			return $http.post( '{$basePath|noescape}/api/sentences/by-id', getSentenceRequestPayload() )
 		}
 	}
 
