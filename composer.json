@@ -21,24 +21,6 @@
 		"behat/mink": "1.4@stable",
 		"behat/mink-extension": "*",
 		"behat/mink-selenium2-driver": "*",
-		"PHPTestCase": "1.0" 
-	},
-	"repositories": {
-		"PHPTestCase": { 
-			"type": "package", 
-			"package": {
-				"name": "PHPTestCase",
-				"version": "1.0",
-				"source": {
-					"url": "https://github.com/DeveloperHub/PHPTestCase.git", 
-					"type": "git", 
-					"reference": "1.0.0"
-				}
-			}
-		},
-		"nette": {
-			"type": "vcs",
-			"url": "https://github.com/choko/nette"
-		}
+		"developerhub/php-testcase": "1.1.0"
 	}
 }
