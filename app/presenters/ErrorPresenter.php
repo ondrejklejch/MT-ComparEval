@@ -1,6 +1,6 @@
 <?php
 
-use Nette\Diagnostics\Debugger;
+use Tracy\Debugger;
 
 
 
