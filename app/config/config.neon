@@ -4,170 +4,163 @@
 # If you don't protect this directory from direct web access, anybody will be able to see your passwords.
 # http://nette.org/security-warning
 #
-common:
-	parameters:
-		title: MT-ComparEval
-		show_administration: true
+parameters:
+	title: MT-ComparEval
+	show_administration: true
 
-	php:
-		date.timezone: Europe/Prague
-		# zlib.output_compression: yes
+php:
+	date.timezone: Europe/Prague
+	# zlib.output_compression: yes
 
-	nette:
-		application:
-			errorPresenter: Error
+application:
+	errorPresenter: Error
 
-		database:
-			dsn: 'sqlite:%appDir%/../storage/database'
-			debugger: false
-			explain: false
+database:
+	dsn: 'sqlite:%appDir%/../storage/database'
+	debugger: false
+	explain: false
 
-		session:
-			expiration: 14 days
+session:
+	expiration: 14 days
 
 
-	services:
-		routerFactory: RouterFactory( %consoleMode% )
-		router: @routerFactory::createRouter
-		authenticator: Authenticator
-		ngramsCache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/precomputed_ngrams ) )
-		terCache: 
-			class: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/ter ) )
-			autowired: no			
-		hjersonCache:
-			class: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/hjerson ) )
-			autowired: no
-		cacheStorage:
-				class: Nette\Caching\Storages\DevNullStorage
-		# Models
-		experiments: Experiments
-		tasks: Tasks
-		sentences: Sentences
-		metrics: Metrics
-		ngrams: CachedNGrams
+services:
+	routerFactory: RouterFactory( %consoleMode% )
+	router: @routerFactory::createRouter
+	ngramsCache: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/precomputed_ngrams ) )
+	terCache:
+		class: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/ter ) )
+		autowired: no
+	hjersonCache:
+		class: Nette\Caching\Cache( Nette\Caching\Storages\FileStorage( %appDir%/../storage/hjerson ) )
+		autowired: no
+	cacheStorage:
+		class: Nette\Caching\Storages\DevNullStorage
+	# Models
+	experiments: Experiments
+	tasks: Tasks
+	sentences: Sentences
+	metrics: Metrics
+	ngrams: CachedNGrams
 
-		# Metrics
-		brevityPenaltyMetric: BrevityPenalty
-		bleuMetric: Bleu( @geometricPrecisionMetric, @brevityPenaltyMetric )
-		hjersonWOMetric: Hjerson("bhypRer", @hjersonCache)
-		hjersonFormMetric: Hjerson("bhypINFer", @hjersonCache)
-		hjersonOmissionMetric: Hjerson("bMISer", @hjersonCache)
-		hjersonAdditionMetric: Hjerson("bEXTer", @hjersonCache)
-		hjersonMistranslationMetric: Hjerson("bhypLEXer", @hjersonCache)
-		fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
-		terMetric: Ter( @terCache )
-		bootstrapSampler: BootstrapSampler( 1000 )
-		geometricPrecisionMetric:
-			factory: GeometricPrecision
-		arithmeticPrecisionMetric:
-			factory: ArithmeticPrecision
-		geometricRecallMetric:
-			factory: GeometricRecall
-		arithmeticRecallMetric:
-			factory: ArithmeticRecall
+	# Metrics
+	brevityPenaltyMetric: BrevityPenalty
+	bleuMetric: Bleu( @geometricPrecisionMetric, @brevityPenaltyMetric )
+	hjersonWOMetric: Hjerson("bhypRer", @hjersonCache)
+	hjersonFormMetric: Hjerson("bhypINFer", @hjersonCache)
+	hjersonOmissionMetric: Hjerson("bMISer", @hjersonCache)
+	hjersonAdditionMetric: Hjerson("bEXTer", @hjersonCache)
+	hjersonMistranslationMetric: Hjerson("bhypLEXer", @hjersonCache)
+	fmeasureMetric: FMeasure( @arithmeticPrecisionMetric, @arithmeticRecallMetric )
+	terMetric: Ter( @terCache )
+	bootstrapSampler: BootstrapSampler( 1000 )
+	geometricPrecisionMetric:
+		factory: GeometricPrecision
+	arithmeticPrecisionMetric:
+		factory: ArithmeticPrecision
+	geometricRecallMetric:
+		factory: GeometricRecall
+	arithmeticRecallMetric:
+		factory: ArithmeticRecall
 
-		experimentsImporter:
-			class: ExperimentsImporter
-			setup:
-				- setLogger( @logger )
-				- setNormalizer( @normalizer )
+	experimentsImporter:
+		class: ExperimentsImporter
+		setup:
+			- setLogger( @logger )
+			- setNormalizer( @normalizer )
 
-		tasksImporter:
-			class: TasksImporter(
-				@experiments,
-				@tasks,
-				@ngrams,
-				@bootstrapSampler,
-				PreprocessorList( [
-					@initialPreprocessor
-					@ngramsPreprocessor
-					@confirmedNGramsPreprocessor
-					@ngramsCounterPreprocessor
-				] ),
-				@enabledMetrics,
-			)
-			setup:
-				- setLogger( @logger )
-				- setNormalizer( @normalizer )
+	tasksImporter:
+		class: TasksImporter(
+			@experiments,
+			@tasks,
+			@ngrams,
+			@bootstrapSampler,
+			PreprocessorList( [
+				@initialPreprocessor
+				@ngramsPreprocessor
+				@confirmedNGramsPreprocessor
+				@ngramsCounterPreprocessor
+			] ),
+			@enabledMetrics,
+		)
+		setup:
+			- setLogger( @logger )
+			- setNormalizer( @normalizer )
 
-		enabledMetrics:	EnabledMetricsList( [
-			#BREVITY-PENALTY: [
-			#	class: @brevityPenaltyMetric,
-			#	case_sensitive: False,
-			#	compute_bootstrap: False,
-			#],
-			BLEU: [
-				class: @bleuMetric,
-				case_sensitive: False,
-				compute_bootstrap: True,
-			],
-			BLEU-cased: [
-				class: @bleuMetric,
-				case_sensitive: True,
-				compute_bootstrap: True,
-			],
-			PRECISION: [
-				class: @arithmeticPrecisionMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			RECALL: [
-				class: @arithmeticRecallMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			F-MEASURE: [
-				class: @fmeasureMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			H-WORDORDER: [
-				class: @hjersonWOMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			H-ADDITION: [
-				class: @hjersonAdditionMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			H-MISTRANSLATION: [
-				class: @hjersonMistranslationMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			H-OMISSION: [
-				class: @hjersonOmissionMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			H-FORM: [
-				class: @hjersonFormMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			],
-			TER: [
-				class: @terMetric,
-				case_sensitive: False,
-				compute_bootstrap: False,
-			]
-		] )
+	enabledMetrics:	EnabledMetricsList( [
+		#BREVITY-PENALTY: [
+		#	class: @brevityPenaltyMetric,
+		#	case_sensitive: False,
+		#	compute_bootstrap: False,
+		#],
+		BLEU: [
+			class: @bleuMetric,
+			case_sensitive: False,
+			compute_bootstrap: True,
+		],
+		BLEU-cased: [
+			class: @bleuMetric,
+			case_sensitive: True,
+			compute_bootstrap: True,
+		],
+		PRECISION: [
+			class: @arithmeticPrecisionMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		RECALL: [
+			class: @arithmeticRecallMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		F-MEASURE: [
+			class: @fmeasureMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		H-WORDORDER: [
+			class: @hjersonWOMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		H-ADDITION: [
+			class: @hjersonAdditionMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		H-MISTRANSLATION: [
+			class: @hjersonMistranslationMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		H-OMISSION: [
+			class: @hjersonOmissionMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		H-FORM: [
+			class: @hjersonFormMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		],
+		TER: [
+			class: @terMetric,
+			case_sensitive: False,
+			compute_bootstrap: False,
+		]
+	] )
 
-		# Importers dependencies
-		logger: EchoLogger
-		tokenizer: Tokenizer( true )
-		ngramizer: NGramizer
+	# Importers dependencies
+	logger: EchoLogger
+	tokenizer: Tokenizer( true )
+	ngramizer: NGramizer
 
-		# Replace MTEvalInternationalNormalizer with MTEvalNormalizer
-		# if you want to get results compatible with matrix.statmt.org
-		normalizer: MTEvalInternationalNormalizer
+	# Replace MTEvalInternationalNormalizer with MTEvalNormalizer
+	# if you want to get results compatible with matrix.statmt.org
+	normalizer: MTEvalInternationalNormalizer
 
-		# Sentences preprocessors
-		initialPreprocessor: InitialPreprocessor
-		ngramsPreprocessor: NGramsPreprocessor
-		confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
-		ngramsCounterPreprocessor: NGramsCounterPreprocessor
-
-production < common:
-
-development < common:
+	# Sentences preprocessors
+	initialPreprocessor: InitialPreprocessor
+	ngramsPreprocessor: NGramsPreprocessor
+	confirmedNGramsPreprocessor: ConfirmedNGramsPreprocessor( ConfirmedNGramsFinder() )
+	ngramsCounterPreprocessor: NGramsCounterPreprocessor
