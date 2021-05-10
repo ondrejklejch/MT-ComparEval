@@ -37,14 +37,24 @@ There is the possibility to enable additional metrics. At the moment, the tool "
 MT-ComparEval has been designed and tested on Ubuntu and Debian systems. Such an operating system is therefore suggested. 
 
 In order to be able to run MT-ComparEval several dependencies have to be installed.
-Namely, PHP version 5.4 and Sqlite 3.
-On Ubuntu 14.04 these dependencies can be installed with the following commands:
+On Ubuntu 20.04, these dependencies can be installed with the following commands:
 ```
-sudo apt-get install sqlite3 php5-cli php5-sqlite curl
+sudo apt install sqlite3 php7.4-cli php7.4-sqlite3 curl php7.4-mbstring php7.4-xml php7.4-curl
 ```
+
+On Ubuntu 18.04 use:
+```
+sudo apt install sqlite3 php7.2-cli php7.2-sqlite3 curl php7.2-mbstring php7.2-xml php7.2-curl
+```
+
 On Ubuntu 16.04 use:
 ```
 sudo apt install sqlite3 php7.0-cli php7.0-sqlite3 curl php7.0-mbstring php7.0-xml
+```
+
+On Ubuntu 14.04 use:
+```
+sudo apt-get install sqlite3 php5-cli php5-sqlite curl
 ```
 
 Download or clone the application and set your commandline within the new directory. Then the application can be installed with the following command:
