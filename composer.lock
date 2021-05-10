@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "hash": "c500d39a5e1baadb9f0bc66272bc377b",
+    "content-hash": "3c98c7b7f38294c98db4955093ca617c",
     "packages": [
         {
             "name": "latte/latte",
@@ -59,7 +59,7 @@
                 "templating",
                 "twig"
             ],
-            "time": "2015-07-03 13:37:59"
+            "time": "2015-07-03T13:37:59+00:00"
         },
         {
             "name": "nette/application",
@@ -121,7 +121,7 @@
             ],
             "description": "Nette Application MVC Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-01 15:54:47"
+            "time": "2015-07-01T15:54:47+00:00"
         },
         {
             "name": "nette/bootstrap",
@@ -187,7 +187,7 @@
             ],
             "description": "Nette Bootstrap",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:07:11"
+            "time": "2015-07-11T21:07:11+00:00"
         },
         {
             "name": "nette/caching",
@@ -245,7 +245,7 @@
             ],
             "description": "Nette Caching Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:09:42"
+            "time": "2015-07-11T21:09:42+00:00"
         },
         {
             "name": "nette/component-model",
@@ -295,7 +295,7 @@
             ],
             "description": "Nette Component Model",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:11:20"
+            "time": "2015-07-11T21:11:20+00:00"
         },
         {
             "name": "nette/database",
@@ -349,7 +349,7 @@
             ],
             "description": "Nette Database Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-20 01:20:17"
+            "time": "2015-07-20T01:20:17+00:00"
         },
         {
             "name": "nette/deprecated",
@@ -405,7 +405,7 @@
             ],
             "description": "APIs and features removed from Nette Framework",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 20:57:29"
+            "time": "2015-07-11T20:57:29+00:00"
         },
         {
             "name": "nette/di",
@@ -457,7 +457,7 @@
             ],
             "description": "Nette Dependency Injection Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-13 22:28:49"
+            "time": "2015-07-13T22:28:49+00:00"
         },
         {
             "name": "nette/finder",
@@ -507,7 +507,7 @@
             ],
             "description": "Nette Finder: Files Searching",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:13:50"
+            "time": "2015-07-11T21:13:50+00:00"
         },
         {
             "name": "nette/forms",
@@ -562,7 +562,7 @@
             ],
             "description": "Nette Forms: greatly facilitates web forms",
             "homepage": "http://nette.org",
-            "time": "2015-07-20 01:25:35"
+            "time": "2015-07-20T01:25:35+00:00"
         },
         {
             "name": "nette/http",
@@ -616,7 +616,7 @@
             ],
             "description": "Nette HTTP Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-19 16:17:50"
+            "time": "2015-07-19T16:17:50+00:00"
         },
         {
             "name": "nette/mail",
@@ -671,7 +671,7 @@
             ],
             "description": "Nette Mail: Sending E-mails",
             "homepage": "http://nette.org",
-            "time": "2015-07-03 13:31:38"
+            "time": "2015-07-03T13:31:38+00:00"
         },
         {
             "name": "nette/neon",
@@ -718,7 +718,7 @@
             ],
             "description": "Nette NEON: parser & generator for Nette Object Notation",
             "homepage": "http://ne-on.org",
-            "time": "2015-07-13 22:29:08"
+            "time": "2015-07-13T22:29:08+00:00"
         },
         {
             "name": "nette/nette",
@@ -790,7 +790,7 @@
                 "mvc",
                 "templating"
             ],
-            "time": "2015-07-20 01:58:21"
+            "time": "2015-07-20T01:58:21+00:00"
         },
         {
             "name": "nette/php-generator",
@@ -840,7 +840,7 @@
             ],
             "description": "Nette PHP Generator",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:19:33"
+            "time": "2015-07-11T21:19:33+00:00"
         },
         {
             "name": "nette/reflection",
@@ -893,7 +893,7 @@
             ],
             "description": "Nette PHP Reflection Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:34:53"
+            "time": "2015-07-11T21:34:53+00:00"
         },
         {
             "name": "nette/robot-loader",
@@ -945,7 +945,7 @@
             ],
             "description": "Nette RobotLoader: comfortable autoloading",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:20:57"
+            "time": "2015-07-11T21:20:57+00:00"
         },
         {
             "name": "nette/safe-stream",
@@ -999,7 +999,7 @@
             ],
             "description": "Nette SafeStream: Atomic Operations",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 20:59:15"
+            "time": "2015-07-11T20:59:15+00:00"
         },
         {
             "name": "nette/security",
@@ -1051,7 +1051,7 @@
             ],
             "description": "Nette Security: Access Control Component",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:22:53"
+            "time": "2015-07-11T21:22:53+00:00"
         },
         {
             "name": "nette/tokenizer",
@@ -1100,7 +1100,7 @@
             ],
             "description": "Nette Tokenizer",
             "homepage": "http://nette.org",
-            "time": "2015-07-11 21:24:02"
+            "time": "2015-07-11T21:24:02+00:00"
         },
         {
             "name": "nette/utils",
@@ -1155,7 +1155,7 @@
             ],
             "description": "Nette Utility Classes",
             "homepage": "http://nette.org",
-            "time": "2015-07-13 22:30:00"
+            "time": "2015-07-13T22:30:00+00:00"
         },
         {
             "name": "tracy/tracy",
@@ -1210,20 +1210,10 @@
                 "debugger",
                 "nette"
             ],
-            "time": "2015-07-03 12:52:35"
+            "time": "2015-07-03T12:52:35+00:00"
         }
     ],
     "packages-dev": [
-        {
-            "name": "PHPTestCase",
-            "version": "1.0",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/DeveloperHub/PHPTestCase.git",
-                "reference": "1.0.0"
-            },
-            "type": "library"
-        },
         {
             "name": "behat/behat",
             "version": "v2.4.6",
@@ -1289,7 +1279,7 @@
                 "Behat",
                 "Symfony2"
             ],
-            "time": "2013-06-06 10:46:48"
+            "time": "2013-06-06T10:46:48+00:00"
         },
         {
             "name": "behat/gherkin",
@@ -1350,7 +1340,7 @@
                 "Symfony2",
                 "parser"
             ],
-            "time": "2013-03-02 10:38:40"
+            "time": "2013-03-02T10:38:40+00:00"
         },
         {
             "name": "behat/mink",
@@ -1409,7 +1399,7 @@
                 "testing",
                 "web"
             ],
-            "time": "2012-05-29 22:50:10"
+            "time": "2012-05-29T22:50:10+00:00"
         },
         {
             "name": "behat/mink-extension",
@@ -1464,7 +1454,7 @@
                 "test",
                 "web"
             ],
-            "time": "2013-02-19 23:49:16"
+            "time": "2013-02-19T23:49:16+00:00"
         },
         {
             "name": "behat/mink-selenium2-driver",
@@ -1522,7 +1512,35 @@
                 "testing",
                 "webdriver"
             ],
-            "time": "2013-02-17 15:32:01"
+            "time": "2013-02-17T15:32:01+00:00"
+        },
+        {
+            "name": "developerhub/php-testcase",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Lawondyss/PHPTestCase.git",
+                "reference": "432258b0e1cdd181a961f587674eaf106703559a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Lawondyss/PHPTestCase/zipball/432258b0e1cdd181a961f587674eaf106703559a",
+                "reference": "432258b0e1cdd181a961f587674eaf106703559a",
+                "shasum": ""
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Radim Daniel Panek",
+                    "email": "rdpanek@gmail.com"
+                }
+            ],
+            "description": "PHPUnit testing tool for PHP. Support >= PHPUnit3.6 and SeleniumRC 2, Webdriver.",
+            "support": {
+                "source": "https://github.com/Lawondyss/PHPTestCase/tree/v1.1.0"
+            },
+            "time": "2012-08-03T11:40:17+00:00"
         },
         {
             "name": "instaclick/php-webdriver",
@@ -1580,7 +1598,7 @@
                 "webdriver",
                 "webtest"
             ],
-            "time": "2013-10-04 15:03:51"
+            "time": "2013-10-04T15:03:51+00:00"
         },
         {
             "name": "nette/tester",
@@ -1636,7 +1654,7 @@
                 "testing",
                 "unit"
             ],
-            "time": "2015-07-16 02:05:19"
+            "time": "2015-07-16T02:05:19+00:00"
         },
         {
             "name": "symfony/config",
@@ -1686,7 +1704,7 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-07-09T16:07:40+00:00"
         },
         {
             "name": "symfony/console",
@@ -1743,7 +1761,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-07-09T16:07:40+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -1787,20 +1805,20 @@
             ],
             "description": "Symfony CssSelector Component",
             "homepage": "http://symfony.com",
-            "time": "2013-05-17 00:31:34"
+            "time": "2013-05-17T00:31:34+00:00"
         },
         {
             "name": "symfony/dependency-injection",
-            "version": "v2.7.2",
+            "version": "v2.8.52",
             "source": {
                 "type": "git",
-                "url": "https://github.com/symfony/DependencyInjection.git",
-                "reference": "d56b1b89a0c8b34a6eca6211ec76c43256ec4030"
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "c306198fee8f872a8f5f031e6e4f6f83086992d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/DependencyInjection/zipball/d56b1b89a0c8b34a6eca6211ec76c43256ec4030",
-                "reference": "d56b1b89a0c8b34a6eca6211ec76c43256ec4030",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/c306198fee8f872a8f5f031e6e4f6f83086992d8",
+                "reference": "c306198fee8f872a8f5f031e6e4f6f83086992d8",
                 "shasum": ""
             },
             "require": {
@@ -1810,26 +1828,29 @@
                 "symfony/expression-language": "<2.6"
             },
             "require-dev": {
-                "symfony/config": "~2.2",
-                "symfony/expression-language": "~2.6",
-                "symfony/phpunit-bridge": "~2.7",
-                "symfony/yaml": "~2.1"
+                "symfony/config": "~2.2|~3.0.0",
+                "symfony/expression-language": "~2.6|~3.0.0",
+                "symfony/yaml": "~2.3.42|~2.7.14|~2.8.7|~3.0.7"
             },
             "suggest": {
                 "symfony/config": "",
+                "symfony/expression-language": "For using expressions in service container configuration",
                 "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
                 "symfony/yaml": ""
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.7-dev"
+                    "dev-master": "2.8-dev"
                 }
             },
             "autoload": {
                 "psr-4": {
                     "Symfony\\Component\\DependencyInjection\\": ""
-                }
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1847,7 +1868,10 @@
             ],
             "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "support": {
+                "source": "https://github.com/symfony/dependency-injection/tree/2.8"
+            },
+            "time": "2019-04-16T11:33:46+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1905,7 +1929,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-06-18 19:21:56"
+            "time": "2015-06-18T19:21:56+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -1954,7 +1978,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-07-09T16:07:40+00:00"
         },
         {
             "name": "symfony/finder",
@@ -2004,7 +2028,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-08 05:54:32"
+            "time": "2015-07-08T05:54:32+00:00"
         },
         {
             "name": "symfony/translation",
@@ -2065,7 +2089,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-09 16:07:40"
+            "time": "2015-07-09T16:07:40+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -2114,7 +2138,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2015-07-01 11:25:50"
+            "time": "2015-07-01T11:25:50+00:00"
         }
     ],
     "aliases": [],
@@ -2129,5 +2153,6 @@
     "platform": {
         "php": ">= 5.3.7"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }
