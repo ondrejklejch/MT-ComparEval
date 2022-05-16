@@ -91,16 +91,18 @@ class TasksPresenter extends BasePresenter {
 
 		$this->tasksModel->updateTask( $id, $name, $description );
 		$experimentId = $this->tasksModel->getTask( $id )->experiments_id;
+		$experimentName = $this->experimentsModel->getExperimentById( $experimentId )->url_key;
 
 		$this->flashMessage( 'Task was successfully updated.', 'alert-success' );
-		$this->redirect( 'list', $experimentId );
+		$this->redirect( 'list', $experimentName );
 	}
 
 	public function actionDelete( $taskId ) {
 		$experimentId = $this->tasksModel->getTask( $taskId )->experiments_id;
+		$experimentName = $this->experimentsModel->getExperimentById( $experimentId )->url_key;
 		$this->tasksModel->deleteTask( $taskId );
 
-		$this->redirect( 'list', $experimentId );
+		$this->redirect( 'list', $experimentName );
 	}
 
 	protected function createComponentEditForm() {
