@@ -17,7 +17,7 @@ $(document).ready( function() {
 			return alert( "You can compare only 2 tasks." );
 		}
 
-		window.location = "{$basePath|noescape}/{$experiment->url_key|noescape}/compare/" + tasksIds[0] + "/" + tasksIds[1];
+		window.location = {$basePath} + "/{$experiment->url_key|noescape}/compare/" + tasksIds[0] + "/" + tasksIds[1];
 	} );
 } );
 </script>
@@ -58,13 +58,13 @@ $(document).ready( function() {
 				"experimentId": {$experimentId|noescape}
 			};
 
-			$http.get( '{$basePath|noescape}/api/tasks', payload )
+			$http.get( {$basePath} + '/api/tasks', payload )
 				.then( function( response ) {
 					var data = response.data;
 					$scope.tasks = data.tasks;
 					$scope.showAdministration = data.show_administration;
 
-					return $http.get( '{$basePath|noescape}/api/metrics/scores-in-experiment', payload );
+					return $http.get( {$basePath} + '/api/metrics/scores-in-experiment', payload );
 				} )
 				.then( function( response ) {
 					var data = response.data;
