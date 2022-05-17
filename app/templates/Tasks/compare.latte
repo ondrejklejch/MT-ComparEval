@@ -150,7 +150,7 @@ function Sentences( $scope, $http ) {
 		payload.params = {
 				"task1": $scope.task0,
 				"task2": $scope.task1,
-				"metric": ( !$scope.currentMetric ) ? 'bleu' : $scope.currentMetric
+				"metric": ( !$scope.currentMetric ) ? 'BLEU' : $scope.currentMetric
 		};
 
 		$http.get( {$basePath} + '/api/metrics/results', payload ).success( function( data ) {
@@ -159,11 +159,11 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Sentence-level " + ( $scope.currentMetric || 'bleu' ) + " differences",
+					"text": "Sentence-level " + ( $scope.currentMetric || 'BLEU' ) + " differences",
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'BLEU' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -242,14 +242,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " differences",
+					"text": "Paired Bootstrap Resampling " + ( $scope.currentMetric || 'BLEU' ) + " differences",
 				},
 				"subtitle": {
 					"text": $scope.taskNames[ $scope.task0 ] + " is " + isBetter + " than " + $scope.taskNames[ $scope.task1 ] + ": " + significant,
 				},
 				"yAxis": {
 					"title": {
-						"text": "diff " + ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": "diff " + ( $scope.currentMetric || 'BLEU' ) + " (" + $scope.taskNames[ $scope.task0] + " - " + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -316,14 +316,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task0 ]
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'BLEU' ) + " " + $scope.taskNames[ $scope.task0 ]
 				},
 				"subtitle": {
 					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
 				},
 				"yAxis": {
 					"title": {
-						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task0 ] + ")",
+						"text": ( $scope.currentMetric || 'BLEU' ) + " (" + $scope.taskNames[ $scope.task0 ] + ")",
 					}
 				},
 				"xAxis": {
@@ -395,14 +395,14 @@ function Sentences( $scope, $http ) {
 					"zoomType": "x"
 				},
 				"title": {
-					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'bleu' ) + " " + $scope.taskNames[ $scope.task1 ]
+					"text": "Bootstrap Resampling " + ( $scope.currentMetric || 'BLEU' ) + " " + $scope.taskNames[ $scope.task1 ]
 				},
 				"subtitle": {
 					"text": ( $scope.currentMetric || 'BLEU' ) + " lies in 95% confidence interval: [" + first + ", " + last + "]",
 				},
 				"yAxis": {
 					"title": {
-						"text": ( $scope.currentMetric || 'bleu' ) + " (" + $scope.taskNames[ $scope.task1 ] + ")",
+						"text": ( $scope.currentMetric || 'BLEU' ) + " (" + $scope.taskNames[ $scope.task1 ] + ")",
 					}
 				},
 				"xAxis": {
